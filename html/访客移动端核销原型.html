@@ -1,0 +1,2514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>访客移动端核销原型 v11</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: #1a1a2e;
+  color: #333;
+  font-size: 14px;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+}
+
+/* ==================== 左侧菜单 ==================== */
+.sidebar {
+  width: 240px;
+  background: #0f0f23;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.sidebar-header {
+  padding: 20px 16px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.sidebar-header h2 {
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+}
+.sidebar-header p {
+  color: rgba(255,255,255,0.4);
+  font-size: 12px;
+  margin-top: 4px;
+}
+.menu-group {
+  padding: 12px 0 0;
+}
+.menu-group-title {
+  padding: 0 16px 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.3);
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+  color: rgba(255,255,255,0.6);
+  font-size: 13px;
+  gap: 10px;
+}
+.menu-item:hover {
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.9);
+}
+.menu-item.active {
+  background: rgba(37,99,235,0.12);
+  color: #60a5fa;
+  border-left-color: #2563eb;
+}
+.menu-item .icon {
+  width: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+.menu-item .badge-new {
+  margin-left: auto;
+  background: #EF4444;
+  color: #fff;
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-weight: 600;
+}
+
+/* ==================== 右侧预览区 ==================== */
+.preview-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  position: relative;
+}
+.preview-area .page-label {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: rgba(255,255,255,0.5);
+  font-size: 13px;
+  font-weight: 500;
+  background: rgba(255,255,255,0.06);
+  padding: 6px 16px;
+  border-radius: 20px;
+}
+
+/* ==================== 手机外壳 ==================== */
+.phone-frame {
+  width: 375px;
+  height: 812px;
+  background: #000;
+  border-radius: 44px;
+  padding: 12px;
+  box-shadow: 
+    0 0 0 2px #333,
+    0 0 0 4px #1a1a1a,
+    0 20px 60px rgba(0,0,0,0.5),
+    inset 0 0 0 1px rgba(255,255,255,0.05);
+  position: relative;
+  overflow: hidden;
+}
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  background: #F0F2F5;
+  border-radius: 34px;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 刘海 */
+.phone-notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 28px;
+  background: #000;
+  border-radius: 0 0 18px 18px;
+  z-index: 9999;
+}
+.phone-notch::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 6px;
+  background: #1a1a1a;
+  border-radius: 3px;
+}
+
+/* 手机内容区 */
+.phone-content {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.phone-content::-webkit-scrollbar { display: none; }
+
+/* ==================== 状态栏 ==================== */
+.status-bar {
+  background: #2563EB;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 20px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+.status-bar .time { font-size: 14px; font-weight: 700; }
+.status-bar .icons { display: flex; gap: 4px; align-items: center; }
+.status-bar .icons span { font-size: 11px; }
+
+/* 导航栏 */
+.nav-bar {
+  background: #2563EB;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 10px 16px 14px;
+  position: sticky;
+  top: 26px;
+  z-index: 998;
+}
+.nav-bar .back-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 22px;
+  border: none;
+  background: none;
+  color: #fff;
+}
+.nav-bar .title {
+  flex: 1;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+  margin-right: 32px;
+}
+
+/* 页面容器 */
+.page { display: none; }
+.page.active { display: block; }
+
+/* 卡片 */
+.card {
+  background: #fff;
+  border-radius: 12px;
+  margin: 10px 14px;
+  padding: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1E293B;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+/* 状态标签 */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.badge-pending { background: #FFF7ED; color: #EA580C; border: 1px solid #FDBA74; }
+.badge-approved { background: #F0FDF4; color: #16A34A; border: 1px solid #86EFAC; }
+.badge-rejected { background: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; }
+.badge-cancelled { background: #F1F5F9; color: #64748B; border: 1px solid #CBD5E1; }
+.badge-used { background: #F0F9FF; color: #0284C7; border: 1px solid #7DD3FC; }
+.badge-expired { background: #F1F5F9; color: #94A3B8; border: 1px solid #CBD5E1; }
+
+/* 表单字段 */
+.field-row {
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid #F8FAFC;
+  align-items: flex-start;
+  font-size: 13px;
+}
+.field-label {
+  width: 80px;
+  color: #64748B;
+  flex-shrink: 0;
+}
+.field-label .required { color: #EF4444; margin-right: 2px; }
+.field-value {
+  flex: 1;
+  color: #1E293B;
+  word-break: break-all;
+}
+
+/* 按钮 */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 20px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary { background: #2563EB; color: #fff; }
+.btn-primary:hover { background: #1D4ED8; }
+.btn-success { background: #16A34A; color: #fff; }
+.btn-danger { background: #DC2626; color: #fff; }
+.btn-warning { background: #EA580C; color: #fff; }
+.btn-outline { background: #fff; color: #2563EB; border: 1px solid #2563EB; }
+.btn-block { display: flex; width: 100%; }
+.btn-lg { padding: 12px 20px; font-size: 15px; border-radius: 10px; }
+
+/* 底部操作栏 */
+.bottom-bar {
+  background: #fff;
+  padding: 10px 14px;
+  border-top: 1px solid #F1F5F9;
+  display: flex;
+  gap: 10px;
+  position: sticky;
+  bottom: 0;
+  z-index: 100;
+}
+
+/* 预约卡片 */
+.reservation-card {
+  background: #fff;
+  border-radius: 12px;
+  margin: 10px 14px;
+  padding: 12px 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+.reservation-card:active { transform: scale(0.98); }
+.reservation-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.reservation-name { font-size: 15px; font-weight: 600; color: #1E293B; }
+.reservation-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 12px;
+  color: #64748B;
+}
+
+/* 二维码区域 */
+.qr-container { text-align: center; padding: 24px 16px; }
+.qr-box {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 16px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.qr-placeholder { width: 160px; height: 160px; }
+.qr-placeholder svg { width: 100%; height: 100%; }
+.qr-status { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.qr-status.valid { color: #16A34A; }
+.qr-refresh-tip { font-size: 12px; color: #94A3B8; margin-top: 8px; }
+.qr-countdown { font-size: 12px; color: #2563EB; margin-top: 6px; font-weight: 500; }
+
+/* 保安/仓管工作台 */
+.workstation-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 14px; }
+.workstation-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 14px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  cursor: pointer;
+}
+.workstation-card .icon { font-size: 32px; margin-bottom: 8px; }
+.workstation-card .label { font-size: 14px; font-weight: 500; color: #1E293B; }
+
+/* 统计卡片 */
+.stats-row { display: flex; gap: 8px; padding: 0 14px; margin-bottom: 10px; }
+.stat-card {
+  flex: 1;
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px 8px;
+  text-align: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.stat-number { font-size: 22px; font-weight: 700; }
+.stat-label { font-size: 10px; color: #94A3B8; margin-top: 2px; }
+
+/* 扫码界面 - flex列布局 */
+.scan-view {
+  background: #000;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.scan-view.hidden { display: none !important; }
+.scan-frame { width: 200px; height: 200px; position: relative; }
+.scan-frame .corner {
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  border-color: #2563EB;
+  border-style: solid;
+  border-width: 0;
+}
+.scan-frame .corner.tl { top: 0; left: 0; border-top-width: 3px; border-left-width: 3px; border-radius: 4px 0 0 0; }
+.scan-frame .corner.tr { top: 0; right: 0; border-top-width: 3px; border-right-width: 3px; border-radius: 0 4px 0 0; }
+.scan-frame .corner.bl { bottom: 0; left: 0; border-bottom-width: 3px; border-left-width: 3px; border-radius: 0 0 0 4px; }
+.scan-frame .corner.br { bottom: 0; right: 0; border-bottom-width: 3px; border-right-width: 3px; border-radius: 0 0 4px 0; }
+.scan-line {
+  position: absolute;
+  top: 0;
+  left: 10px;
+  right: 10px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #2563EB, transparent);
+  box-shadow: 0 0 8px rgba(37,99,235,0.6);
+  animation: scanMove 2.5s ease-in-out infinite;
+}
+@keyframes scanMove { 0%, 100% { top: 10px; } 50% { top: 180px; } }
+.scan-tip {
+  color: rgba(255,255,255,0.7);
+  font-size: 13px;
+  margin-top: 20px;
+  text-align: center;
+}
+.scan-simulate-btn {
+  margin-top: 30px;
+}
+
+/* 扫码结果 */
+.scan-result-view {
+  display: none;
+  flex: 1;
+  overflow-y: auto;
+}
+.scan-result-view.show { display: block !important; }
+.scan-result-banner {
+  background: linear-gradient(135deg, #16A34A, #15803D);
+  padding: 28px 14px 24px;
+  text-align: center;
+  color: #fff;
+}
+.scan-result-body {
+  padding: 16px 14px;
+  background: #F0F2F5;
+  min-height: 300px;
+}
+.scan-info-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.scan-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #F1F5F9;
+  font-size: 13px;
+}
+.scan-info-row:last-child { border-bottom: none; }
+.scan-info-row .si-label { color: #64748B; }
+.scan-info-row .si-value { color: #1E293B; font-weight: 500; text-align: right; }
+
+/* 搜索框 */
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 10px;
+  margin: 10px 14px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.search-bar input {
+  flex: 1;
+  border: none;
+  outline: none;
+  font-size: 13px;
+  color: #333;
+  background: transparent;
+}
+.search-bar input::placeholder { color: #CBD5E1; }
+.search-bar .search-btn {
+  background: #2563EB;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+/* 搜索方式切换 */
+.search-tabs {
+  display: flex;
+  gap: 0;
+  margin: 10px 14px 0;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.search-tab {
+  flex: 1;
+  text-align: center;
+  padding: 8px 0;
+  font-size: 12px;
+  color: #64748B;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+.search-tab.active { color: #2563EB; border-bottom-color: #2563EB; font-weight: 500; }
+
+/* 核销弹窗 */
+.modal-overlay {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 2000;
+  align-items: flex-end;
+  justify-content: center;
+  border-radius: 34px;
+}
+.modal-overlay.show { display: flex; }
+.modal-content {
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  max-height: 85%;
+  overflow-y: auto;
+  padding: 16px 14px;
+  animation: slideUp 0.3s ease;
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #F1F5F9;
+}
+.modal-title { font-size: 16px; font-weight: 600; color: #1E293B; }
+.modal-close {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #F1F5F9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: none;
+  font-size: 14px;
+  color: #64748B;
+}
+
+/* 单选组 */
+.radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.radio-item {
+  display: flex;
+  align-items: center;
+  padding: 7px 12px;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 12px;
+}
+.radio-item.selected { border-color: #2563EB; background: #EFF6FF; color: #2563EB; }
+.radio-item .dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #CBD5E1;
+  margin-right: 6px;
+  position: relative;
+}
+.radio-item.selected .dot { border-color: #2563EB; }
+.radio-item.selected .dot::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2563EB;
+}
+
+/* 摘要行 */
+.summary-row {
+  background: #F8FAFC;
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+}
+.summary-row .item {
+  display: flex;
+  justify-content: space-between;
+  padding: 3px 0;
+  font-size: 12px;
+}
+.summary-row .item .label { color: #64748B; }
+.summary-row .item .value { color: #1E293B; font-weight: 500; }
+
+/* 地磅区域 */
+.weigh-section {
+  background: #FFF7ED;
+  border: 1px solid #FDBA74;
+  border-radius: 10px;
+  padding: 12px;
+  margin: 12px 0;
+}
+.weigh-section .weigh-title { font-size: 13px; font-weight: 600; color: #EA580C; margin-bottom: 8px; }
+.weigh-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 12px; }
+.weigh-status { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; }
+.weigh-status.online { color: #16A34A; }
+
+/* 信息组标题 */
+.section-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #1E293B;
+  margin: 12px 0 8px;
+  padding-left: 8px;
+  border-left: 3px solid #2563EB;
+}
+
+/* 车辆标签 */
+.vehicle-tag {
+  display: inline-block;
+  padding: 1px 6px;
+  background: #EFF6FF;
+  color: #2563EB;
+  border-radius: 4px;
+  font-size: 10px;
+  margin-left: 4px;
+}
+
+/* 时间信息 */
+.time-block {
+  background: #F0F9FF;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 6px 0;
+}
+.time-block .time-label { font-size: 11px; color: #64748B; }
+.time-block .time-value { font-size: 14px; font-weight: 600; color: #0284C7; margin-top: 2px; }
+
+/* 空状态 */
+.empty-state { text-align: center; padding: 30px 16px; color: #94A3B8; }
+.empty-state .icon { font-size: 40px; margin-bottom: 10px; }
+.empty-state .text { font-size: 13px; }
+
+/* 核销记录 */
+.record-card {
+  background: #fff;
+  border-radius: 10px;
+  margin: 6px 14px;
+  padding: 10px 12px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.record-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+.record-name { font-size: 13px; font-weight: 600; }
+.record-detail { font-size: 11px; color: #94A3B8; }
+
+/* ==================== 消息通知 ==================== */
+.msg-category-tabs {
+  display: flex; gap: 0; margin: 10px 14px 0; background: #fff;
+  border-radius: 10px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+.msg-category-tab {
+  flex: 1; text-align: center; padding: 9px 0; font-size: 12px;
+  color: #64748B; cursor: pointer; border-bottom: 2px solid transparent;
+}
+.msg-category-tab.active { color: #2563EB; border-bottom-color: #2563EB; font-weight: 500; }
+.msg-item {
+  background: #fff; border-radius: 12px; margin: 10px 14px; padding: 12px 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06); position: relative;
+}
+.msg-item.unread::before {
+  content: ''; position: absolute; top: 14px; right: 14px;
+  width: 8px; height: 8px; background: #EF4444; border-radius: 50%;
+}
+.msg-source { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.msg-source-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;
+}
+.msg-source-icon.wechat { background: #07C160; color: #fff; }
+.msg-source-icon.sms { background: #2563EB; color: #fff; }
+.msg-source-name { font-size: 13px; font-weight: 600; color: #1E293B; }
+.msg-source-time { font-size: 11px; color: #94A3B8; margin-left: auto; }
+.msg-title { font-size: 14px; font-weight: 600; color: #1E293B; margin-bottom: 6px; }
+.msg-body { font-size: 12px; color: #64748B; line-height: 1.6; }
+.msg-detail-card { background: #F8FAFC; border-radius: 8px; padding: 10px 12px; margin-top: 8px; }
+.msg-detail-row { display: flex; justify-content: space-between; padding: 3px 0; font-size: 12px; }
+.msg-detail-row .mdl { color: #64748B; }
+.msg-detail-row .mdv { color: #1E293B; font-weight: 500; }
+.msg-status-tag {
+  display: inline-block; padding: 2px 8px; border-radius: 10px;
+  font-size: 10px; font-weight: 500; margin-top: 8px;
+}
+.msg-status-tag.success { background: #F0FDF4; color: #16A34A; border: 1px solid #86EFAC; }
+
+/* ==================== 我的信息 ==================== */
+.profile-header {
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+  padding: 30px 14px 24px; text-align: center; color: #fff;
+}
+.profile-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: rgba(255,255,255,0.2); margin: 0 auto 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 32px; border: 3px solid rgba(255,255,255,0.4);
+  position: relative; overflow: hidden;
+}
+.profile-avatar .edit-badge {
+  position: absolute; bottom: 0; right: 0; width: 22px; height: 22px;
+  background: rgba(0,0,0,0.5); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 10px;
+}
+.profile-name { font-size: 18px; font-weight: 700; }
+.profile-sub { font-size: 12px; opacity: 0.8; margin-top: 4px; }
+.profile-section {
+  background: #fff; border-radius: 12px; margin: 12px 14px; padding: 4px 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.profile-row {
+  display: flex; align-items: center; padding: 12px 14px;
+  border-bottom: 1px solid #F1F5F9;
+}
+.profile-row:last-child { border-bottom: none; }
+.profile-row .pr-label { width: 72px; font-size: 13px; color: #64748B; flex-shrink: 0; }
+.profile-row .pr-value { flex: 1; font-size: 13px; color: #1E293B; font-weight: 500; }
+.profile-row .pr-arrow { color: #CBD5E1; font-size: 14px; margin-left: 4px; }
+.profile-row .pr-edit { color: #2563EB; font-size: 12px; cursor: pointer; }
+.profile-row.clickable { cursor: pointer; }
+.profile-row.clickable:active { background: #F8FAFC; }
+.profile-save-bar { padding: 16px 14px; }
+
+/* Home indicator */
+.home-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 134px;
+  height: 5px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 3px;
+  z-index: 9998;
+}
+
+/* ==================== 预约登录页 ==================== */
+.login-welcome {
+  min-height: 100%;
+  background: linear-gradient(160deg, #2563EB 0%, #1D4ED8 60%, #1E40AF 100%);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 60px 28px 32px; color: #fff;
+  position: relative;
+}
+.login-welcome .login-logo {
+  width: 80px; height: 80px; border-radius: 20px;
+  background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; margin-bottom: 24px;
+}
+.login-welcome .login-title {
+  font-size: 24px; font-weight: 700; text-align: center;
+  line-height: 1.5; margin-bottom: 12px;
+}
+.login-welcome .login-subtitle {
+  font-size: 13px; opacity: 0.75; text-align: center; margin-bottom: 36px;
+}
+.login-type-hint {
+  font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 12px; text-align: center;
+}
+.login-btn-primary {
+  width: 100%; padding: 16px; border-radius: 14px; font-size: 17px; font-weight: 600;
+  border: none; cursor: pointer; margin-bottom: 12px; text-align: center;
+  background: #fff; color: #2563EB; transition: all 0.2s;
+}
+.login-btn-primary:active { opacity: 0.85; transform: scale(0.98); }
+.login-btn-outline {
+  width: 100%; padding: 16px; border-radius: 14px; font-size: 17px; font-weight: 600;
+  border: 2px solid rgba(255,255,255,0.6); cursor: pointer; margin-bottom: 20px;
+  background: transparent; color: #fff; text-align: center; transition: all 0.2s;
+}
+.login-btn-outline:active { opacity: 0.85; transform: scale(0.98); }
+.login-bottom-links {
+  margin-top: auto; text-align: center; width: 100%;
+}
+.login-bottom-links .my-reservation {
+  font-size: 15px; color: rgba(255,255,255,0.9); cursor: pointer;
+  margin-bottom: 16px; display: inline-block;
+}
+.login-bottom-links .my-reservation:hover { text-decoration: underline; }
+.login-bottom-links .internal-notice {
+  font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.6;
+}
+
+
+/* 登录页两步选择样式 */
+.login-org-grid {
+  display: flex; flex-direction: column; gap: 10px; width: 100%; margin-bottom: 8px;
+}
+.login-org-btn {
+  width: 100%; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 600;
+  border: 2px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.1);
+  color: #fff; text-align: center; cursor: pointer; transition: all 0.2s;
+}
+.login-org-btn:active { background: rgba(255,255,255,0.25); transform: scale(0.98); }
+.login-org-btn.selected { background: #fff; color: #2563EB; border-color: #fff; }
+.login-type-grid {
+  display: flex; flex-wrap: wrap; gap: 10px; width: 100%; margin-bottom: 8px;
+}
+.login-type-btn {
+  flex: 1 1 calc(50% - 5px); padding: 12px 8px; border-radius: 12px; font-size: 14px; font-weight: 500;
+  border: 2px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.08);
+  color: #fff; text-align: center; cursor: pointer; transition: all 0.2s;
+  min-width: 0;
+}
+.login-type-btn:active { background: rgba(255,255,255,0.25); transform: scale(0.97); }
+.login-type-btn.selected { background: #fff; color: #2563EB; border-color: #fff; }
+.login-back-link {
+  color: rgba(255,255,255,0.7); font-size: 13px; cursor: pointer;
+  margin-top: 8px; text-align: center;
+}
+.login-back-link:hover { color: #fff; }
+
+/* 选择组织弹窗 */
+.login-org-popup-overlay {
+  display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 999;
+  align-items: center; justify-content: center; padding: 30px;
+}
+.login-org-popup-overlay.show { display: flex; }
+.login-org-popup-card {
+  background: #fff; border-radius: 16px; width: 100%; padding: 24px 20px;
+}
+.login-org-popup-title {
+  text-align: center; font-size: 16px; font-weight: 700; color: #1E293B; margin-bottom: 16px;
+}
+.login-org-popup-grid {
+  display: flex; flex-direction: column; gap: 10px;
+}
+.login-org-popup-btn {
+  padding: 14px; border-radius: 10px; text-align: center;
+  font-size: 15px; font-weight: 600; color: #334155;
+  background: #F1F5F9; border: 2px solid transparent;
+  cursor: pointer; transition: all 0.15s;
+}
+.login-org-popup-btn:active { background: #E2E8F0; transform: scale(0.98); }
+.login-selected-org {
+  background: rgba(255,255,255,0.15); border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.login-selected-org-left {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 14px; color: rgba(255,255,255,0.7);
+}
+.login-selected-org-name {
+  font-size: 16px; font-weight: 700; color: #fff;
+}
+.login-change-link {
+  font-size: 13px; color: rgba(255,255,255,0.6); cursor: pointer;
+}
+/* ==================== 入厂须知页 ==================== */
+.notice-video-placeholder {
+  margin: 14px; border-radius: 12px; overflow: hidden;
+  background: linear-gradient(135deg, #374151, #4B5563);
+  height: 180px; position: relative; cursor: pointer;
+}
+.notice-video-placeholder .play-icon {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 56px; height: 56px; background: rgba(0,0,0,0.5); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px; color: #fff;
+}
+.notice-video-placeholder .video-tag {
+  position: absolute; top: 10px; right: 10px;
+  background: rgba(0,0,0,0.6); color: #fff; font-size: 11px;
+  padding: 3px 8px; border-radius: 6px;
+}
+.notice-video-placeholder .video-title {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 10px 14px; background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  color: #fff; font-size: 13px; font-weight: 500;
+}
+.notice-safety-link {
+  margin: 0 14px 12px; padding: 12px 14px;
+  background: #EFF6FF; border-radius: 10px; cursor: pointer;
+  color: #2563EB; font-size: 13px; font-weight: 500;
+}
+.notice-quiz-section {
+  margin: 0 14px 14px; background: #fff; border-radius: 12px;
+  padding: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.notice-quiz-title {
+  font-size: 15px; font-weight: 600; color: #1E293B; margin-bottom: 4px;
+}
+.notice-quiz-hint {
+  font-size: 12px; color: #94A3B8; margin-bottom: 14px;
+}
+.quiz-question {
+  margin-bottom: 14px; padding-bottom: 14px;
+  border-bottom: 1px solid #F1F5F9;
+}
+.quiz-question:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.quiz-q-text {
+  font-size: 13px; color: #1E293B; font-weight: 500;
+  margin-bottom: 10px; line-height: 1.6;
+}
+.quiz-q-number {
+  display: inline-block; background: #2563EB; color: #fff;
+  width: 20px; height: 20px; border-radius: 50%; font-size: 11px;
+  text-align: center; line-height: 20px; margin-right: 6px; flex-shrink: 0;
+}
+.quiz-options { display: flex; gap: 10px; }
+.quiz-option-btn {
+  flex: 1; padding: 10px 0; border-radius: 10px; text-align: center;
+  font-size: 13px; font-weight: 500; cursor: pointer;
+  border: 1.5px solid #E2E8F0; background: #fff; color: #64748B;
+  transition: all 0.2s;
+}
+.quiz-option-btn:active { transform: scale(0.97); }
+.quiz-option-btn.selected {
+  border-color: #2563EB; background: #EFF6FF; color: #2563EB;
+}
+.quiz-option-btn.wrong {
+  border-color: #EF4444; background: #FEE2E2; color: #DC2626;
+}
+.notice-submit-bar {
+  padding: 12px 14px 20px; background: #fff;
+  border-top: 1px solid #F1F5F9; position: sticky; bottom: 0;
+}
+.notice-submit-btn {
+  width: 100%; padding: 14px; border-radius: 12px; font-size: 16px;
+  font-weight: 600; border: none; cursor: pointer;
+  background: #2563EB; color: #fff; transition: all 0.2s;
+}
+.notice-submit-btn:active { opacity: 0.85; }
+.notice-submit-btn:disabled { background: #94A3B8; cursor: not-allowed; }
+
+/* 安全告知书弹窗 */
+.notice-popup-overlay {
+  display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6); z-index: 1000;
+  align-items: center; justify-content: center; padding: 20px;
+}
+.notice-popup-overlay.show { display: flex; }
+.notice-popup-card {
+  background: #fff; border-radius: 16px; width: 100%; max-height: 68%;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.notice-popup-card h3 {
+  font-size: 16px; font-weight: 700; color: #1E293B;
+  text-align: center; margin: 0 16px 16px; padding: 0 0 12px;
+  border-bottom: 1px solid #E2E8F0;
+}
+.notice-popup-card .popup-content {
+  font-size: 13px; color: #475569; line-height: 1.8;
+}
+.notice-popup-card .popup-content p { margin-bottom: 8px; }
+.notice-popup-countdown {
+  text-align: center; padding: 12px 0 0;
+  font-size: 13px; color: #94A3B8;
+}
+.notice-popup-close {
+  display: block; margin: 10px auto 0; padding: 10px 32px;
+  border-radius: 10px; font-size: 14px; font-weight: 600;
+  border: none; cursor: pointer; background: #2563EB; color: #fff;
+}
+.notice-popup-close:disabled { background: #CBD5E1; cursor: not-allowed; }
+
+/* 答题错误弹窗 */
+.quiz-error-overlay {
+  display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 1001;
+  align-items: center; justify-content: center; padding: 30px;
+}
+.quiz-error-overlay.show { display: flex; }
+.quiz-error-card {
+  background: #fff; border-radius: 16px; width: 100%; padding: 24px 20px;
+  text-align: center;
+}
+.quiz-error-icon { font-size: 48px; margin-bottom: 12px; }
+.quiz-error-title { font-size: 18px; font-weight: 700; color: #DC2626; margin-bottom: 8px; }
+.quiz-error-msg { font-size: 14px; color: #64748B; line-height: 1.6; margin-bottom: 20px; }
+.quiz-error-btn {
+  padding: 12px 40px; border-radius: 10px; font-size: 15px; font-weight: 600;
+  border: none; cursor: pointer; background: #2563EB; color: #fff;
+}
+
+/* 签字区域 */
+.signature-overlay {
+  display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 1002;
+  align-items: center; justify-content: center; padding: 20px;
+}
+.signature-overlay.show { display: flex; }
+.signature-card {
+  background: #fff; border-radius: 16px; width: 100%; padding: 20px;
+}
+.signature-card h4 { font-size: 16px; font-weight: 600; margin-bottom: 12px; text-align: center; color: #1E293B; }
+.signature-canvas {
+  width: 100%; height: 180px; border: 2px dashed #CBD5E1;
+  border-radius: 12px; background: #F8FAFC; cursor: crosshair;
+  touch-action: none;
+}
+.signature-actions {
+  display: flex; gap: 10px; margin-top: 12px;
+}
+.signature-actions button {
+  flex: 1; padding: 12px; border-radius: 10px; font-size: 14px;
+  font-weight: 600; border: none; cursor: pointer;
+}
+.sig-clear-btn { background: #F1F5F9; color: #64748B; }
+.sig-confirm-btn { background: #2563EB; color: #fff; }
+
+/* ==================== 预约登记页 ==================== */
+.registration-tip-bar {
+  margin: 10px 14px 0; padding: 10px 12px; border-radius: 10px;
+  background: #FEF3C7; color: #92400E; font-size: 12px; line-height: 1.5;
+}
+.visitor-type-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px;
+  padding: 8px 12px; font-size: 13px; color: #2563EB; font-weight: 500;
+  margin-right: 8px; margin-bottom: 8px;
+}
+.visitor-type-badge .vtb-label { color: #64748B; font-weight: 400; font-size: 12px; }
+.reg-form-group { margin-bottom: 14px; }
+.reg-form-group .reg-label {
+  font-size: 13px; color: #1E293B; font-weight: 500; margin-bottom: 6px; display: block;
+}
+.reg-form-group .reg-label .required { color: #EF4444; margin-right: 2px; }
+.reg-form-group .reg-input {
+  width: 100%; padding: 10px 12px; border: 1.5px solid #E2E8F0;
+  border-radius: 10px; font-size: 13px; color: #1E293B;
+  background: #fff; outline: none; transition: border-color 0.2s;
+}
+.reg-form-group .reg-input:focus { border-color: #2563EB; }
+.reg-form-group .reg-input:read-only { background: #F8FAFC; color: #94A3B8; }
+.reg-form-group select.reg-input { background: #fff !important; color: #1E293B !important; -webkit-appearance: menulist; appearance: menulist; }
+.time-range-display { width:100%;padding:10px 12px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:13px;color:#1E293B;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:space-between;box-sizing:border-box; }
+.time-range-display .arrow { color:#94A3B8;font-size:11px; }
+.time-range-popup { position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1002;display:flex;align-items:flex-end; }
+.time-range-sheet { background:#fff;width:100%;border-radius:16px 16px 0 0;padding:20px 16px 24px; }
+.time-range-sheet .tr-title { font-size:16px;font-weight:600;color:#1E293B;text-align:center;margin-bottom:16px; }
+.time-range-sheet .tr-row { display:flex;align-items:center;gap:8px;margin-bottom:12px; }
+.time-range-sheet .tr-label { font-size:13px;color:#64748B;width:40px;flex-shrink:0; }
+.time-range-sheet .tr-input { flex:1;padding:10px 12px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:13px;color:#1E293B;background:#fff;outline:none; }
+.time-range-sheet .tr-input:focus { border-color:#2563EB; }
+.time-range-sheet .tr-confirm { width:100%;padding:12px;border-radius:10px;background:#2563EB;color:#fff;font-size:15px;font-weight:600;border:none;cursor:pointer;margin-top:8px; }
+.reg-form-group .reg-input::placeholder { color: #CBD5E1; }
+.reg-upload-area {
+  width: 100%; height: 100px; border: 2px dashed #CBD5E1;
+  border-radius: 12px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; cursor: pointer;
+  background: #F8FAFC; transition: all 0.2s;
+}
+.reg-upload-area:hover { border-color: #2563EB; background: #EFF6FF; }
+.reg-upload-area .upload-icon { font-size: 28px; margin-bottom: 4px; }
+.reg-upload-area .upload-text { font-size: 12px; color: #94A3B8; }
+.reg-plate-row { display: flex; align-items: center; gap: 8px; }
+.reg-plate-row .reg-input { flex: 1; }
+.reg-plate-tag {
+  padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500;
+  background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0;
+  white-space: nowrap;
+}
+.reg-submit-bar {
+  padding: 12px 14px 24px; background: #fff;
+  border-top: 1px solid #F1F5F9; position: sticky; bottom: 0;
+}
+.reg-submit-btn {
+  width: 100%; padding: 14px; border-radius: 12px; font-size: 16px;
+  font-weight: 600; border: none; cursor: pointer;
+  background: #2563EB; color: #fff; transition: all 0.2s;
+}
+.reg-submit-btn:active { opacity: 0.85; }
+
+/* 登记成功弹窗 */
+.reg-success-overlay {
+  display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 1003;
+  align-items: center; justify-content: center; padding: 30px;
+}
+.reg-success-overlay.show { display: flex; }
+.reg-success-card {
+  background: #fff; border-radius: 16px; width: 100%; padding: 28px 20px;
+  text-align: center;
+}
+.reg-success-icon { font-size: 56px; margin-bottom: 12px; }
+.reg-success-title { font-size: 18px; font-weight: 700; color: #16A34A; margin-bottom: 8px; }
+.reg-success-msg { font-size: 13px; color: #64748B; line-height: 1.6; margin-bottom: 20px; }
+.reg-success-btn {
+  padding: 12px 32px; border-radius: 10px; font-size: 15px; font-weight: 600;
+  border: none; cursor: pointer; background: #2563EB; color: #fff;
+}
+
+/* 访客类型确认弹窗 */
+.type-confirm-overlay {
+  display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 1003;
+  align-items: center; justify-content: center; padding: 30px;
+}
+.type-confirm-overlay.show { display: flex; }
+.type-confirm-card {
+  background: #fff; border-radius: 16px; width: 100%; padding: 24px 20px;
+  text-align: center;
+}
+.type-confirm-icon { font-size: 48px; margin-bottom: 10px; }
+.type-confirm-title { font-size: 17px; font-weight: 700; color: #1E293B; margin-bottom: 8px; }
+.type-confirm-desc { font-size: 13px; color: #64748B; line-height: 1.6; margin-bottom: 20px; }
+.type-confirm-btns { display: flex; gap: 12px; }
+.type-confirm-btn {
+  flex: 1; padding: 12px 0; border-radius: 10px; font-size: 15px; font-weight: 600;
+  border: none; cursor: pointer;
+}
+.type-confirm-btn.cancel { background: #F1F5F9; color: #64748B; }
+.type-confirm-btn.confirm { background: #2563EB; color: #fff; }
+
+</style>
+</head>
+<body>
+
+<!-- ==================== 左侧菜单 ==================== -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>📱 移动端原型</h2>
+    <p>访客核销 v11</p>
+  </div>
+
+  <div class="menu-group">
+    <div class="menu-group-title">👤 访客端</div>
+    <div class="menu-item" onclick="navigateTo('v-page-login', this, '预约登录页')">
+      <span class="icon">🔑</span> 预约登录页
+      <span class="badge-new">NEW</span>
+    </div>
+    <div class="menu-item" onclick="navigateTo('v-page-notice', this, '入厂须知页')">
+      <span class="icon">⚠️</span> 入厂须知页
+      <span class="badge-new">NEW</span>
+    </div>
+    <div class="menu-item" onclick="navigateTo('v-page-registration', this, '预约登记页')">
+      <span class="icon">📝</span> 预约登记页
+      <span class="badge-new">NEW</span>
+    </div>
+    <div class="menu-item active" onclick="navigateTo('v-page-list', this, '我的预约列表')">
+      <span class="icon">📋</span> 我的预约列表
+    </div>
+    <div class="menu-item" onclick="navigateTo('v-page-detail', this, '预约详情页')">
+      <span class="icon">📄</span> 预约详情页
+    </div>
+    <div class="menu-item" onclick="navigateTo('v-page-qrcode', this, '核销码展示')">
+      <span class="icon">📱</span> 核销码展示
+      <span class="badge-new">NEW</span>
+    </div>
+    <div class="menu-item" onclick="navigateTo('v-page-messages', this, '消息通知')">
+      <span class="icon">🔔</span> 消息通知
+      <span class="badge-new">NEW</span>
+    </div>
+    <div class="menu-item" onclick="navigateTo('v-page-profile', this, '我的信息')">
+      <span class="icon">👤</span> 我的信息
+      <span class="badge-new">NEW</span>
+    </div>
+  </div>
+
+  <div class="menu-group">
+    <div class="menu-group-title">🛡️ 保安/仓管端</div>
+    <div class="menu-item" onclick="navigateTo('s-page-home', this, '保安/仓管工作台')">
+      <span class="icon">🏠</span> 保安/仓管工作台
+    </div>
+    <div class="menu-item" onclick="navigateTo('s-page-scan', this, '扫码核销')">
+      <span class="icon">📷</span> 扫码核销
+      <span class="badge-new">NEW</span>
+    </div>
+    <div class="menu-item" onclick="navigateTo('s-page-search', this, '搜索核销')">
+      <span class="icon">🔍</span> 搜索核销
+      <span class="badge-new">NEW</span>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 右侧预览区 ==================== -->
+<div class="preview-area">
+  <div class="page-label" id="page-label">我的预约列表</div>
+  
+  <div class="phone-frame">
+    <div class="phone-notch"></div>
+    <div class="phone-screen">
+      <div class="home-indicator"></div>
+      
+      <div class="phone-content" id="phone-content">
+
+<!-- ========== 状态栏 ========== -->
+<div class="status-bar">
+  <span class="time">9:41</span>
+  <span class="icons"><span>📶</span><span>📡</span><span>🔋</span></span>
+</div>
+
+
+<!-- ========== 预约登录页 ========== -->
+<div id="v-page-login" class="page">
+  <div class="login-welcome">
+    <div class="login-logo">🏭</div>
+    <div class="login-title">欢迎来到<br>红牛访客预约平台</div>
+    <div class="login-subtitle">请选择基地组织和访客类型以继续</div>
+    
+    <!-- 已选组织显示条（选中后显示） -->
+    <div id="login-org-selected" style="display:none;">
+      <div class="login-selected-org">
+        <div class="login-selected-org-left">
+          <span>访问组织：</span>
+          <span class="login-selected-org-name" id="selected-org-name">奥瑞金</span>
+        </div>
+        <div class="login-change-link" onclick="showOrgPopup()">切换 ›</div>
+      </div>
+    </div>
+
+    <!-- 选择访客类型 -->
+    <div id="login-type-section">
+      <div class="login-type-hint">请选择访客类型</div>
+      <div class="login-type-grid">
+        <div class="login-type-btn" onclick="selectVisitorTypeNew('一般访客')">一般访客</div>
+        <div class="login-type-btn" onclick="selectVisitorTypeNew('外来施工')">外来施工</div>
+        <div class="login-type-btn" onclick="selectVisitorTypeNew('成品发运')">成品发运</div>
+        <div class="login-type-btn" onclick="selectVisitorTypeNew('原料送货')">原料送货</div>
+        <div class="login-type-btn" onclick="selectVisitorTypeNew('辅料/备件送货')">辅料/备件送货</div>
+      </div>
+    </div>
+
+    <!-- 选择组织弹窗 -->
+    <div class="login-org-popup-overlay show" id="login-org-popup">
+      <div class="login-org-popup-card">
+        <div class="login-org-popup-title">请选择访问组织</div>
+        <div class="login-org-popup-grid">
+          <div class="login-org-popup-btn" onclick="selectBaseOrg('红牛（本基地）')">红牛基地</div>
+          <div class="login-org-popup-btn" onclick="selectBaseOrg('奥瑞金')">奥瑞金</div>
+          <div class="login-org-popup-btn" onclick="selectBaseOrg('力美')">力美</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="login-bottom-links">
+      <div class="my-reservation" onclick="navigateTo('v-page-list', null, '我的预约列表')">📋 我的预约 ›</div>
+      <div class="internal-notice">*公司内部管理系统，采用白名单验证登录机制，仅限内部员工使用</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 入厂须知页 ========== -->
+<div id="v-page-notice" class="page" style="position:relative;">
+  <div class="nav-bar">
+    <button class="back-btn" onclick="navigateTo('v-page-login', null, '预约登录页')">‹</button>
+    <div class="title">入厂须知</div>
+    <span style="font-size:18px;margin-left:auto;cursor:pointer;margin-right:8px;opacity:0.7;">···</span>
+    <span style="font-size:16px;cursor:pointer;opacity:0.7;">⊙</span>
+  </div>
+
+  <!-- 视频区域 -->
+  <div class="notice-video-placeholder">
+    <div class="play-icon">▶</div>
+    <div class="video-tag">已观看 80%</div>
+    <div class="video-title">外来人员入厂告知视频</div>
+  </div>
+
+  <!-- 安全告知书链接 -->
+  <div class="notice-safety-link" onclick="openSafetyNotice()">
+    📄 点击查看：《外来人员入厂安全告知书》
+  </div>
+
+  <!-- 答题区域 -->
+  <div class="notice-quiz-section">
+    <div class="notice-quiz-title">入厂安全知识问答</div>
+    <div class="notice-quiz-hint">（答题前需观看视频后方可答题）🔒</div>
+
+    <div class="quiz-question" data-q="1" data-answer="A">
+      <div class="quiz-q-text"><span class="quiz-q-number">1</span>车辆进厂应走指定通道，按要求进行车辆检查，不可擅自进入厂区进行清扫及维修，该说法是否正确？</div>
+      <div class="quiz-options">
+        <div class="quiz-option-btn" data-val="A" onclick="selectQuizOption(this)">A. 正常</div>
+        <div class="quiz-option-btn" data-val="B" onclick="selectQuizOption(this)">B. 错误</div>
+      </div>
+    </div>
+
+    <div class="quiz-question" data-q="2" data-answer="A">
+      <div class="quiz-q-text"><span class="quiz-q-number">2</span>进入生产现场必须由相关人员陪同，佩戴防护用品，服从现场管理，该说法是否正确？</div>
+      <div class="quiz-options">
+        <div class="quiz-option-btn" data-val="A" onclick="selectQuizOption(this)">A. 正常</div>
+        <div class="quiz-option-btn" data-val="B" onclick="selectQuizOption(this)">B. 错误</div>
+      </div>
+    </div>
+
+    <div class="quiz-question" data-q="3" data-answer="A">
+      <div class="quiz-q-text"><span class="quiz-q-number">3</span>外来人员未经许可不得进入生产作业区域，不得触碰设备设施，该说法是否正确？</div>
+      <div class="quiz-options">
+        <div class="quiz-option-btn" data-val="A" onclick="selectQuizOption(this)">A. 正常</div>
+        <div class="quiz-option-btn" data-val="B" onclick="selectQuizOption(this)">B. 错误</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 底部提交按钮 -->
+  <div class="notice-submit-bar">
+    <button class="notice-submit-btn" onclick="submitQuiz()">签字提交（答题 0/3）</button>
+  </div>
+
+  <!-- 安全告知书弹窗 -->
+  <div class="notice-popup-overlay" id="safety-notice-overlay">
+    <div class="notice-popup-card">
+      <h3 style="flex-shrink:0;padding-top:8px;">《外来人员入厂安全告知书》</h3>
+      <div class="popup-content" style="flex:1;overflow-y:auto;padding:0 16px 12px;">
+        <p>欢迎您来到红牛饮料有限公司，为保障您的人身安全及公司正常生产秩序，请认真阅读以下安全须知：</p>
+        <p>1. 进入厂区必须遵守公司安全管理规定，服从管理人员指挥。</p>
+        <p>2. 车辆进厂应走指定通道，接受门卫检查，限速5公里/小时行驶。</p>
+        <p>3. 进入生产区域须由接待人员全程陪同，未经许可不得单独行动。</p>
+        <p>4. 进入生产现场必须佩戴安全帽、反光背心等防护用品。</p>
+        <p>5. 严禁在厂区内吸烟、饮酒，严禁携带易燃易爆物品入厂。</p>
+        <p>6. 严禁触碰、操作任何生产设备、阀门、管道及电气设施。</p>
+        <p>7. 厂区内请走人行通道，注意避让叉车及运输车辆。</p>
+        <p>8. 如遇紧急情况，请听从现场工作人员指挥，沿安全通道撤离。</p>
+        <p>9. 外来施工人员须持有效证件，办理相关审批手续后方可作业。</p>
+        <p>10. 未经许可不得擅自拍照、录像，涉及商业秘密区域禁止拍摄。</p>
+        <p>11. 访客在厂区内发生的一切人身伤害，由本人及派出单位承担相应责任。</p>
+        <p>12. 本人已阅读并理解以上告知内容，承诺严格遵守各项安全管理规定。</p>
+      </div>
+      <div class="notice-popup-footer" style="flex-shrink:0;border-top:1px solid #E2E8F0;padding:12px 16px 16px;">
+        <div class="notice-popup-countdown" id="popup-countdown">请仔细阅读（<span id="popup-timer">3</span>秒后可关闭）</div>
+        <button class="notice-popup-close" id="popup-close-btn" disabled onclick="closeSafetyNotice()">我已阅读并知晓</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 答题错误弹窗 -->
+  <div class="quiz-error-overlay" id="quiz-error-overlay">
+    <div class="quiz-error-card">
+      <div class="quiz-error-icon">❗</div>
+      <div class="quiz-error-title">提交失败</div>
+      <div class="quiz-error-msg" id="quiz-error-msg">第（1、2、3）题回答错误<br>请重新修改提交！</div>
+      <button class="quiz-error-btn" onclick="closeQuizError()">修改答题</button>
+    </div>
+  </div>
+
+  <!-- 签字弹窗 -->
+  <div class="signature-overlay" id="signature-overlay">
+    <div class="signature-card">
+      <h4>✍️ 请在下方签名确认</h4>
+      <canvas class="signature-canvas" id="signature-canvas"></canvas>
+      <div class="signature-actions">
+        <button class="sig-clear-btn" onclick="clearSignature()">清除重签</button>
+        <button class="sig-confirm-btn" onclick="confirmSignature()">确认提交</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 预约登记页 ========== -->
+<div id="v-page-registration" class="page" style="position:relative;">
+  <div class="nav-bar">
+    <button class="back-btn" onclick="navigateTo('v-page-notice', null, '入厂须知页')">‹</button>
+    <div class="title">预约登记</div>
+    <span style="font-size:18px;margin-left:auto;cursor:pointer;margin-right:8px;opacity:0.7;">···</span>
+    <span style="font-size:16px;cursor:pointer;opacity:0.7;">⊙</span>
+  </div>
+
+  <!-- 隐私提示条 -->
+  <div class="registration-tip-bar">
+    ⓘ 此次个人信息收集仅用于公司内部管理，公司严格保密
+  </div>
+
+  <!-- 访客类型标记 -->
+  <div class="card">
+    <div style="display:flex;flex-wrap:wrap;margin-bottom:4px;">
+      <div class="visitor-type-badge">
+        <span class="vtb-label">基地：</span>
+        <span id="reg-base-org">红牛（本基地）</span>
+      </div>
+      <div class="visitor-type-badge">
+        <span class="vtb-label">类型：</span>
+        <span id="reg-visitor-type">一般访客</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 来访信息表单 -->
+  <div class="card">
+    <div class="card-title">来访信息</div>
+
+    <div class="reg-form-group">
+      <label class="reg-label"><span class="required">*</span>访客姓名</label>
+      <input class="reg-input" type="text" placeholder="请输入">
+    </div>
+    <div class="reg-form-group">
+      <label class="reg-label"><span class="required">*</span>身份证号</label>
+      <input class="reg-input" type="text" placeholder="请输入">
+    </div>
+    <div class="reg-form-group">
+      <label class="reg-label"><span class="required">*</span>性别</label>
+      <input class="reg-input" type="text" value="身份证自动获取" readonly>
+    </div>
+    <div class="reg-form-group">
+      <label class="reg-label"><span class="required">*</span>访客单位</label>
+      <input class="reg-input" type="text" placeholder="请输入">
+    </div>
+    <div class="reg-form-group">
+      <label class="reg-label"><span class="required">*</span>联系电话</label>
+      <input class="reg-input" type="tel" placeholder="请输入">
+    </div>
+    <div class="reg-form-group">
+      <label class="reg-label"><span class="required">*</span>接待部门</label>
+      <select class="reg-input">
+        <option value="">请选择接待部门</option>
+        <option>储运采购部</option>
+        <option>生产部</option>
+        <option>安全部</option>
+        <option>行政部</option>
+      </select>
+    </div>
+    <div class="reg-form-group">
+      <label class="reg-label"><span class="required">*</span>接待人</label>
+      <input class="reg-input" type="text" placeholder="请输入接待人">
+    </div>
+    <div class="reg-form-group">
+      <label class="reg-label"><span class="required">*</span>计划停留时间</label>
+      <div class="time-range-display" onclick="document.getElementById('time-range-popup').style.display='flex'">
+        <span id="time-range-text" style="color:#CBD5E1;">请选择停留时间区间</span>
+        <span class="arrow">▼</span>
+      </div>
+    </div>
+    <div class="reg-form-group">
+      <label class="reg-label"><span class="required">*</span>访问事由</label>
+      <select class="reg-input">
+        <option value="">请选择访问事由</option>
+        <option>检查</option>
+        <option>业务洽谈</option>
+        <option>施工维修</option>
+        <option>送货</option>
+        <option>其他</option>
+      </select>
+    </div>
+    <div class="reg-form-group">
+      <label class="reg-label">备注</label>
+      <input class="reg-input" type="text" placeholder="请输入备注">
+    </div>
+    <div class="reg-form-group">
+      <label class="reg-label">人脸图片</label>
+      <div class="reg-upload-area">
+        <div class="upload-icon">📷</div>
+        <div class="upload-text">点击上传人脸照片</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 来访车辆 -->
+  <div class="card">
+    <div class="card-title">来访车辆（选填）</div>
+    <div class="reg-form-group">
+      <label class="reg-label">车牌号</label>
+      <div class="reg-plate-row">
+        <input class="reg-input" type="text" placeholder="请输入车牌号">
+        <span class="reg-plate-tag">新能源</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:70px;"></div>
+
+  <!-- 底部提交按钮 -->
+  <div class="reg-submit-bar">
+    <button class="reg-submit-btn" onclick="submitRegistration()">提交申请</button>
+  </div>
+
+</div>
+
+<!-- ========== 页面1：我的预约列表 ========== -->
+<div id="v-page-list" class="page active">
+  <div class="nav-bar"><div class="title">我的预约</div></div>
+  <div style="display:flex; background:#fff;">
+    <div class="v-sub-tab active" onclick="switchVisitorTab(this, 'v-reservations')" style="flex:1;text-align:center;padding:10px 0;font-size:13px;color:#2563EB;border-bottom:2px solid #2563EB;cursor:pointer;font-weight:500;">我的预约</div>
+    <div class="v-sub-tab" onclick="switchVisitorTab(this, 'v-records')" style="flex:1;text-align:center;padding:10px 0;font-size:13px;color:#94A3B8;border-bottom:2px solid transparent;cursor:pointer;">进厂记录</div>
+  </div>
+  <div id="v-reservations">
+    <div class="reservation-card" onclick="navigateTo('v-page-detail', null, '预约详情页')">
+      <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-approved">已审核</span></div>
+      <div class="reservation-info"><span>🚗 京A·12345</span><span>📅 2026-07-01</span></div>
+      <div style="margin-top:4px;font-size:11px;color:#64748B;">红牛-本基地 · 一般访客 · 接待人：李经理</div>
+      <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;font-size:10px;">
+        <span style="background:#F0F9FF;color:#0284C7;padding:2px 6px;border-radius:4px;">🕐 07-01 08:00~18:00</span>
+        <span style="background:#F0FDF4;color:#16A34A;padding:2px 6px;border-radius:4px;">🚪 东门岗</span>
+        <span style="background:#FEF3C7;color:#D97706;padding:2px 6px;border-radius:4px;">📍 1号卸货点</span>
+      </div>
+      <div style="margin-top:8px;"><button class="btn btn-primary" onclick="event.stopPropagation();navigateTo('v-page-qrcode', null, '核销码展示')" style="width:100%;padding:7px 0;font-size:12px;border-radius:8px;">📱 打开核销码</button></div>
+    </div>
+    <div class="reservation-card" id="card-arrived" onclick="navigateTo('v-page-detail', null, '预约详情页')">
+      <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-approved">已审核</span></div>
+      <div class="reservation-info"><span>🚗 京E·55555</span><span>📅 2026-07-02</span></div>
+      <div style="margin-top:4px;font-size:11px;color:#64748B;">红牛-本基地 · 原料送货 · 接待人：李经理</div>
+      <div id="confirm-arrive-section" style="margin-top:8px;">
+        <button class="btn btn-primary" onclick="event.stopPropagation();confirmArrival()" style="width:100%;padding:7px 0;font-size:12px;border-radius:8px;background:#16A34A;">✅ 确认到达</button>
+      </div>
+      <div id="waiting-section" style="display:none;margin-top:8px;">
+        <div style="background:#FFF7ED;border:1px solid #FDBA74;border-radius:8px;padding:8px 12px;text-align:center;font-size:12px;color:#EA580C;font-weight:500;">
+          ⏳ 未叫号，请等待
+        </div>
+      </div>
+    </div>
+    <div class="reservation-card" onclick="navigateTo('v-page-detail', null, '预约详情页')">
+      <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-pending">待审核</span></div>
+      <div class="reservation-info"><span>🚗 京B·67890</span><span>📅 2026-07-05</span></div>
+      <div style="margin-top:4px;font-size:11px;color:#64748B;">奥瑞金 · 外来施工 · 接待人：王主管</div>
+    </div>
+    <div class="reservation-card" onclick="navigateTo('v-page-detail', null, '预约详情页')">
+      <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-rejected">已驳回</span></div>
+      <div class="reservation-info"><span>🚗 京C·11111</span><span>📅 2026-06-28</span></div>
+      <div style="margin-top:4px;font-size:11px;color:#64748B;">力美 · 成品发运 · 接待人：赵主任</div>
+    </div>
+    <div class="reservation-card" onclick="navigateTo('v-page-detail', null, '预约详情页')">
+      <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-cancelled">已取消</span></div>
+      <div class="reservation-info"><span>🚗 京D·22222</span><span>📅 2026-06-25</span></div>
+      <div style="margin-top:4px;font-size:11px;color:#64748B;">红牛-本基地 · 辅料备件送货 · 接待人：孙班长</div>
+    </div>
+  </div>
+  <div id="v-records" style="display:none;">
+    <div class="record-card">
+      <div class="record-header"><span class="record-name">入场 · 京A·12345</span><span class="badge badge-approved">已核销</span></div>
+      <div class="record-detail">核销时间：2026-06-30 08:32 · 红牛-本基地</div>
+    </div>
+    <div class="record-card">
+      <div class="record-header"><span class="record-name">离场 · 京A·12345</span><span class="badge badge-approved">已核销</span></div>
+      <div class="record-detail">核销时间：2026-06-30 17:15 · 红牛-本基地</div>
+    </div>
+    <div class="record-card">
+      <div class="record-header"><span class="record-name">入场 · 京D·22222</span><span class="badge badge-used">已核销</span></div>
+      <div class="record-detail">核销时间：2026-06-25 09:10 · 红牛-本基地</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 页面2：预约详情页 ========== -->
+<div id="v-page-detail" class="page">
+  <div class="nav-bar">
+    <button class="back-btn" onclick="navigateTo('v-page-list', null, '我的预约列表')">‹</button>
+    <div class="title">预约详情</div>
+  </div>
+  <div style="padding:10px 14px 0;">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <span style="font-size:16px;font-weight:700;color:#1E293B;">来访信息</span>
+      <span class="badge badge-approved">已审核</span>
+    </div>
+  </div>
+  <div class="card">
+    <div class="field-row"><div class="field-label"><span class="required">*</span>基地组织</div><div class="field-value">红牛-本基地</div></div>
+    <div class="field-row"><div class="field-label"><span class="required">*</span>访客类型</div><div class="field-value">一般访客</div></div>
+    <div class="field-row"><div class="field-label"><span class="required">*</span>访客姓名</div><div class="field-value">张三</div></div>
+    <div class="field-row"><div class="field-label"><span class="required">*</span>身份证号</div><div class="field-value">110101****1234</div></div>
+    <div class="field-row"><div class="field-label"><span class="required">*</span>性别</div><div class="field-value">男</div></div>
+    <div class="field-row"><div class="field-label"><span class="required">*</span>访客单位</div><div class="field-value">北京某某科技有限公司</div></div>
+    <div class="field-row"><div class="field-label"><span class="required">*</span>联系电话</div><div class="field-value">138****5678</div></div>
+    <div class="field-row"><div class="field-label"><span class="required">*</span>接待部门</div><div class="field-value">储运采购部</div></div>
+    <div class="field-row"><div class="field-label"><span class="required">*</span>接待人</div><div class="field-value">李经理</div></div>
+    <div class="field-row"><div class="field-label"><span class="required">*</span>停留时间</div><div class="field-value">2026-07-01 08:00~18:00</div></div>
+    <div class="field-row"><div class="field-label">访问事由</div><div class="field-value">业务洽谈</div></div>
+    <div class="field-row"><div class="field-label">备注</div><div class="field-value">携带笔记本电脑一台</div></div>
+    <div class="field-row"><div class="field-label">人脸图片</div><div class="field-value"><div style="width:50px;height:62px;border-radius:6px;background:#F1F5F9;display:flex;align-items:center;justify-content:center;color:#94A3B8;font-size:10px;">已上传</div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">来访车辆</div>
+    <div class="field-row"><div class="field-label">车牌号</div><div class="field-value">京A·12345 <span class="vehicle-tag">新能源</span></div></div>
+  </div>
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="flex:1;"><div style="font-size:14px;font-weight:600;color:#1E293B;">核销码</div><div style="font-size:11px;color:#94A3B8;margin-top:2px;">到达gate后向保安/仓管出示</div></div>
+      <button class="btn btn-primary" onclick="navigateTo('v-page-qrcode', null, '核销码展示')" style="padding:6px 16px;font-size:13px;">打开核销码</button>
+    </div>
+  </div>
+  <div class="bottom-bar">
+    <button class="btn btn-outline" style="flex:1;" onclick="navigateTo('v-page-list', null, '我的预约列表')">返回列表</button>
+    <button class="btn btn-danger" style="flex:1;">取消预约</button>
+  </div>
+</div>
+
+<!-- ========== 页面3：核销码展示页 ========== -->
+<div id="v-page-qrcode" class="page">
+  <div class="nav-bar">
+    <button class="back-btn" onclick="navigateTo('v-page-detail', null, '预约详情页')">‹</button>
+    <div class="title">核销码</div>
+  </div>
+  <div class="qr-container">
+    <div style="margin-bottom:16px;">
+      <div style="font-size:16px;font-weight:600;color:#1E293B;">张三</div>
+      <div style="font-size:12px;color:#64748B;margin-top:2px;">京A·12345 · 2026-07-01 08:00~18:00</div>
+    </div>
+    <div class="qr-box">
+      <div class="qr-placeholder">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="200" height="200" fill="#fff"/>
+          <rect x="10" y="10" width="50" height="50" rx="4" fill="none" stroke="#1E293B" stroke-width="6"/>
+          <rect x="22" y="22" width="26" height="26" rx="2" fill="#1E293B"/>
+          <rect x="140" y="10" width="50" height="50" rx="4" fill="none" stroke="#1E293B" stroke-width="6"/>
+          <rect x="152" y="22" width="26" height="26" rx="2" fill="#1E293B"/>
+          <rect x="10" y="140" width="50" height="50" rx="4" fill="none" stroke="#1E293B" stroke-width="6"/>
+          <rect x="22" y="152" width="26" height="26" rx="2" fill="#1E293B"/>
+          <rect x="75" y="15" width="8" height="8" fill="#1E293B"/><rect x="90" y="15" width="8" height="8" fill="#1E293B"/>
+          <rect x="105" y="15" width="8" height="8" fill="#1E293B"/><rect x="120" y="15" width="8" height="8" fill="#1E293B"/>
+          <rect x="75" y="28" width="8" height="8" fill="#1E293B"/><rect x="105" y="28" width="8" height="8" fill="#1E293B"/>
+          <rect x="75" y="41" width="8" height="8" fill="#1E293B"/><rect x="90" y="41" width="8" height="8" fill="#1E293B"/>
+          <rect x="120" y="41" width="8" height="8" fill="#1E293B"/>
+          <rect x="15" y="75" width="8" height="8" fill="#1E293B"/><rect x="30" y="75" width="8" height="8" fill="#1E293B"/>
+          <rect x="45" y="75" width="8" height="8" fill="#1E293B"/><rect x="75" y="75" width="8" height="8" fill="#1E293B"/>
+          <rect x="90" y="75" width="8" height="8" fill="#1E293B"/><rect x="105" y="75" width="8" height="8" fill="#1E293B"/>
+          <rect x="135" y="75" width="8" height="8" fill="#1E293B"/><rect x="165" y="75" width="8" height="8" fill="#1E293B"/>
+          <rect x="180" y="75" width="8" height="8" fill="#1E293B"/>
+          <rect x="15" y="90" width="8" height="8" fill="#1E293B"/><rect x="45" y="90" width="8" height="8" fill="#1E293B"/>
+          <rect x="75" y="90" width="8" height="8" fill="#1E293B"/><rect x="120" y="90" width="8" height="8" fill="#1E293B"/>
+          <rect x="150" y="90" width="8" height="8" fill="#1E293B"/><rect x="180" y="90" width="8" height="8" fill="#1E293B"/>
+          <rect x="15" y="105" width="8" height="8" fill="#1E293B"/><rect x="30" y="105" width="8" height="8" fill="#1E293B"/>
+          <rect x="45" y="105" width="8" height="8" fill="#1E293B"/><rect x="75" y="105" width="8" height="8" fill="#1E293B"/>
+          <rect x="90" y="105" width="8" height="8" fill="#1E293B"/><rect x="105" y="105" width="8" height="8" fill="#1E293B"/>
+          <rect x="120" y="105" width="8" height="8" fill="#1E293B"/><rect x="135" y="105" width="8" height="8" fill="#1E293B"/>
+          <rect x="150" y="105" width="8" height="8" fill="#1E293B"/><rect x="165" y="105" width="8" height="8" fill="#1E293B"/>
+          <rect x="180" y="105" width="8" height="8" fill="#1E293B"/>
+          <rect x="75" y="140" width="8" height="8" fill="#1E293B"/><rect x="90" y="140" width="8" height="8" fill="#1E293B"/>
+          <rect x="120" y="140" width="8" height="8" fill="#1E293B"/><rect x="135" y="140" width="8" height="8" fill="#1E293B"/>
+          <rect x="150" y="140" width="8" height="8" fill="#1E293B"/><rect x="180" y="140" width="8" height="8" fill="#1E293B"/>
+          <rect x="75" y="155" width="8" height="8" fill="#1E293B"/><rect x="105" y="155" width="8" height="8" fill="#1E293B"/>
+          <rect x="135" y="155" width="8" height="8" fill="#1E293B"/><rect x="165" y="155" width="8" height="8" fill="#1E293B"/>
+          <rect x="75" y="170" width="8" height="8" fill="#1E293B"/><rect x="90" y="170" width="8" height="8" fill="#1E293B"/>
+          <rect x="105" y="170" width="8" height="8" fill="#1E293B"/><rect x="120" y="170" width="8" height="8" fill="#1E293B"/>
+          <rect x="150" y="170" width="8" height="8" fill="#1E293B"/><rect x="180" y="170" width="8" height="8" fill="#1E293B"/>
+        </svg>
+      </div>
+    </div>
+    <div class="qr-status valid">✓ 核销码有效</div>
+    <div class="qr-refresh-tip">核销码每分钟自动刷新</div>
+    <div class="qr-countdown" id="qr-countdown">下次刷新：00:45</div>
+    <div style="margin-top:20px;padding:0 10px;">
+      <div class="time-block" style="text-align:left;"><div class="time-label">访客姓名</div><div class="time-value" style="font-size:13px;color:#1E293B;">张三</div></div>
+      <div class="time-block" style="text-align:left;margin-top:6px;"><div class="time-label">车牌号</div><div class="time-value" style="font-size:13px;color:#1E293B;">京A·12345</div></div>
+      <div class="time-block" style="text-align:left;margin-top:6px;"><div class="time-label">有效时间</div><div class="time-value" style="font-size:13px;color:#1E293B;">2026-07-01 08:00 ~ 18:00</div></div>
+    </div>
+  </div>
+  <div class="bottom-bar"><button class="btn btn-primary btn-block btn-lg" onclick="navigateTo('v-page-detail', null, '预约详情页')">返回详情</button></div>
+</div>
+
+<!-- ========== 页面4：消息通知 ========== -->
+<div id="v-page-messages" class="page">
+  <div class="nav-bar"><div class="title">消息通知</div></div>
+  <div class="msg-category-tabs">
+    <div class="msg-category-tab active" onclick="switchMsgTab(this, 'msg-all')">全部</div>
+    <div class="msg-category-tab" onclick="switchMsgTab(this, 'msg-wechat')">订阅消息</div>
+    <div class="msg-category-tab" onclick="switchMsgTab(this, 'msg-sms')">短信通知</div>
+  </div>
+  <div id="msg-all">
+    <div class="msg-item unread">
+      <div class="msg-source">
+        <div class="msg-source-icon wechat">💬</div>
+        <span class="msg-source-name">数智工厂访客系统</span>
+        <span class="msg-source-time">今天 09:32</span>
+      </div>
+      <div class="msg-title">🎉 您的进场预约已审核通过</div>
+      <div class="msg-body">尊敬的张三，您的来访预约已通过审核，请按时到达指定门岗。</div>
+      <div class="msg-detail-card">
+        <div class="msg-detail-row"><span class="mdl">预约编号</span><span class="mdv">RV20260701001</span></div>
+        <div class="msg-detail-row"><span class="mdl">访客姓名</span><span class="mdv">张三</span></div>
+        <div class="msg-detail-row"><span class="mdl">车牌号</span><span class="mdv">京A·12345</span></div>
+        <div class="msg-detail-row"><span class="mdl">允许进入时段</span><span class="mdv">07-01 08:00 ~ 18:00</span></div>
+        <div class="msg-detail-row"><span class="mdl">门岗</span><span class="mdv">东门岗</span></div>
+        <div class="msg-detail-row"><span class="mdl">卸货点</span><span class="mdv">1号卸货点</span></div>
+        <div class="msg-detail-row"><span class="mdl">基地组织</span><span class="mdv">红牛-本基地</span></div>
+      </div>
+      <span class="msg-status-tag success">✓ 审核通过</span>
+    </div>
+    <div class="msg-item unread">
+      <div class="msg-source">
+        <div class="msg-source-icon sms">✉️</div>
+        <span class="msg-source-name">短信通知</span>
+        <span class="msg-source-time">今天 09:30</span>
+      </div>
+      <div class="msg-title">【数智工厂】进场预约通知</div>
+      <div class="msg-body">尊敬的张三，您预约于2026年7月1日进入红牛-本基地的预约已审核通过。允许进入时段：07-01 08:00~18:00，请从东门岗进入，卸货点：1号卸货点。到达后请向保安/仓管出示核销码。</div>
+    </div>
+    <div class="msg-item">
+      <div class="msg-source">
+        <div class="msg-source-icon wechat">💬</div>
+        <span class="msg-source-name">数智工厂访客系统</span>
+        <span class="msg-source-time">昨天 17:45</span>
+      </div>
+      <div class="msg-title">⏰ 进场时段即将到期提醒</div>
+      <div class="msg-body">您的进场许可将于今日18:00到期，请尽快完成卸货并离场。</div>
+      <div class="msg-detail-card">
+        <div class="msg-detail-row"><span class="mdl">访客姓名</span><span class="mdv">张三</span></div>
+        <div class="msg-detail-row"><span class="mdl">车牌号</span><span class="mdv">京A·12345</span></div>
+        <div class="msg-detail-row"><span class="mdl">到期时间</span><span class="mdv">06-30 18:00</span></div>
+        <div class="msg-detail-row"><span class="mdl">离场门岗</span><span class="mdv">东门岗</span></div>
+      </div>
+    </div>
+    <div class="msg-item">
+      <div class="msg-source">
+        <div class="msg-source-icon sms">✉️</div>
+        <span class="msg-source-name">短信通知</span>
+        <span class="msg-source-time">06-28 14:20</span>
+      </div>
+      <div class="msg-title">【数智工厂】预约审核结果通知</div>
+      <div class="msg-body">尊敬的张三，您预约于2026年6月28日进入红牛-本基地的预约已被驳回。驳回原因：来访事由描述不清晰，请修改后重新提交。如有疑问请联系接待人。</div>
+    </div>
+    <div class="msg-item">
+      <div class="msg-source">
+        <div class="msg-source-icon wechat">💬</div>
+        <span class="msg-source-name">数智工厂访客系统</span>
+        <span class="msg-source-time">06-25 08:33</span>
+      </div>
+      <div class="msg-title">✅ 入场核销成功</div>
+      <div class="msg-body">您已于08:33通过东门岗入场核销，请在指定区域活动。</div>
+      <div class="msg-detail-card">
+        <div class="msg-detail-row"><span class="mdl">访客姓名</span><span class="mdv">张三</span></div>
+        <div class="msg-detail-row"><span class="mdl">车牌号</span><span class="mdv">京A·12345</span></div>
+        <div class="msg-detail-row"><span class="mdl">入场门岗</span><span class="mdv">东门岗</span></div>
+        <div class="msg-detail-row"><span class="mdl">卸货点</span><span class="mdv">1号卸货点</span></div>
+        <div class="msg-detail-row"><span class="mdl">核销时间</span><span class="mdv">06-25 08:33</span></div>
+      </div>
+    </div>
+  </div>
+  <div id="msg-wechat" style="display:none;">
+    <div class="msg-item unread">
+      <div class="msg-source">
+        <div class="msg-source-icon wechat">💬</div>
+        <span class="msg-source-name">数智工厂访客系统</span>
+        <span class="msg-source-time">今天 09:32</span>
+      </div>
+      <div class="msg-title">🎉 您的进场预约已审核通过</div>
+      <div class="msg-body">尊敬的张三，您的来访预约已通过审核，请按时到达指定门岗。</div>
+      <div class="msg-detail-card">
+        <div class="msg-detail-row"><span class="mdl">允许进入时段</span><span class="mdv">07-01 08:00 ~ 18:00</span></div>
+        <div class="msg-detail-row"><span class="mdl">门岗</span><span class="mdv">东门岗</span></div>
+        <div class="msg-detail-row"><span class="mdl">卸货点</span><span class="mdv">1号卸货点</span></div>
+      </div>
+      <span class="msg-status-tag success">✓ 审核通过</span>
+    </div>
+    <div class="msg-item">
+      <div class="msg-source">
+        <div class="msg-source-icon wechat">💬</div>
+        <span class="msg-source-name">数智工厂访客系统</span>
+        <span class="msg-source-time">昨天 17:45</span>
+      </div>
+      <div class="msg-title">⏰ 进场时段即将到期提醒</div>
+      <div class="msg-body">您的进场许可将于今日18:00到期，请尽快完成卸货并离场。</div>
+    </div>
+    <div class="msg-item">
+      <div class="msg-source">
+        <div class="msg-source-icon wechat">💬</div>
+        <span class="msg-source-name">数智工厂访客系统</span>
+        <span class="msg-source-time">06-25 08:33</span>
+      </div>
+      <div class="msg-title">✅ 入场核销成功</div>
+      <div class="msg-body">您已于08:33通过东门岗入场核销。</div>
+    </div>
+  </div>
+  <div id="msg-sms" style="display:none;">
+    <div class="msg-item unread">
+      <div class="msg-source">
+        <div class="msg-source-icon sms">✉️</div>
+        <span class="msg-source-name">短信通知</span>
+        <span class="msg-source-time">今天 09:30</span>
+      </div>
+      <div class="msg-title">【数智工厂】进场预约通知</div>
+      <div class="msg-body">尊敬的张三，您预约于2026年7月1日进入红牛-本基地的预约已审核通过。允许进入时段：07-01 08:00~18:00，请从东门岗进入，卸货点：1号卸货点。到达后请向保安/仓管出示核销码。</div>
+    </div>
+    <div class="msg-item">
+      <div class="msg-source">
+        <div class="msg-source-icon sms">✉️</div>
+        <span class="msg-source-name">短信通知</span>
+        <span class="msg-source-time">06-28 14:20</span>
+      </div>
+      <div class="msg-title">【数智工厂】预约审核结果通知</div>
+      <div class="msg-body">尊敬的张三，您预约于2026年6月28日进入红牛-本基地的预约已被驳回。驳回原因：来访事由描述不清晰，请修改后重新提交。</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 页面5：我的信息 ========== -->
+<div id="v-page-profile" class="page">
+  <div class="nav-bar" style="background:transparent;position:absolute;z-index:999;width:100%;"><button class="back-btn" onclick="navigateTo('v-page-list', null, '我的预约列表')">‹</button><div class="title">我的信息</div></div>
+  <div class="profile-header" style="padding-top:50px;">
+    <div class="profile-avatar">👤<div class="edit-badge">📷</div></div>
+    <div class="profile-name">张三</div>
+    <div class="profile-sub">北京某某科技有限公司</div>
+  </div>
+  <div style="padding:12px 14px 0;"><div class="section-title" style="margin:0 0 8px;">基本信息</div></div>
+  <div class="profile-section">
+    <div class="profile-row clickable">
+      <span class="pr-label">头像</span>
+      <span class="pr-value" style="display:flex;align-items:center;gap:8px;">
+        <span style="width:36px;height:36px;border-radius:50%;background:#EFF6FF;display:flex;align-items:center;justify-content:center;font-size:18px;">👤</span>
+        <span style="font-size:12px;color:#94A3B8;">点击更换</span>
+      </span>
+      <span class="pr-arrow">›</span>
+    </div>
+    <div class="profile-row clickable">
+      <span class="pr-label">姓名</span>
+      <span class="pr-value">张三</span>
+      <span class="pr-edit">编辑</span>
+    </div>
+    <div class="profile-row clickable">
+      <span class="pr-label">性别</span>
+      <span class="pr-value">男</span>
+      <span class="pr-arrow">›</span>
+    </div>
+  </div>
+  <div style="padding:6px 14px 0;"><div class="section-title" style="margin:0 0 8px;">证件信息</div></div>
+  <div class="profile-section">
+    <div class="profile-row clickable">
+      <span class="pr-label">身份证号</span>
+      <span class="pr-value">110101****1234</span>
+      <span class="pr-edit">编辑</span>
+    </div>
+    <div class="profile-row">
+      <span class="pr-label">身份证正面</span>
+      <span class="pr-value"><span style="display:inline-flex;align-items:center;gap:4px;background:#F0FDF4;color:#16A34A;padding:2px 8px;border-radius:4px;font-size:11px;">✓ 已上传</span></span>
+      <span class="pr-edit">重新上传</span>
+    </div>
+    <div class="profile-row">
+      <span class="pr-label">身份证反面</span>
+      <span class="pr-value"><span style="display:inline-flex;align-items:center;gap:4px;background:#F0FDF4;color:#16A34A;padding:2px 8px;border-radius:4px;font-size:11px;">✓ 已上传</span></span>
+      <span class="pr-edit">重新上传</span>
+    </div>
+  </div>
+  <div style="padding:6px 14px 0;"><div class="section-title" style="margin:0 0 8px;">联系方式</div></div>
+  <div class="profile-section">
+    <div class="profile-row clickable">
+      <span class="pr-label">手机号</span>
+      <span class="pr-value">138****5678</span>
+      <span class="pr-edit">更换</span>
+    </div>
+    <div class="profile-row">
+      <span class="pr-label">验证状态</span>
+      <span class="pr-value"><span style="display:inline-flex;align-items:center;gap:4px;background:#F0FDF4;color:#16A34A;padding:2px 8px;border-radius:4px;font-size:11px;">✓ 已验证</span></span>
+    </div>
+  </div>
+  <div style="padding:6px 14px 0;"><div class="section-title" style="margin:0 0 8px;">车辆信息</div></div>
+  <div class="profile-section">
+    <div class="profile-row clickable">
+      <span class="pr-label">车牌号</span>
+      <span class="pr-value">京A·12345</span>
+      <span class="pr-edit">编辑</span>
+    </div>
+    <div class="profile-row clickable">
+      <span class="pr-label">车辆类型</span>
+      <span class="pr-value">新能源货车</span>
+      <span class="pr-arrow">›</span>
+    </div>
+    <div class="profile-row">
+      <span class="pr-label">行驶证</span>
+      <span class="pr-value"><span style="display:inline-flex;align-items:center;gap:4px;background:#F0FDF4;color:#16A34A;padding:2px 8px;border-radius:4px;font-size:11px;">✓ 已上传</span></span>
+      <span class="pr-edit">重新上传</span>
+    </div>
+  </div>
+  <div class="profile-save-bar"><button class="btn btn-primary btn-block btn-lg">保存修改</button></div>
+</div>
+
+<!-- ========== 页面6：保安/仓管工作台首页 ========== -->
+<div id="s-page-home" class="page">
+  <div class="nav-bar"><div class="title">保安/仓管工作台</div></div>
+  <div class="workstation-grid">
+    <div class="workstation-card" onclick="navigateTo('s-page-scan', null, '扫码核销')" style="background:linear-gradient(135deg,#EFF6FF,#DBEAFE);">
+      <div class="icon">📷</div><div class="label">扫码核销</div>
+      <div style="font-size:10px;color:#64748B;margin-top:2px;">扫描访客核销码</div>
+    </div>
+    <div class="workstation-card" onclick="navigateTo('s-page-search', null, '搜索核销')" style="background:linear-gradient(135deg,#F0FDF4,#DCFCE7);">
+      <div class="icon">🔍</div><div class="label">搜索核销</div>
+      <div style="font-size:10px;color:#64748B;margin-top:2px;">按姓名/手机/车牌</div>
+    </div>
+  </div>
+  <div style="padding:12px 14px 6px;"><div style="font-size:14px;font-weight:600;color:#1E293B;">今日核销统计</div></div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-number" style="color:#16A34A;">23</div><div class="stat-label">已核销入厂</div></div>
+    <div class="stat-card"><div class="stat-number" style="color:#0284C7;">18</div><div class="stat-label">已核销出厂</div></div>
+    <div class="stat-card"><div class="stat-number" style="color:#EA580C;">5</div><div class="stat-label">待核销</div></div>
+  </div>
+  <div style="padding:6px 14px;"><div style="font-size:14px;font-weight:600;color:#1E293B;margin-bottom:6px;">最近核销记录</div></div>
+  <div class="record-card"><div class="record-header"><span class="record-name">王五 · 京B·67890</span><span class="badge badge-approved">入场</span></div><div class="record-detail">扫码核销 · 10:32 · 红牛-本基地</div></div>
+  <div class="record-card"><div class="record-header"><span class="record-name">赵六 · 京C·33333</span><span class="badge badge-used">离场</span></div><div class="record-detail">手动核销 · 10:15 · 奥瑞金</div></div>
+  <div class="record-card"><div class="record-header"><span class="record-name">孙七 · 沪A·88888</span><span class="badge badge-approved">入场</span></div><div class="record-detail">门禁核销 · 09:58 · 力美</div></div>
+  <div class="record-card"><div class="record-header"><span class="record-name">周八 · 京D·44444</span><span class="badge badge-used">离场</span></div><div class="record-detail">扫码核销 · 09:45 · 红牛-本基地</div></div>
+</div>
+
+<!-- ========== 页面5：扫码核销页 ========== -->
+<div id="s-page-scan" class="page" data-layout="flex" style="display:flex;flex-direction:column;height:calc(100% - 26px);">
+  <div class="nav-bar" style="background:#000;position:relative;top:0;">
+    <button class="back-btn" onclick="navigateTo('s-page-home', null, '保安/仓管工作台'); resetScan();">‹</button>
+    <div class="title">扫码核销</div>
+  </div>
+  <!-- 扫码取景界面 -->
+  <div id="scan-view" class="scan-view">
+    <div class="scan-frame">
+      <div class="corner tl"></div><div class="corner tr"></div>
+      <div class="corner bl"></div><div class="corner br"></div>
+      <div class="scan-line"></div>
+    </div>
+    <div class="scan-tip">将二维码放入框内自动扫描</div>
+    <div class="scan-simulate-btn">
+      <button onclick="simulateScan()" class="btn btn-warning" style="opacity:0.9;border-radius:20px;padding:8px 24px;font-size:13px;">模拟扫码成功</button>
+    </div>
+  </div>
+  <!-- 扫码成功结果界面 -->
+  <div id="scan-result-view" class="scan-result-view">
+    <div class="scan-result-banner">
+      <div style="font-size:40px;margin-bottom:6px;">✓</div>
+      <div style="font-size:17px;font-weight:600;">扫码成功</div>
+    </div>
+    <div class="scan-result-body">
+      <div class="scan-info-card">
+        <div class="scan-info-row"><span class="si-label">访客姓名</span><span class="si-value">张三</span></div>
+        <div class="scan-info-row"><span class="si-label">车牌号</span><span class="si-value">京A·12345</span></div>
+        <div class="scan-info-row"><span class="si-label">访客类型</span><span class="si-value">一般访客</span></div>
+        <div class="scan-info-row"><span class="si-label">基地组织</span><span class="si-value">红牛-本基地</span></div>
+        <div class="scan-info-row"><span class="si-label">接待部门</span><span class="si-value">储运采购部</span></div>
+        <div class="scan-info-row"><span class="si-label">接待人</span><span class="si-value">李经理</span></div>
+        <div class="scan-info-row"><span class="si-label">有效时段</span><span class="si-value">07-01 08:00~18:00</span></div>
+      </div>
+      <button class="btn btn-primary btn-block btn-lg" onclick="showVerifyModal('扫码')">确认核销</button>
+      <button class="btn btn-outline btn-block" style="margin-top:10px;" onclick="resetScan()">重新扫码</button>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 页面8：搜索核销页 ========== -->
+<div id="s-page-search" class="page">
+  <div class="nav-bar">
+    <button class="back-btn" onclick="navigateTo('s-page-home', null, '保安/仓管工作台')">‹</button>
+    <div class="title">搜索核销</div>
+  </div>
+  <div class="search-tabs">
+    <div class="search-tab active" onclick="switchSearchTab(this,'name')">姓名</div>
+    <div class="search-tab" onclick="switchSearchTab(this,'phone')">手机号</div>
+    <div class="search-tab" onclick="switchSearchTab(this,'plate')">车牌号</div>
+  </div>
+  <div class="search-bar">
+    <span style="color:#94A3B8;margin-right:6px;">🔍</span>
+    <input type="text" id="search-input" placeholder="请输入访客姓名">
+    <button class="search-btn" onclick="doSearch()">搜索</button>
+  </div>
+  <div id="search-results">
+    <div class="reservation-card" onclick="showVerifyModalSearch('张三','京A·12345')" style="margin:6px 14px;">
+      <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-approved">已审核</span></div>
+      <div class="reservation-info"><span>🚗 京A·12345</span><span>📅 2026-07-01</span></div>
+      <div style="margin-top:6px;font-size:11px;color:#64748B;">红牛-本基地 · 一般访客 · 接待人：李经理</div>
+    </div>
+    <div class="reservation-card" onclick="showVerifyModalSearch('张三','京C·11111')" style="margin:6px 14px;">
+      <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-pending">待审核</span></div>
+      <div class="reservation-info"><span>🚗 京C·11111</span><span>📅 2026-07-03</span></div>
+      <div style="margin-top:6px;font-size:11px;color:#64748B;">奥瑞金 · 外来施工 · 接待人：王主管</div>
+    </div>
+  </div>
+  <div id="search-empty" style="display:none;">
+    <div class="empty-state"><div class="icon">🔍</div><div class="text">未找到匹配的预约记录</div></div>
+  </div>
+</div>
+
+<!-- ========== 核销确认弹窗 ========== -->
+<div class="modal-overlay" id="verify-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <span class="modal-title">核销确认</span>
+      <button class="modal-close" onclick="closeVerifyModal()">✕</button>
+    </div>
+    <div class="summary-row">
+      <div class="item"><span class="label">访客姓名</span><span class="value" id="modal-name">张三</span></div>
+      <div class="item"><span class="label">车牌号</span><span class="value" id="modal-plate">京A·12345</span></div>
+      <div class="item"><span class="label">访客类型</span><span class="value">一般访客</span></div>
+      <div class="item"><span class="label">基地组织</span><span class="value">红牛-本基地</span></div>
+      <div class="item"><span class="label">接待部门</span><span class="value">储运采购部</span></div>
+      <div class="item"><span class="label">接待人</span><span class="value">李经理</span></div>
+    </div>
+    <div class="section-title">允许进入时段</div>
+    <div class="time-block">
+      <div style="display:flex;justify-content:space-between;">
+        <div><div class="time-label">开始时间</div><div class="time-value" style="font-size:13px;">2026-07-01 08:00</div></div>
+        <div style="text-align:right;"><div class="time-label">结束时间</div><div class="time-value" style="font-size:13px;">2026-07-01 18:00</div></div>
+      </div>
+    </div>
+    <div class="section-title">核销原因</div>
+    <div class="radio-group" id="verify-reason">
+      <div class="radio-item selected" onclick="selectRadio(this,'verify-reason');toggleWeighSection();"><div class="dot"></div>确认入场</div>
+      <div class="radio-item" onclick="selectRadio(this,'verify-reason');toggleWeighSection();"><div class="dot"></div>确认离场</div>
+    </div>
+    <div class="section-title">触发类型</div>
+    <div class="radio-group" id="verify-trigger">
+      <div class="radio-item" onclick="selectRadio(this,'verify-trigger')"><div class="dot"></div>手动</div>
+      <div class="radio-item selected" onclick="selectRadio(this,'verify-trigger')"><div class="dot"></div>扫码</div>
+      <div class="radio-item" onclick="selectRadio(this,'verify-trigger')"><div class="dot"></div>门禁</div>
+    </div>
+    <div class="weigh-section" id="weigh-section" style="display:none;">
+      <div class="weigh-title">⚖️ 地磅称重信息</div>
+      <div class="weigh-row"><span style="color:#64748B;">设备状态</span><span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#DC2626;">● 设备未连接</span></div>
+      <div class="weigh-row"><span style="color:#64748B;">称重输入</span><input type="text" placeholder="请输入重量" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:120px;outline:none;"></div>
+      <div style="font-size:11px;color:#EA580C;margin-top:6px;">⚠️ 设备未连接，请手动输入称重数值（吨）</div>
+    </div>
+    <div class="section-title">核销时间</div>
+    <div class="time-block"><div class="time-label">核销时间</div><div class="time-value" style="font-size:13px;" id="verify-time">2026-07-01 08:32:15</div></div>
+    <div style="margin-top:16px;display:flex;gap:8px;">
+      <button class="btn btn-outline" style="flex:1;" onclick="closeVerifyModal()">取消</button>
+      <button class="btn btn-success" style="flex:1;" onclick="confirmVerify()">确认核销</button>
+    </div>
+  </div>
+</div>
+
+<!-- 核销成功弹窗 -->
+<div class="modal-overlay" id="success-modal">
+  <div style="background:#fff;border-radius:16px;width:80%;max-width:280px;padding:24px 16px;text-align:center;animation:slideUp 0.3s ease;margin:auto;">
+    <div style="font-size:40px;margin-bottom:10px;">✅</div>
+    <div style="font-size:16px;font-weight:600;color:#1E293B;margin-bottom:6px;">核销成功</div>
+    <div style="font-size:13px;color:#64748B;margin-bottom:16px;" id="success-msg">已确认入场</div>
+    <button class="btn btn-primary btn-block" onclick="closeSuccessModal()">确定</button>
+  </div>
+</div>
+
+      </div><!-- end phone-content -->
+  <!-- 访客类型确认弹窗（在phone-screen内部，phone-content外部） -->
+  <div class="type-confirm-overlay" id="type-confirm-overlay">
+    <div class="type-confirm-card">
+      <div class="type-confirm-icon">📋</div>
+      <div class="type-confirm-title" id="type-confirm-title">访客类型确认</div>
+      <div class="type-confirm-desc" id="type-confirm-desc">描述内容</div>
+      <div class="type-confirm-btns">
+        <button class="type-confirm-btn cancel" onclick="closeTypeConfirm()">取消</button>
+        <button class="type-confirm-btn confirm" onclick="confirmTypeSelection()">确认</button>
+      </div>
+    </div>
+  </div>
+  <!-- 时间区间选择弹窗 -->
+  <div id="time-range-popup" class="time-range-popup" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+    <div class="time-range-sheet">
+      <div class="tr-title">选择停留时间区间</div>
+      <div class="tr-row">
+        <span class="tr-label">开始</span>
+        <input class="tr-input" type="datetime-local" id="tr-start">
+      </div>
+      <div class="tr-row">
+        <span class="tr-label">结束</span>
+        <input class="tr-input" type="datetime-local" id="tr-end">
+      </div>
+      <button class="tr-confirm" onclick="confirmTimeRange()">确认</button>
+    </div>
+  </div>
+  <!-- 提交成功弹窗（在phone-screen内部，phone-content外部） -->
+  <div class="reg-success-overlay" id="reg-success-overlay">
+    <div class="reg-success-card">
+      <div class="reg-success-icon">✅</div>
+      <div class="reg-success-title">预约提交成功</div>
+      <div class="reg-success-msg">您的预约申请已提交，请等待审批。<br>审批结果将通过消息通知您。</div>
+      <button class="reg-success-btn" onclick="goToMyList()">查看我的预约</button>
+    </div>
+  </div>
+    </div><!-- end phone-screen -->
+  </div><!-- end phone-frame -->
+</div><!-- end preview-area -->
+
+<script>
+let countdownInterval = null;
+
+function navigateTo(pageId, menuItem, label) {
+  // 切换页面
+  document.querySelectorAll('.page').forEach(function(p) {
+    p.classList.remove('active');
+    // 保留原本有inline display:flex的页面的flex布局
+    if (p.getAttribute('data-layout') === 'flex') {
+      p.style.display = 'none';
+    } else {
+      p.style.display = 'none';
+    }
+  });
+  var page = document.getElementById(pageId);
+  if (page) {
+    if (page.getAttribute('data-layout') === 'flex') {
+      page.style.display = 'flex';
+    } else {
+      page.style.display = 'block';
+    }
+    page.classList.add('active');
+  }
+  
+  // 更新菜单高亮
+  if (menuItem) {
+    document.querySelectorAll('.menu-item').forEach(function(m) { m.classList.remove('active'); });
+    menuItem.classList.add('active');
+  } else {
+    // 根据pageId找到对应菜单项
+    var menuItems = document.querySelectorAll('.menu-item');
+    menuItems.forEach(function(m) {
+      var onclickStr = m.getAttribute('onclick') || '';
+      if (onclickStr.indexOf(pageId) > -1) {
+        document.querySelectorAll('.menu-item').forEach(function(x) { x.classList.remove('active'); });
+        m.classList.add('active');
+      }
+    });
+  }
+  
+  // 更新页面标签
+  if (label) {
+    document.getElementById('page-label').textContent = label;
+  }
+  
+  // 滚动到顶部
+  document.getElementById('phone-content').scrollTop = 0;
+  
+  // 核销码倒计时
+  if (pageId === 'v-page-qrcode') { startCountdown(); } else { stopCountdown(); }
+}
+
+function switchVisitorTab(el, targetId) {
+  document.querySelectorAll('.v-sub-tab').forEach(function(t) {
+    t.style.color = '#94A3B8';
+    t.style.borderBottomColor = 'transparent';
+    t.style.fontWeight = 'normal';
+    t.classList.remove('active');
+  });
+  el.style.color = '#2563EB';
+  el.style.borderBottomColor = '#2563EB';
+  el.style.fontWeight = '500';
+  el.classList.add('active');
+  document.getElementById('v-reservations').style.display = targetId === 'v-reservations' ? 'block' : 'none';
+  document.getElementById('v-records').style.display = targetId === 'v-records' ? 'block' : 'none';
+}
+
+function switchMsgTab(el, targetId) {
+  document.querySelectorAll('.msg-category-tab').forEach(function(t) { t.classList.remove('active'); });
+  el.classList.add('active');
+  document.getElementById('msg-all').style.display = targetId === 'msg-all' ? 'block' : 'none';
+  document.getElementById('msg-wechat').style.display = targetId === 'msg-wechat' ? 'block' : 'none';
+  document.getElementById('msg-sms').style.display = targetId === 'msg-sms' ? 'block' : 'none';
+}
+
+function switchSearchTab(el, type) {
+  document.querySelectorAll('.search-tab').forEach(function(t) { t.classList.remove('active'); });
+  el.classList.add('active');
+  var input = document.getElementById('search-input');
+  var placeholders = { name: '请输入访客姓名', phone: '请输入手机号', plate: '请输入车牌号' };
+  input.placeholder = placeholders[type] || '请输入搜索关键词';
+  input.value = '';
+}
+
+function doSearch() {
+  var val = document.getElementById('search-input').value.trim();
+  if (val) {
+    document.getElementById('search-results').style.display = 'block';
+    document.getElementById('search-empty').style.display = 'none';
+  } else {
+    document.getElementById('search-results').style.display = 'none';
+    document.getElementById('search-empty').style.display = 'block';
+  }
+}
+
+function simulateScan() {
+  document.getElementById('scan-view').classList.add('hidden');
+  document.getElementById('scan-result-view').classList.add('show');
+}
+
+function resetScan() {
+  document.getElementById('scan-result-view').classList.remove('show');
+  document.getElementById('scan-view').classList.remove('hidden');
+}
+
+function showVerifyModal(triggerType) {
+  var triggerGroup = document.getElementById('verify-trigger');
+  triggerGroup.querySelectorAll('.radio-item').forEach(function(item) {
+    item.classList.remove('selected');
+    if (item.textContent.trim() === triggerType) item.classList.add('selected');
+  });
+  var now = new Date();
+  var timeStr = now.getFullYear() + '-' + String(now.getMonth()+1).padStart(2,'0') + '-' + String(now.getDate()).padStart(2,'0') + ' ' + String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0') + ':' + String(now.getSeconds()).padStart(2,'0');
+  document.getElementById('verify-time').textContent = timeStr;
+  var reasonGroup = document.getElementById('verify-reason');
+  reasonGroup.querySelectorAll('.radio-item').forEach(function(item, i) { item.classList.toggle('selected', i === 0); });
+  document.getElementById('weigh-section').style.display = 'none';
+  document.getElementById('verify-modal').classList.add('show');
+}
+
+function showVerifyModalSearch(name, plate) {
+  document.getElementById('modal-name').textContent = name;
+  document.getElementById('modal-plate').textContent = plate;
+  showVerifyModal('手动');
+}
+
+function closeVerifyModal() { document.getElementById('verify-modal').classList.remove('show'); }
+
+function confirmVerify() {
+  closeVerifyModal();
+  var reason = document.querySelector('#verify-reason .radio-item.selected');
+  var reasonText = reason ? reason.textContent.trim() : '确认入场';
+  document.getElementById('success-msg').textContent = '已' + reasonText;
+  document.getElementById('success-modal').classList.add('show');
+}
+
+function closeSuccessModal() { document.getElementById('success-modal').classList.remove('show'); }
+
+function selectRadio(el, groupId) {
+  var group = document.getElementById(groupId);
+  group.querySelectorAll('.radio-item').forEach(function(item) { item.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+
+function toggleWeighSection() {
+  var reasonItems = document.querySelectorAll('#verify-reason .radio-item');
+  var isExit = reasonItems[1] && reasonItems[1].classList.contains('selected');
+  document.getElementById('weigh-section').style.display = isExit ? 'block' : 'none';
+}
+
+function startCountdown() {
+  var seconds = 45;
+  var el = document.getElementById('qr-countdown');
+  stopCountdown();
+  countdownInterval = setInterval(function() {
+    seconds--;
+    if (seconds <= 0) seconds = 60;
+    var m = String(Math.floor(seconds / 60)).padStart(2, '0');
+    var s = String(seconds % 60).padStart(2, '0');
+    el.textContent = '下次刷新：' + m + ':' + s;
+  }, 1000);
+}
+
+function stopCountdown() {
+  if (countdownInterval) { clearInterval(countdownInterval); countdownInterval = null; }
+}
+
+
+// ==================== 预约流程：全局变量 ====================
+var selectedVisitorType = '一般访客';
+var selectedBaseOrg = '红牛（本基地）';
+var safetyNoticeTimer = null;
+var sigCanvas = null;
+var sigCtx = null;
+var sigDrawing = false;
+
+// 选择访客类型
+function selectVisitorType(type) {
+  selectedVisitorType = type;
+  // 如果是承包商，默认基地为力美/奥瑞金等，这里简化
+  if (type === '承包商') {
+    selectedBaseOrg = '红牛（本基地）';
+  }
+  // 跳转到入厂须知
+  navigateTo('v-page-notice', null, '入厂须知页');
+  // 打开安全告知书弹窗
+  setTimeout(function() { openSafetyNotice(); }, 300);
+}
+
+// 安全告知书弹窗
+function openSafetyNotice() {
+  var overlay = document.getElementById('safety-notice-overlay');
+  overlay.classList.add('show');
+  var timer = 3;
+  var closeBtn = document.getElementById('popup-close-btn');
+  var countdownEl = document.getElementById('popup-countdown');
+  var timerSpan = countdownEl.querySelector('span');
+  
+  closeBtn.disabled = true;
+  if (timerSpan) timerSpan.textContent = timer;
+  
+  if (safetyNoticeTimer) clearInterval(safetyNoticeTimer);
+  safetyNoticeTimer = setInterval(function() {
+    timer--;
+    var timerSpan = countdownEl.querySelector('span');
+    if (timerSpan) timerSpan.textContent = timer;
+    if (timer <= 0) {
+      clearInterval(safetyNoticeTimer);
+      safetyNoticeTimer = null;
+      closeBtn.disabled = false;
+      countdownEl.textContent = '请关闭弹窗后完成答题';
+    }
+  }, 1000);
+}
+
+function closeSafetyNotice() {
+  document.getElementById('safety-notice-overlay').classList.remove('show');
+  if (safetyNoticeTimer) { clearInterval(safetyNoticeTimer); safetyNoticeTimer = null; }
+}
+
+// 答题选项选中
+function selectQuizOption(el) {
+  var parent = el.parentElement;
+  parent.querySelectorAll('.quiz-option-btn').forEach(function(btn) {
+    btn.classList.remove('selected', 'wrong');
+  });
+  el.classList.add('selected');
+  updateQuizCount();
+}
+
+function updateQuizCount() {
+  var questions = document.querySelectorAll('.quiz-question');
+  var answered = 0;
+  questions.forEach(function(q) {
+    if (q.querySelector('.quiz-option-btn.selected')) answered++;
+  });
+  var btn = document.querySelector('.notice-submit-btn');
+  if (btn) btn.textContent = '签字提交（答题 ' + answered + '/3）';
+}
+
+// 提交答题
+function submitQuiz() {
+  var questions = document.querySelectorAll('.quiz-question');
+  var answered = 0;
+  var wrongNums = [];
+  
+  // 先清除之前的错误样式
+  questions.forEach(function(q) {
+    q.querySelectorAll('.quiz-option-btn').forEach(function(btn) {
+      btn.classList.remove('wrong');
+    });
+  });
+  
+  questions.forEach(function(q, idx) {
+    var selected = q.querySelector('.quiz-option-btn.selected');
+    if (selected) {
+      answered++;
+      var correctAnswer = q.getAttribute('data-answer');
+      if (selected.getAttribute('data-val') !== correctAnswer) {
+        wrongNums.push(idx + 1);
+        selected.classList.add('wrong');
+      }
+    }
+  });
+  
+  if (answered < 3) {
+    // 没答完
+    var errOverlay = document.getElementById('quiz-error-overlay');
+    document.getElementById('quiz-error-msg').innerHTML = '请先完成所有题目再提交！';
+    errOverlay.classList.add('show');
+    return;
+  }
+  
+  if (wrongNums.length > 0) {
+    // 有错误
+    var errOverlay2 = document.getElementById('quiz-error-overlay');
+    document.getElementById('quiz-error-msg').innerHTML = '第（' + wrongNums.join('、') + '）题回答错误<br>请重新修改提交！';
+    errOverlay2.classList.add('show');
+  } else {
+    // 全部正确，弹出签字
+    openSignature();
+  }
+}
+
+function closeQuizError() {
+  document.getElementById('quiz-error-overlay').classList.remove('show');
+}
+
+// 签字功能
+function openSignature() {
+  var overlay = document.getElementById('signature-overlay');
+  overlay.classList.add('show');
+  setTimeout(function() { initSignatureCanvas(); }, 100);
+}
+
+function initSignatureCanvas() {
+  sigCanvas = document.getElementById('signature-canvas');
+  sigCtx = sigCanvas.getContext('2d');
+  var rect = sigCanvas.getBoundingClientRect();
+  sigCanvas.width = rect.width;
+  sigCanvas.height = rect.height;
+  sigCtx.strokeStyle = '#1E293B';
+  sigCtx.lineWidth = 2.5;
+  sigCtx.lineCap = 'round';
+  sigCtx.lineJoin = 'round';
+  
+  sigCanvas.onmousedown = function(e) {
+    sigDrawing = true;
+    sigCtx.beginPath();
+    var r = sigCanvas.getBoundingClientRect();
+    sigCtx.moveTo(e.clientX - r.left, e.clientY - r.top);
+  };
+  sigCanvas.onmousemove = function(e) {
+    if (!sigDrawing) return;
+    var r = sigCanvas.getBoundingClientRect();
+    sigCtx.lineTo(e.clientX - r.left, e.clientY - r.top);
+    sigCtx.stroke();
+  };
+  sigCanvas.onmouseup = function() { sigDrawing = false; };
+  sigCanvas.onmouseleave = function() { sigDrawing = false; };
+  
+  // Touch events
+  sigCanvas.ontouchstart = function(e) {
+    e.preventDefault();
+    sigDrawing = true;
+    sigCtx.beginPath();
+    var r = sigCanvas.getBoundingClientRect();
+    var t = e.touches[0];
+    sigCtx.moveTo(t.clientX - r.left, t.clientY - r.top);
+  };
+  sigCanvas.ontouchmove = function(e) {
+    e.preventDefault();
+    if (!sigDrawing) return;
+    var r = sigCanvas.getBoundingClientRect();
+    var t = e.touches[0];
+    sigCtx.lineTo(t.clientX - r.left, t.clientY - r.top);
+    sigCtx.stroke();
+  };
+  sigCanvas.ontouchend = function(e) { e.preventDefault(); sigDrawing = false; };
+}
+
+function clearSignature() {
+  if (sigCanvas && sigCtx) {
+    sigCtx.clearRect(0, 0, sigCanvas.width, sigCanvas.height);
+  }
+}
+
+function confirmSignature() {
+  document.getElementById('signature-overlay').classList.remove('show');
+  // 跳转到预约登记页
+  var typeEl = document.getElementById('reg-visitor-type');
+  var baseEl = document.getElementById('reg-base-org');
+  if (typeEl) typeEl.textContent = selectedVisitorType;
+  if (baseEl) baseEl.textContent = selectedBaseOrg;
+  navigateTo('v-page-registration', null, '预约登记页');
+}
+
+// 预约登记提交
+function submitRegistration() {
+  document.getElementById('reg-success-overlay').classList.add('show');
+}
+
+function goToMyList() {
+  document.getElementById('reg-success-overlay').classList.remove('show');
+  navigateTo('v-page-list', null, '我的预约列表');
+}
+
+
+
+// ==================== 登录页 - 弹窗选组织 + 页面选类型 ====================
+function selectBaseOrg(orgName) {
+  selectedBaseOrg = orgName;
+  // 关闭弹窗
+  document.getElementById('login-org-popup').classList.remove('show');
+  // 显示已选组织
+  document.getElementById('selected-org-name').textContent = orgName;
+  document.getElementById('login-org-selected').style.display = 'block';
+}
+
+function showOrgPopup() {
+  document.getElementById('login-org-popup').classList.add('show');
+}
+
+// 访客类型描述映射
+var visitorTypeDesc = {
+  '一般访客': '适用于无特殊限制的日常拜访人员',
+  '外来施工': '适用于外部施工单位人员，需佩戴安全帽',
+  '成品发运': '适用于物流公司成品发运车辆司机及人员，进厂前做好卫生、安全防护措施检查',
+  '原料送货': '适用于原料供应商送货车辆及人员',
+  '辅料/备件送货': '适用于辅料、备件供应商送货人员'
+};
+
+function selectVisitorTypeNew(type) {
+  selectedVisitorType = type;
+  // 高亮选中
+  document.querySelectorAll('.login-type-btn').forEach(function(b) { b.classList.remove('selected'); });
+  event.target.classList.add('selected');
+  // 显示访客类型确认弹窗
+  var desc = visitorTypeDesc[type] || '';
+  document.getElementById('type-confirm-title').textContent = type;
+  document.getElementById('type-confirm-desc').textContent = desc;
+  document.getElementById('type-confirm-overlay').classList.add('show');
+}
+
+function closeTypeConfirm() {
+  document.getElementById('type-confirm-overlay').classList.remove('show');
+}
+
+function confirmTypeSelection() {
+  closeTypeConfirm();
+  // 跳转到入厂须知并打开安全告知书弹窗
+  setTimeout(function() {
+    navigateTo('v-page-notice', null, '入厂须知页');
+    setTimeout(function() { openSafetyNotice(); }, 300);
+  }, 200);
+}
+
+// ==================== 时间区间选择 ====================
+function confirmTimeRange() {
+  var s = document.getElementById('tr-start').value;
+  var e = document.getElementById('tr-end').value;
+  if (!s || !e) return;
+  if (new Date(s) >= new Date(e)) return;
+  function fmt(dt) { var d=new Date(dt); return (d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+  document.getElementById('time-range-text').textContent = fmt(s) + ' ~ ' + fmt(e);
+  document.getElementById('time-range-text').style.color = '#1E293B';
+  document.getElementById('time-range-popup').style.display = 'none';
+}
+
+// ==================== 确认到达 ====================
+function confirmArrival() {
+  document.getElementById('confirm-arrive-section').style.display = 'none';
+  document.getElementById('waiting-section').style.display = 'block';
+}
+
+// 初始化
+(function() {
+  document.querySelectorAll('.page').forEach(function(p) {
+    p.style.display = 'none';
+    p.classList.remove('active');
+  });
+  var page = document.getElementById('v-page-list');
+  if (page) { page.style.display = 'block'; page.classList.add('active'); }
+})();
+</script>
+</body>
+</html>

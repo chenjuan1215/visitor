@@ -1,0 +1,2317 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>访客移动端流程总览</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+  background: #1a1a2e;
+  color: #333;
+  font-size: 14px;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+}
+
+/* ==================== 左侧边栏 ==================== */
+.sidebar {
+  width: 200px;
+  background: #0f0f23;
+  border-right: 1px solid rgba(255,255,255,0.06);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+.sidebar-header {
+  padding: 16px 14px 10px;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.sidebar-header h2 {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+.sidebar-header p {
+  color: rgba(255,255,255,0.35);
+  font-size: 11px;
+  margin-top: 3px;
+}
+.sidebar-steps {
+  padding: 8px 0;
+  flex: 1;
+}
+.step-btn {
+  display: flex;
+  align-items: center;
+  padding: 8px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+  color: rgba(255,255,255,0.55);
+  font-size: 12px;
+  gap: 8px;
+}
+.step-btn:hover {
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.85);
+}
+.step-btn.active {
+  background: rgba(37,99,235,0.12);
+  color: #60a5fa;
+  border-left-color: #2563eb;
+}
+.step-btn .step-number {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+.step-btn.active .step-number {
+  background: #2563EB;
+  color: #fff;
+}
+.step-btn .step-name {
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.step-btn .step-role {
+  font-size: 9px;
+  color: rgba(255,255,255,0.25);
+  margin-left: auto;
+  flex-shrink: 0;
+}
+.step-btn.active .step-role { color: rgba(96,165,250,0.7); }
+.sidebar-group-label {
+  padding: 10px 14px 4px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: rgba(255,255,255,0.25);
+}
+
+/* ==================== 主内容区 ==================== */
+.main-content {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 20px 16px;
+  gap: 12px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  overflow: hidden;
+}
+
+/* ==================== 手机外壳 ==================== */
+.phone-section {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.phone-frame {
+  width: 375px;
+  height: 812px;
+  background: #000;
+  border-radius: 44px;
+  padding: 12px;
+  box-shadow: 
+    0 0 0 2px #333,
+    0 0 0 4px #1a1a1a,
+    0 20px 60px rgba(0,0,0,0.5),
+    inset 0 0 0 1px rgba(255,255,255,0.05);
+  position: relative;
+  overflow: hidden;
+}
+.phone-screen {
+  width: 100%;
+  height: 100%;
+  background: #F0F2F5;
+  border-radius: 34px;
+  overflow: hidden;
+  position: relative;
+}
+.phone-notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150px;
+  height: 28px;
+  background: #000;
+  border-radius: 0 0 18px 18px;
+  z-index: 9999;
+}
+.phone-notch::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 6px;
+  background: #1a1a1a;
+  border-radius: 3px;
+}
+.phone-content {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.phone-content::-webkit-scrollbar { display: none; }
+.home-indicator {
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 134px;
+  height: 5px;
+  background: rgba(0,0,0,0.2);
+  border-radius: 3px;
+  z-index: 9998;
+}
+
+/* ==================== 右侧配置面板 ==================== */
+.config-panel {
+  width: 310px;
+  flex-shrink: 0;
+}
+.config-card {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  overflow: hidden;
+  display: none;
+}
+.config-card.active { display: block; }
+
+/* ==================== 黑名单限制说明（额外页） ==================== */
+.step-btn-extra {
+  border-top: 1px dashed rgba(255,255,255,0.15);
+  margin-top: 8px;
+  padding-top: 12px;
+}
+.step-btn-extra .step-name {
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+}
+.step-btn-extra:hover { background: rgba(96,165,250,0.1); }
+.step-btn-extra.active { background: rgba(96,165,250,0.2); }
+.step-btn-extra.active .step-name { color: #fff; }
+
+/* ov-page-extra 容器：替换 phone-section 时的容器，承载 dual-phone-wrapper */
+.ov-extra-section {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background: transparent;
+}
+.ov-extra-section .dual-phone-wrapper {
+  display: flex !important;
+  padding: 20px 0;
+  gap: 20px;
+  background: transparent;
+  justify-content: flex-start;
+}
+
+
+.config-header {
+  background: linear-gradient(135deg, #2563EB, #1D4ED8);
+  padding: 16px 20px;
+  color: #fff;
+}
+.config-header h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+.config-header p {
+  font-size: 12px;
+  opacity: 0.75;
+}
+.config-body {
+  padding: 16px 20px 20px;
+}
+.config-item {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #F1F5F9;
+}
+.config-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.config-item-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #1E293B;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.config-item-desc {
+  font-size: 13px;
+  color: #64748B;
+  line-height: 1.7;
+}
+.config-tag {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 500;
+  margin-right: 4px;
+  margin-top: 4px;
+}
+.config-tag-blue { background: #EFF6FF; color: #2563EB; border: 1px solid #BFDBFE; }
+.config-tag-green { background: #F0FDF4; color: #16A34A; border: 1px solid #86EFAC; }
+.config-tag-orange { background: #FFF7ED; color: #EA580C; border: 1px solid #FDBA74; }
+.config-tag-gray { background: #F1F5F9; color: #64748B; border: 1px solid #CBD5E1; }
+.config-highlight {
+  background: #FFF7ED;
+  border: 1px solid #FDBA74;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #92400E;
+  line-height: 1.6;
+}
+.config-note {
+  background: #F0F9FF;
+  border: 1px solid #BAE6FD;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #0369A1;
+  line-height: 1.6;
+}
+.config-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
+}
+.config-flow-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #475569;
+}
+.config-flow-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #2563EB;
+  flex-shrink: 0;
+}
+
+/* ==================== 手机内通用样式 ==================== */
+.status-bar {
+  background: #2563EB;
+  color: #fff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 20px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+}
+.status-bar .time { font-size: 14px; font-weight: 700; }
+.status-bar .icons { display: flex; gap: 4px; align-items: center; }
+.status-bar .icons span { font-size: 11px; }
+
+.nav-bar {
+  background: #2563EB;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  padding: 10px 16px 14px;
+  position: sticky;
+  top: 26px;
+  z-index: 998;
+}
+.nav-bar .back-btn {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; font-size: 22px;
+  border: none; background: none; color: #fff;
+}
+.nav-bar .title {
+  flex: 1; text-align: center;
+  font-size: 17px; font-weight: 600;
+  margin-right: 32px;
+}
+
+/* 卡片 */
+.card {
+  background: #fff; border-radius: 12px;
+  margin: 10px 14px; padding: 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.card-title {
+  font-size: 15px; font-weight: 600; color: #1E293B;
+  margin-bottom: 10px; padding-bottom: 8px;
+  border-bottom: 1px solid #F1F5F9;
+}
+
+/* 状态标签 */
+.badge {
+  display: inline-block; padding: 2px 8px;
+  border-radius: 10px; font-size: 11px; font-weight: 500;
+}
+.badge-pending { background: #FFF7ED; color: #EA580C; border: 1px solid #FDBA74; }
+.badge-approved { background: #F0FDF4; color: #16A34A; border: 1px solid #86EFAC; }
+.badge-rejected { background: #FEF2F2; color: #DC2626; border: 1px solid #FCA5A5; }
+.badge-cancelled { background: #F1F5F9; color: #64748B; border: 1px solid #CBD5E1; }
+.badge-used { background: #F0F9FF; color: #0284C7; border: 1px solid #7DD3FC; }
+.badge-expired { background: #F1F5F9; color: #94A3B8; border: 1px solid #CBD5E1; }
+
+/* 按钮 */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 9px 20px; border-radius: 8px; font-size: 14px; font-weight: 500;
+  border: none; cursor: pointer; transition: all 0.2s;
+}
+.btn-primary { background: #2563EB; color: #fff; }
+.btn-outline { background: #fff; color: #2563EB; border: 1px solid #2563EB; }
+.btn-block { display: flex; width: 100%; }
+.btn-lg { padding: 12px 20px; font-size: 15px; border-radius: 10px; }
+.btn-success { background: #16A34A; color: #fff; }
+.btn-warning { background: #EA580C; color: #fff; }
+
+/* 底部操作栏 */
+.bottom-bar {
+  background: #fff; padding: 10px 14px;
+  border-top: 1px solid #F1F5F9;
+  display: flex; gap: 10px;
+  position: sticky; bottom: 0; z-index: 100;
+}
+
+/* 预约卡片 */
+.reservation-card {
+  background: #fff; border-radius: 12px;
+  margin: 10px 14px; padding: 12px 14px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.reservation-header {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 8px;
+}
+.reservation-name { font-size: 15px; font-weight: 600; color: #1E293B; }
+.reservation-info {
+  display: flex; flex-wrap: wrap; gap: 10px;
+  font-size: 12px; color: #64748B;
+}
+
+/* 表单字段 */
+.field-row {
+  display: flex; padding: 8px 0;
+  border-bottom: 1px solid #F8FAFC;
+  align-items: flex-start; font-size: 13px;
+}
+.field-label { width: 80px; color: #64748B; flex-shrink: 0; }
+.field-label .required { color: #EF4444; margin-right: 2px; }
+.field-value { flex: 1; color: #1E293B; word-break: break-all; }
+
+/* 二维码 */
+.qr-container { text-align: center; padding: 24px 16px; }
+.qr-box {
+  width: 200px; height: 200px; margin: 0 auto 16px;
+  background: #fff; border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  display: flex; align-items: center; justify-content: center;
+}
+.qr-placeholder { width: 160px; height: 160px; }
+.qr-placeholder svg { width: 100%; height: 100%; }
+.qr-status { font-size: 16px; font-weight: 600; margin-bottom: 6px; }
+.qr-status.valid { color: #16A34A; }
+.qr-refresh-tip { font-size: 12px; color: #94A3B8; margin-top: 8px; }
+.qr-countdown { font-size: 12px; color: #2563EB; margin-top: 6px; font-weight: 500; }
+
+/* 时间信息 */
+.time-block {
+  background: #F0F9FF; border-radius: 8px;
+  padding: 8px 12px; margin: 6px 0;
+}
+.time-block .time-label { font-size: 11px; color: #64748B; }
+.time-block .time-value { font-size: 14px; font-weight: 600; color: #0284C7; margin-top: 2px; }
+
+/* 车辆标签 */
+.vehicle-tag {
+  display: inline-block; padding: 1px 6px;
+  background: #EFF6FF; color: #2563EB;
+  border-radius: 4px; font-size: 10px; margin-left: 4px;
+}
+
+/* ==================== 登录页 ==================== */
+.login-welcome {
+  min-height: 100%;
+  background: linear-gradient(160deg, #2563EB 0%, #1D4ED8 60%, #1E40AF 100%);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 60px 28px 32px; color: #fff;
+}
+.login-logo {
+  width: 80px; height: 80px; border-radius: 20px;
+  background: rgba(255,255,255,0.15); border: 2px solid rgba(255,255,255,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36px; margin-bottom: 24px;
+}
+.login-title { font-size: 24px; font-weight: 700; text-align: center; line-height: 1.5; margin-bottom: 12px; }
+.login-subtitle { font-size: 13px; opacity: 0.75; text-align: center; margin-bottom: 36px; }
+.login-type-hint { font-size: 13px; color: rgba(255,255,255,0.7); margin-bottom: 12px; text-align: center; }
+.login-org-popup-overlay {
+  display: flex; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 999;
+  align-items: center; justify-content: center; padding: 30px;
+}
+.login-org-popup-card { background: #fff; border-radius: 16px; width: 100%; padding: 24px 20px; }
+.login-org-popup-title { text-align: center; font-size: 16px; font-weight: 700; color: #1E293B; margin-bottom: 16px; }
+.login-org-popup-grid { display: flex; flex-direction: column; gap: 10px; }
+.login-org-popup-btn {
+  padding: 14px; border-radius: 10px; text-align: center;
+  font-size: 15px; font-weight: 600; color: #334155;
+  background: #F1F5F9; border: 2px solid transparent;
+}
+.login-selected-org {
+  background: rgba(255,255,255,0.15); border-radius: 12px;
+  padding: 14px 16px; margin-bottom: 16px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.login-selected-org-left { display: flex; align-items: center; gap: 8px; font-size: 14px; color: rgba(255,255,255,0.7); }
+.login-selected-org-name { font-size: 16px; font-weight: 700; color: #fff; }
+.login-change-link { font-size: 13px; color: rgba(255,255,255,0.6); cursor: pointer; }
+.login-type-grid { display: flex; flex-wrap: wrap; gap: 10px; width: 100%; margin-bottom: 8px; }
+.login-type-btn {
+  flex: 1 1 calc(50% - 5px); padding: 12px 8px; border-radius: 12px; font-size: 14px; font-weight: 500;
+  border: 2px solid rgba(255,255,255,0.4); background: rgba(255,255,255,0.08);
+  color: #fff; text-align: center; min-width: 0;
+}
+.login-type-btn.selected { background: #fff; color: #2563EB; border-color: #fff; }
+.login-bottom-links { margin-top: auto; text-align: center; width: 100%; }
+.login-bottom-links .my-reservation { font-size: 15px; color: rgba(255,255,255,0.9); margin-bottom: 16px; display: inline-block; }
+.login-bottom-links .internal-notice { font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.6; }
+
+/* ==================== 入厂须知页 ==================== */
+.notice-video-placeholder {
+  margin: 14px; border-radius: 12px; overflow: hidden;
+  background: linear-gradient(135deg, #374151, #4B5563);
+  height: 180px; position: relative;
+}
+.notice-video-placeholder .play-icon {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%);
+  width: 56px; height: 56px; background: rgba(0,0,0,0.5); border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; font-size: 24px; color: #fff;
+}
+.notice-video-placeholder .video-tag {
+  position: absolute; top: 10px; right: 10px;
+  background: rgba(0,0,0,0.6); color: #fff; font-size: 11px; padding: 3px 8px; border-radius: 6px;
+}
+.notice-video-placeholder .video-title {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  padding: 10px 14px; background: linear-gradient(transparent, rgba(0,0,0,0.7));
+  color: #fff; font-size: 13px; font-weight: 500;
+}
+.notice-safety-link {
+  margin: 0 14px 12px; padding: 12px 14px;
+  background: #EFF6FF; border-radius: 10px; color: #2563EB; font-size: 13px; font-weight: 500;
+}
+.notice-quiz-section {
+  margin: 0 14px 14px; background: #fff; border-radius: 12px;
+  padding: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.notice-quiz-title { font-size: 15px; font-weight: 600; color: #1E293B; margin-bottom: 4px; }
+.notice-quiz-hint { font-size: 12px; color: #94A3B8; margin-bottom: 14px; }
+.quiz-question { margin-bottom: 14px; padding-bottom: 14px; border-bottom: 1px solid #F1F5F9; }
+.quiz-question:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+.quiz-q-text { font-size: 13px; color: #1E293B; font-weight: 500; margin-bottom: 10px; line-height: 1.6; }
+.quiz-q-number {
+  display: inline-block; background: #2563EB; color: #fff;
+  width: 20px; height: 20px; border-radius: 50%; font-size: 11px;
+  text-align: center; line-height: 20px; margin-right: 6px;
+}
+.quiz-options { display: flex; gap: 10px; }
+.quiz-option-btn {
+  flex: 1; padding: 10px 0; border-radius: 10px; text-align: center;
+  font-size: 13px; font-weight: 500; border: 1.5px solid #E2E8F0; background: #fff; color: #64748B;
+  transition: all 0.2s;
+}
+.quiz-option-btn:active { transform: scale(0.97); }
+.quiz-option-btn.selected { border-color: #2563EB; background: #EFF6FF; color: #2563EB; }
+.quiz-option-btn.wrong { border-color: #EF4444; background: #FEE2E2; color: #DC2626; }
+.notice-submit-bar { padding: 12px 14px 20px; background: #fff; border-top: 1px solid #F1F5F9; }
+.notice-submit-btn {
+  width: 100%; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 600;
+  border: none; background: #2563EB; color: #fff;
+}
+
+/* 安全告知书弹窗 */
+.notice-popup-overlay {
+  display: flex; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6); z-index: 1000;
+  align-items: center; justify-content: center; padding: 20px;
+}
+.notice-popup-card {
+  background: #fff; border-radius: 16px; width: 100%; max-height: 68%;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.notice-popup-card h3 { font-size: 16px; font-weight: 700; color: #1E293B; text-align: center; margin: 0 16px 16px; padding: 0 0 12px; border-bottom: 1px solid #E2E8F0; }
+.notice-popup-card .popup-content { font-size: 13px; color: #475569; line-height: 1.8; }
+.notice-popup-card .popup-content p { margin-bottom: 8px; }
+.notice-popup-countdown { text-align: center; padding: 12px 0 0; font-size: 13px; color: #94A3B8; }
+.notice-popup-close { display: block; margin: 10px auto 0; padding: 10px 32px; border-radius: 10px; font-size: 14px; font-weight: 600; border: none; background: #2563EB; color: #fff; }
+
+/* ==================== 预约登记页 ==================== */
+.registration-tip-bar {
+  margin: 10px 14px 0; padding: 10px 12px; border-radius: 10px;
+  background: #FEF3C7; color: #92400E; font-size: 12px; line-height: 1.5;
+}
+.visitor-type-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: #EFF6FF; border: 1px solid #BFDBFE; border-radius: 8px;
+  padding: 8px 12px; font-size: 13px; color: #2563EB; font-weight: 500; margin-right: 8px; margin-bottom: 8px;
+}
+.visitor-type-badge .vtb-label { color: #64748B; font-weight: 400; font-size: 12px; }
+.reg-form-group { margin-bottom: 14px; }
+.reg-form-group .reg-label { font-size: 13px; color: #1E293B; font-weight: 500; margin-bottom: 6px; display: block; }
+.reg-form-group .reg-label .required { color: #EF4444; margin-right: 2px; }
+.reg-form-group .reg-input {
+  width: 100%; padding: 10px 12px; border: 1.5px solid #E2E8F0;
+  border-radius: 10px; font-size: 13px; color: #1E293B; background: #fff; outline: none;
+}
+.reg-form-group .reg-input:read-only { background: #F8FAFC; color: #94A3B8; }
+.reg-form-group select.reg-input { background: #fff !important; color: #1E293B !important; -webkit-appearance: menulist; appearance: menulist; }
+.time-range-display { width:100%;padding:10px 12px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:13px;color:#1E293B;background:#fff;cursor:pointer;display:flex;align-items:center;justify-content:space-between;box-sizing:border-box; }
+.time-range-display .arrow { color:#94A3B8;font-size:11px; }
+.time-range-popup { position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);z-index:1002;display:flex;align-items:flex-end; }
+.time-range-sheet { background:#fff;width:100%;border-radius:16px 16px 0 0;padding:20px 16px 24px; }
+.time-range-sheet .tr-title { font-size:16px;font-weight:600;color:#1E293B;text-align:center;margin-bottom:16px; }
+.time-range-sheet .tr-row { display:flex;align-items:center;gap:8px;margin-bottom:12px; }
+.time-range-sheet .tr-label { font-size:13px;color:#64748B;width:40px;flex-shrink:0; }
+.time-range-sheet .tr-input { flex:1;padding:10px 12px;border:1.5px solid #E2E8F0;border-radius:10px;font-size:13px;color:#1E293B;background:#fff;outline:none; }
+.time-range-sheet .tr-input:focus { border-color:#2563EB; }
+.time-range-sheet .tr-confirm { width:100%;padding:12px;border-radius:10px;background:#2563EB;color:#fff;font-size:15px;font-weight:600;border:none;cursor:pointer;margin-top:8px; }
+.reg-upload-area {
+  width: 100%; height: 100px; border: 2px dashed #CBD5E1; border-radius: 12px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; background: #F8FAFC;
+}
+.reg-upload-area .upload-icon { font-size: 28px; margin-bottom: 4px; }
+.reg-upload-area .upload-text { font-size: 12px; color: #94A3B8; }
+.reg-plate-row { display: flex; align-items: center; gap: 8px; }
+.reg-plate-row .reg-input { flex: 1; }
+.reg-plate-tag { padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; background: #ECFDF5; color: #059669; border: 1px solid #A7F3D0; white-space: nowrap; }
+.reg-submit-bar { padding: 12px 14px 24px; background: #fff; border-top: 1px solid #F1F5F9; position: sticky; bottom: 0; z-index: 10; }
+.reg-submit-btn { width: 100%; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 600; border: none; background: #2563EB; color: #fff; }
+
+/* ==================== 弹窗组件 ==================== */
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-overlay { display:none; position:absolute; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:2000; align-items:flex-end; justify-content:center; border-radius:34px; }
+.modal-overlay.show { display:flex; }
+.modal-content { background:#fff; border-radius:16px 16px 0 0; width:100%; max-height:85%; display:flex; flex-direction:column; overflow:hidden; animation:slideUp 0.3s ease; }
+.modal-body { flex:1; overflow-y:auto; padding:0 14px; }
+.modal-footer { padding:12px 14px 16px; border-top:1px solid #F1F5F9; background:#fff; border-radius:0 0 16px 0; flex-shrink:0; }
+.modal-header { display:flex; justify-content:space-between; align-items:center; padding:16px 14px 10px; border-bottom:1px solid #F1F5F9; flex-shrink:0; }
+.modal-title { font-size:16px; font-weight:600; color:#1E293B; }
+.modal-close { width:26px; height:26px; border-radius:50%; background:#F1F5F9; display:flex; align-items:center; justify-content:center; cursor:pointer; border:none; font-size:14px; color:#64748B; }
+.summary-row { background:#F8FAFC; border-radius:10px; padding:10px 12px; margin-top:12px; margin-bottom:12px; }
+.summary-row .item { display:flex; justify-content:space-between; padding:3px 0; font-size:12px; }
+.summary-row .item .label { color:#64748B; }
+.summary-row .item .value { color:#1E293B; font-weight:500; }
+
+/* ==================== 扫码结果 ==================== */
+
+.scan-result-banner {
+  background: linear-gradient(135deg, #16A34A, #15803D);
+  padding: 28px 14px 24px; text-align: center; color: #fff;
+}
+.scan-result-body { padding: 16px 14px; background: #F0F2F5; }
+.scan-info-card {
+  background: #fff; border-radius: 12px; padding: 14px;
+  margin-bottom: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.scan-info-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid #F1F5F9; font-size: 13px;
+}
+.scan-info-row:last-child { border-bottom: none; }
+.scan-info-row .si-label { color: #64748B; }
+.scan-info-row .si-value { color: #1E293B; font-weight: 500; text-align: right; }
+
+/* 单选组 */
+.radio-group { display: flex; gap: 8px; flex-wrap: wrap; }
+.radio-item {
+  display: flex; align-items: center; padding: 7px 12px;
+  border: 1px solid #E2E8F0; border-radius: 8px; font-size: 12px;
+}
+.radio-item.selected { border-color: #2563EB; background: #EFF6FF; color: #2563EB; }
+.radio-item .dot {
+  width: 14px; height: 14px; border-radius: 50%;
+  border: 2px solid #CBD5E1; margin-right: 6px; position: relative;
+}
+.radio-item.selected .dot { border-color: #2563EB; }
+.radio-item.selected .dot::after {
+  content: ''; position: absolute; top: 2px; left: 2px;
+  width: 6px; height: 6px; border-radius: 50%; background: #2563EB;
+}
+
+/* 信息组标题 */
+.section-title {
+  font-size: 13px; font-weight: 600; color: #1E293B;
+  margin: 12px 0 8px; padding-left: 8px; border-left: 3px solid #2563EB;
+}
+
+/* 地磅区域 */
+.weigh-section {
+  background: #FFF7ED; border: 1px solid #FDBA74;
+  border-radius: 10px; padding: 12px; margin: 12px 0;
+}
+.weigh-section .weigh-title { font-size: 13px; font-weight: 600; color: #EA580C; margin-bottom: 8px; }
+.weigh-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; font-size: 12px; }
+.weigh-status { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; }
+.weigh-status.online { color: #16A34A; }
+
+/* 页面容器 */
+.ov-page { display: none; }
+.ov-page.active { display: block; }
+
+/* 步骤5审批视角标签 */
+.step5-label {
+  background: #FEF3C7;
+  border-bottom: 1px solid #FDE68A;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #92400E;
+  font-weight: 500;
+  text-align: center;
+}
+.step6-label {
+  background: #F0FDF4;
+  border-bottom: 1px solid #BBF7D0;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #166534;
+  font-weight: 500;
+  text-align: center;
+}
+.step7-label {
+  background: #F0F9FF;
+  border-bottom: 1px solid #BAE6FD;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: #075985;
+  font-weight: 500;
+  text-align: center;
+}
+.step89-label {
+  background: #1E293B;
+  padding: 8px 14px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.7);
+  font-weight: 500;
+  text-align: center;
+}
+
+/* 访客类型确认弹窗 */
+.type-confirm-overlay {
+  display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 1003;
+  align-items: center; justify-content: center; padding: 30px;
+}
+.type-confirm-overlay.show { display: flex; }
+.type-confirm-card {
+  background: #fff; border-radius: 16px; width: 100%; padding: 24px 20px;
+  text-align: center;
+}
+.type-confirm-icon { font-size: 48px; margin-bottom: 10px; }
+.type-confirm-title { font-size: 17px; font-weight: 700; color: #1E293B; margin-bottom: 8px; }
+.type-confirm-desc { font-size: 13px; color: #64748B; line-height: 1.6; margin-bottom: 20px; }
+.type-confirm-btns { display: flex; gap: 12px; }
+.type-confirm-btn {
+  flex: 1; padding: 12px 0; border-radius: 10px; font-size: 15px; font-weight: 600;
+  border: none; cursor: pointer;
+}
+.type-confirm-btn.cancel { background: #F1F5F9; color: #64748B; }
+.type-confirm-btn.confirm { background: #2563EB; color: #fff; }
+
+
+/* ==================== 黑名单双手机演示（从核销原型迁移） ==================== */
+.dual-phone-wrapper {
+  display: none;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 50px;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+.dual-phone-wrapper.active { display: flex; }
+.dual-phone-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.dual-phone-cell .cell-title {
+  color: #1E293B;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  padding: 6px 16px;
+  background: #fff;
+  border-radius: 20px;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.dual-phone-cell .cell-subtitle {
+  color: #64748B;
+  font-size: 12px;
+  margin-top: -6px;
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.5;
+}
+.dual-phone-frame {
+  width: 320px;
+  height: 680px;
+  background: #000;
+  border-radius: 40px;
+  padding: 10px;
+  box-shadow:
+    0 0 0 2px #333,
+    0 0 0 4px #1a1a1a,
+    0 20px 60px rgba(0,0,0,0.5),
+    inset 0 0 0 1px rgba(255,255,255,0.05);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.dual-phone-notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 130px;
+  height: 24px;
+  background: #000;
+  border-radius: 0 0 16px 16px;
+  z-index: 9999;
+}
+.dual-phone-screen {
+  width: 100%;
+  height: 100%;
+  background: #F0F2F5;
+  border-radius: 30px;
+  overflow: hidden;
+  position: relative;
+}
+.dual-phone-content {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.dual-phone-content::-webkit-scrollbar { display: none; }
+
+.bl-submit-btn-disabled {
+  width: 100%;
+  padding: 12px 0;
+  background: #F3F4F6;
+  color: #9CA3AF;
+  border: none;
+  border-radius: 22px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: not-allowed;
+}
+
+.blacklist-modal-overlay {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+  padding: 16px;
+}
+.blacklist-modal-overlay.show { display: flex; }
+.blacklist-modal {
+  width: 100%;
+  max-width: 280px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 22px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+.blacklist-modal .bm-icon {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: #FEE2E2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  color: #DC2626;
+  margin-bottom: 10px;
+}
+.blacklist-modal .bm-title {
+  color: #991B1B;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.blacklist-modal .bm-desc {
+  font-size: 12px;
+  color: #64748B;
+  text-align: center;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+.blacklist-modal .bm-reason {
+  width: 100%;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  font-size: 12px;
+  color: #7F1D1D;
+  line-height: 1.7;
+}
+.blacklist-modal .bm-reason strong { color: #991B1B; }
+.blacklist-modal .bm-btn {
+  width: 100%;
+  padding: 12px 0;
+  background: #DC2626;
+  color: #fff;
+  border: none;
+  border-radius: 22px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  letter-spacing: 1px;
+}
+
+</style>
+</head>
+<body>
+
+<!-- 左侧边栏导航 -->
+<div class="sidebar">
+  <div class="sidebar-header">
+    <h2>📱 流程总览</h2>
+    <p>9 步完整流程</p>
+  </div>
+  <div class="sidebar-steps">
+    <div class="step-btn active" onclick="switchStep(1)"><span class="step-number">1</span><span class="step-name">预约登录页</span></div>
+    <div class="step-btn" onclick="switchStep(2)"><span class="step-number">2</span><span class="step-name">入场须知页</span></div>
+    <div class="step-btn" onclick="switchStep(3)"><span class="step-number">3</span><span class="step-name">预约登记页</span></div>
+    <div class="step-btn" onclick="switchStep(4)"><span class="step-number">4</span><span class="step-name">我的预约</span></div>
+    <div class="step-btn" onclick="switchStep(5)"><span class="step-number">5</span><span class="step-name">审批通过</span></div>
+    <div class="step-btn" onclick="switchStep(6)"><span class="step-number">6</span><span class="step-name">确认到达</span></div>
+    <div class="step-btn" onclick="switchStep(7)"><span class="step-number">7</span><span class="step-name">叫号信息</span></div>
+    <div class="step-btn" onclick="switchStep(8)"><span class="step-number">8</span><span class="step-name">核销入场</span></div>
+    <div class="step-btn" onclick="switchStep(9)"><span class="step-number">9</span><span class="step-name">核销出场</span></div>
+    <div class="step-btn step-btn-extra" onclick="switchStep('extra')"><span class="step-name">🚫 黑名单限制说明</span></div>
+  </div>
+</div>
+
+<!-- 主内容区 -->
+<div class="main-content">
+  
+  <!-- 左侧手机框架 -->
+  <div class="phone-section">
+    <div class="phone-frame">
+      <div class="phone-notch"></div>
+      <div class="phone-screen">
+        <div class="home-indicator"></div>
+        <div class="phone-content" id="phone-content">
+
+<!-- 状态栏（共用） -->
+<div class="status-bar">
+  <span class="time">9:41</span>
+  <span class="icons"><span>📶</span><span>📡</span><span>🔋</span></span>
+</div>
+
+<!-- ==================== 步骤1：预约登录页 ==================== -->
+<div id="ov-page-1" class="ov-page active">
+  <div style="min-height:100%;background:linear-gradient(160deg, #2563EB 0%, #1D4ED8 60%, #1E40AF 100%);display:flex;flex-direction:column;align-items:center;padding:60px 28px 32px;color:#fff;position:relative;">
+    <div class="login-logo">🏭</div>
+    <div class="login-title">欢迎来到<br>红牛访客预约平台</div>
+    <div class="login-subtitle">请选择基地组织和访客类型以继续</div>
+    <div class="login-selected-org">
+      <div class="login-selected-org-left">
+        <span>访问组织：</span>
+        <span class="login-selected-org-name">红牛（本基地）</span>
+      </div>
+      <div class="login-change-link" onclick="document.getElementById('org-popup-overlay').style.display='flex'">切换 ›</div>
+    </div>
+    <div class="login-type-hint">请选择访客类型</div>
+    <div class="login-type-grid">
+      <div class="login-type-btn selected">一般访客</div>
+      <div class="login-type-btn">外来施工</div>
+      <div class="login-type-btn">成品发运</div>
+      <div class="login-type-btn">原料送货</div>
+      <div class="login-type-btn">辅料/备件送货</div>
+    </div>
+    <div class="login-bottom-links">
+      <div class="my-reservation">📋 我的预约 ›</div>
+      <div class="internal-notice">*公司内部管理系统，采用白名单验证登录机制，仅限内部员工使用</div>
+    </div>
+    <!-- 组织选择弹窗 -->
+    <div class="login-org-popup-overlay" id="org-popup-overlay" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;z-index:100;">
+      <div class="login-org-popup-card">
+        <div class="login-org-popup-title">请选择访问组织</div>
+        <div class="login-org-popup-grid">
+          <div class="login-org-popup-btn" style="background:#EFF6FF;color:#2563EB;border-color:#2563EB;">红牛基地</div>
+          <div class="login-org-popup-btn">奥瑞金</div>
+          <div class="login-org-popup-btn">力美</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 步骤2：入场须知页 ==================== -->
+<div id="ov-page-2" class="ov-page" style="position:relative;">
+  <div class="nav-bar">
+    <button class="back-btn">‹</button>
+    <div class="title">入厂须知</div>
+  </div>
+  <div class="notice-video-placeholder">
+    <div class="play-icon">▶</div>
+    <div class="video-tag">已观看 80%</div>
+    <div class="video-title">外来人员入厂告知视频</div>
+  </div>
+  <div class="notice-safety-link">📄 点击查看：《外来人员入厂安全告知书》</div>
+  <div class="notice-quiz-section">
+    <div class="notice-quiz-title">入厂安全知识问答</div>
+    <div class="notice-quiz-hint">（答题前需观看视频后方可答题）🔒</div>
+    <div class="quiz-question" data-q="1" data-answer="A">
+      <div class="quiz-q-text"><span class="quiz-q-number">1</span>车辆进厂应走指定通道，按要求进行车辆检查，不可擅自进入厂区进行清扫及维修，该说法是否正确？</div>
+      <div class="quiz-options">
+        <div class="quiz-option-btn" data-val="A" onclick="selectStep2QuizOption(this)">A. 正常</div>
+        <div class="quiz-option-btn" data-val="B" onclick="selectStep2QuizOption(this)">B. 错误</div>
+      </div>
+    </div>
+    <div class="quiz-question" data-q="2" data-answer="A">
+      <div class="quiz-q-text"><span class="quiz-q-number">2</span>进入生产现场必须由相关人员陪同，佩戴防护用品，服从现场管理，该说法是否正确？</div>
+      <div class="quiz-options">
+        <div class="quiz-option-btn" data-val="A" onclick="selectStep2QuizOption(this)">A. 正常</div>
+        <div class="quiz-option-btn" data-val="B" onclick="selectStep2QuizOption(this)">B. 错误</div>
+      </div>
+    </div>
+    <div class="quiz-question" data-q="3" data-answer="A">
+      <div class="quiz-q-text"><span class="quiz-q-number">3</span>外来人员未经许可不得进入生产作业区域，不得触碰设备设施，该说法是否正确？</div>
+      <div class="quiz-options">
+        <div class="quiz-option-btn" data-val="A" onclick="selectStep2QuizOption(this)">A. 正常</div>
+        <div class="quiz-option-btn" data-val="B" onclick="selectStep2QuizOption(this)">B. 错误</div>
+      </div>
+    </div>
+  </div>
+  <div class="notice-submit-bar" style="position:sticky;bottom:0;z-index:100;">
+    <button class="notice-submit-btn" id="notice-submit-btn" style="background:#2563EB;">签字提交（答题 0/3）</button>
+  </div>
+  <!-- 安全告知书弹窗 -->
+  <div class="notice-popup-overlay" id="step2-notice-overlay" style="display:none;">
+    <div class="notice-popup-card">
+      <h3 style="flex-shrink:0;padding-top:8px;">《外来人员入厂安全告知书》</h3>
+      <div class="popup-content" style="flex:1;overflow-y:auto;padding:0 16px 12px;">
+        <p>欢迎您来到红牛饮料有限公司，为保障您的人身安全及公司正常生产秩序，请认真阅读以下安全须知：</p>
+        <p>1. 进入厂区必须遵守公司安全管理规定，服从管理人员指挥。</p>
+        <p>2. 车辆进厂应走指定通道，接受门卫检查，限速5公里/小时行驶。</p>
+        <p>3. 进入生产区域须由接待人员全程陪同，未经许可不得单独行动。</p>
+        <p>4. 进入生产现场必须佩戴安全帽、反光背心等防护用品。</p>
+        <p>5. 严禁在厂区内吸烟、饮酒，严禁携带易燃易爆物品入厂。</p>
+        <p>6. 严禁触碰、操作任何生产设备、阀门、管道及电气设施。</p>
+        <p>7. 厂区内请走人行通道，注意避让叉车及运输车辆。</p>
+        <p>8. 如遇紧急情况，请听从现场工作人员指挥，沿安全通道撤离。</p>
+        <p>9. 外来施工人员须持有效证件，办理相关审批手续后方可作业。</p>
+        <p>10. 未经许可不得擅自拍照、录像，涉及商业秘密区域禁止拍摄。</p>
+        <p>11. 访客在厂区内发生的一切人身伤害，由本人及派出单位承担相应责任。</p>
+        <p>12. 本人已阅读并理解以上告知内容，承诺严格遵守各项安全管理规定。</p>
+      </div>
+      <div style="flex-shrink:0;border-top:1px solid #E2E8F0;padding:12px 16px 16px;">
+        <div class="notice-popup-countdown" id="step2-popup-countdown">请仔细阅读（<span id="step2-popup-timer">3</span>秒后可关闭）</div>
+        <button class="notice-popup-close" id="step2-popup-close-btn" disabled onclick="closeStep2Notice()">我已阅读并知晓</button>
+      </div>
+    </div>
+  </div>
+  <!-- 答题未完成弹窗 -->
+  <div id="step2-quiz-incomplete" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1001;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fff;border-radius:16px;width:100%;padding:24px 20px;text-align:center;">
+      <div style="font-size:48px;margin-bottom:12px;">❗</div>
+      <div style="font-size:18px;font-weight:700;color:#DC2626;margin-bottom:8px;">提交失败</div>
+      <div style="font-size:14px;color:#64748B;line-height:1.6;margin-bottom:20px;">请先完成所有题目再提交！</div>
+      <button onclick="document.getElementById('step2-quiz-incomplete').style.display='none'" style="padding:12px 40px;border-radius:10px;font-size:15px;font-weight:600;border:none;cursor:pointer;background:#2563EB;color:#fff;">修改答题</button>
+    </div>
+  </div>
+  <!-- 答题错误弹窗 -->
+  <div id="step2-quiz-error" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1001;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fff;border-radius:16px;width:100%;padding:24px 20px;text-align:center;">
+      <div style="font-size:32px;margin-bottom:8px;">❗</div>
+      <div style="font-size:16px;font-weight:600;color:#1E293B;margin-bottom:6px;">提交失败</div>
+      <div style="font-size:13px;color:#64748B;margin-bottom:16px;" id="step2-error-msg">第（1、2、3）题回答错误<br>请重新修改提交！</div>
+      <button class="btn btn-primary" style="width:100%;" onclick="document.getElementById('step2-quiz-error').style.display='none'">修改答题</button>
+    </div>
+  </div>
+  <!-- 签字弹窗 -->
+  <div id="step2-signature-overlay" style="display:none;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1002;align-items:center;justify-content:center;padding:20px;">
+    <div style="background:#fff;border-radius:16px;width:100%;padding:24px 20px;">
+      <div style="font-size:16px;font-weight:600;text-align:center;margin-bottom:12px;color:#1E293B;">✍️ 请在下方签名确认</div>
+      <canvas id="step2-signature-canvas" style="width:100%;height:150px;border:2px dashed #CBD5E1;border-radius:10px;background:#F8FAFC;touch-action:none;"></canvas>
+      <div style="display:flex;gap:10px;margin-top:14px;">
+        <button class="btn btn-outline" style="flex:1;font-size:13px;" onclick="clearStep2Signature()">清除重签</button>
+        <button class="btn btn-primary" style="flex:1;font-size:13px;" onclick="confirmStep2Signature()">确认提交</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 步骤3：预约登记页 ==================== -->
+<div id="ov-page-3" class="ov-page">
+  <div class="nav-bar">
+    <button class="back-btn">‹</button>
+    <div class="title">预约登记</div>
+  </div>
+  <div class="registration-tip-bar">ⓘ 此次个人信息收集仅用于公司内部管理，公司严格保密</div>
+  <div class="card">
+    <div style="display:flex;flex-wrap:wrap;margin-bottom:4px;">
+      <div class="visitor-type-badge"><span class="vtb-label">基地：</span>红牛（本基地）</div>
+      <div class="visitor-type-badge"><span class="vtb-label">类型：</span>一般访客</div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">来访信息</div>
+    <div class="reg-form-group"><label class="reg-label"><span class="required">*</span>访客姓名</label><input class="reg-input" type="text" placeholder="请输入"></div>
+    <div class="reg-form-group"><label class="reg-label"><span class="required">*</span>身份证号</label><input class="reg-input" type="text" placeholder="请输入"></div>
+    <div class="reg-form-group"><label class="reg-label"><span class="required">*</span>性别</label><input class="reg-input" type="text" value="身份证自动获取" readonly></div>
+    <div class="reg-form-group"><label class="reg-label"><span class="required">*</span>访客单位</label><input class="reg-input" type="text" placeholder="请输入"></div>
+    <div class="reg-form-group"><label class="reg-label"><span class="required">*</span>联系电话</label><input class="reg-input" type="tel" placeholder="请输入"></div>
+    <div class="reg-form-group"><label class="reg-label"><span class="required">*</span>接待部门</label><select class="reg-input"><option value="">请选择接待部门</option><option>储运采购部</option><option>生产部</option><option>安全部</option><option>行政部</option></select></div>
+    <div class="reg-form-group"><label class="reg-label"><span class="required">*</span>接待人</label><input class="reg-input" type="text" placeholder="请输入接待人"></div>
+    <div class="reg-form-group"><label class="reg-label"><span class="required">*</span>计划停留时间</label><div class="time-range-display" onclick="document.getElementById('time-range-popup').style.display='flex'"><span id="time-range-text" style="color:#CBD5E1;">请选择停留时间区间</span><span class="arrow">▼</span></div></div>
+    <div class="reg-form-group"><label class="reg-label"><span class="required">*</span>访问事由</label><select class="reg-input"><option value="">请选择访问事由</option><option>检查</option><option>业务洽谈</option><option>施工维修</option><option>送货</option><option>其他</option></select></div>
+    <div class="reg-form-group"><label class="reg-label">备注</label><input class="reg-input" type="text" placeholder="请输入备注"></div>
+    <div class="reg-form-group"><label class="reg-label">人脸图片</label><div class="reg-upload-area"><div class="upload-icon">📷</div><div class="upload-text">点击上传人脸照片</div></div></div>
+  </div>
+  <div class="card">
+    <div class="card-title">来访车辆（选填）</div>
+    <div class="reg-form-group">
+      <label class="reg-label">车牌号</label>
+      <div class="reg-plate-row"><input class="reg-input" type="text" placeholder="请输入车牌号"><span class="reg-plate-tag">新能源</span></div>
+    </div>
+  </div>
+  <div class="reg-submit-bar"><button class="reg-submit-btn">提交申请</button></div>
+</div>
+
+<!-- ==================== 步骤4：我的预约列表 ==================== -->
+<div id="ov-page-4" class="ov-page">
+  <div class="nav-bar"><div class="title">我的预约</div></div>
+  <div style="display:flex;background:#fff;">
+    <div style="flex:1;text-align:center;padding:10px 0;font-size:13px;color:#2563EB;border-bottom:2px solid #2563EB;font-weight:500;">我的预约</div>
+    <div style="flex:1;text-align:center;padding:10px 0;font-size:13px;color:#94A3B8;border-bottom:2px solid transparent;">进厂记录</div>
+  </div>
+  <div class="reservation-card">
+    <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-approved">已审核</span></div>
+    <div class="reservation-info"><span>🚗 京A·12345</span><span>📅 2026-07-01</span></div>
+    <div style="margin-top:4px;font-size:11px;color:#64748B;">红牛-本基地 · 一般访客 · 接待人：李经理</div>
+    <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;font-size:10px;">
+      <span style="background:#F0F9FF;color:#0284C7;padding:2px 6px;border-radius:4px;">🕐 07-01 08:00~18:00</span>
+      <span style="background:#F0FDF4;color:#16A34A;padding:2px 6px;border-radius:4px;">🚪 东门岗</span>
+    </div>
+    <div style="margin-top:8px;"><button class="btn btn-primary" style="width:100%;padding:7px 0;font-size:12px;border-radius:8px;">📱 打开核销码</button></div>
+  </div>
+  <div class="reservation-card">
+    <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-pending">待审核</span></div>
+    <div class="reservation-info"><span>🚗 京B·67890</span><span>📅 2026-07-05</span></div>
+    <div style="margin-top:4px;font-size:11px;color:#64748B;">奥瑞金 · 外来施工 · 接待人：王主管</div>
+  </div>
+  <div class="reservation-card">
+    <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-rejected">已驳回</span></div>
+    <div class="reservation-info"><span>🚗 京C·11111</span><span>📅 2026-06-28</span></div>
+    <div style="margin-top:4px;font-size:11px;color:#64748B;">力美 · 成品发运 · 接待人：赵主任</div>
+  </div>
+  <div class="reservation-card">
+    <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-cancelled">已取消</span></div>
+    <div class="reservation-info"><span>🚗 京D·22222</span><span>📅 2026-06-25</span></div>
+    <div style="margin-top:4px;font-size:11px;color:#64748B;">红牛-本基地 · 辅料备件送货 · 接待人：孙班长</div>
+  </div>
+</div>
+
+<!-- ==================== 步骤5：审批通过（审批视角） ==================== -->
+<div id="ov-page-5" class="ov-page">
+  <div class="nav-bar"><div class="title">我的预约</div></div>
+  <div class="step5-label">📌 审批流程视角：展示已审核/待审核/已驳回状态的预约</div>
+  <div class="reservation-card">
+    <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-approved">已审核</span></div>
+    <div class="reservation-info"><span>🚗 京A·12345</span><span>📅 2026-07-01</span></div>
+    <div style="margin-top:4px;font-size:11px;color:#64748B;">红牛-本基地 · 一般访客 · 接待人：李经理</div>
+    <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;font-size:10px;">
+      <span style="background:#F0F9FF;color:#0284C7;padding:2px 6px;border-radius:4px;">🕐 07-01 08:00~18:00</span>
+      <span style="background:#F0FDF4;color:#16A34A;padding:2px 6px;border-radius:4px;">🚪 东门岗</span>
+    </div>
+  </div>
+  <div class="reservation-card">
+    <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-pending">待审核</span></div>
+    <div class="reservation-info"><span>🚗 京B·67890</span><span>📅 2026-07-05</span></div>
+    <div style="margin-top:4px;font-size:11px;color:#64748B;">奥瑞金 · 外来施工 · 接待人：王主管</div>
+  </div>
+  <div class="reservation-card">
+    <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-rejected">已驳回</span></div>
+    <div class="reservation-info"><span>🚗 京C·11111</span><span>📅 2026-06-28</span></div>
+    <div style="margin-top:4px;font-size:11px;color:#64748B;">力美 · 成品发运 · 接待人：赵主任</div>
+    <div style="margin-top:6px;background:#FEF2F2;border-radius:6px;padding:6px 8px;font-size:11px;color:#DC2626;">驳回原因：来访事由描述不清晰</div>
+  </div>
+  <div style="padding:20px 14px;text-align:center;">
+    <div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+      <div style="font-size:13px;color:#64748B;margin-bottom:8px;">审批流程</div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;">
+        <span style="background:#F0FDF4;color:#16A34A;padding:4px 10px;border-radius:6px;">✓ 外部预审</span>
+        <span style="color:#CBD5E1;">→</span>
+        <span style="background:#F0FDF4;color:#16A34A;padding:4px 10px;border-radius:6px;">✓ 内部审批</span>
+        <span style="color:#CBD5E1;">→</span>
+        <span style="background:#EFF6FF;color:#2563EB;padding:4px 10px;border-radius:6px;">等待确认到达</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 步骤6：确认到达 ==================== -->
+<div id="ov-page-6" class="ov-page">
+  <div class="nav-bar"><div class="title">我的预约</div></div>
+  <div class="step6-label">📍 访客到达门岗后，点击"确认到达"按钮</div>
+  <div class="reservation-card" style="border:2px solid #16A34A;">
+    <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-approved">已审核</span></div>
+    <div class="reservation-info"><span>🚗 京E·55555</span><span>📅 2026-07-02</span></div>
+    <div style="margin-top:4px;font-size:11px;color:#64748B;">红牛-本基地 · 原料送货 · 接待人：李经理</div>
+    <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;font-size:10px;">
+      <span style="background:#F0F9FF;color:#0284C7;padding:2px 6px;border-radius:4px;">🕐 07-02 08:00~18:00</span>
+      <span style="background:#F0FDF4;color:#16A34A;padding:2px 6px;border-radius:4px;">🚪 东门岗</span>
+    </div>
+    <div id="step6-confirm-section" style="margin-top:10px;">
+      <button class="btn" onclick="confirmStep6Arrival()" style="width:100%;padding:10px 0;font-size:14px;border-radius:8px;background:#16A34A;color:#fff;font-weight:600;box-shadow:0 4px 12px rgba(22,163,74,0.3);">✅ 确认到达</button>
+    </div>
+    <div id="step6-waiting-section" style="display:none;margin-top:10px;">
+      <div style="background:#FFF7ED;border:1px solid #FDBA74;border-radius:8px;padding:10px 12px;text-align:center;font-size:13px;color:#EA580C;font-weight:500;">
+        ⏳ 未叫号，请等待
+      </div>
+    </div>
+  </div>
+  <div style="padding:12px 14px;">
+    <div style="background:#fff;border-radius:12px;padding:16px;box-shadow:0 2px 8px rgba(0,0,0,0.06);text-align:center;">
+      <div style="font-size:24px;margin-bottom:8px;">👆</div>
+      <div style="font-size:13px;color:#16A34A;font-weight:600;">到达门岗后点击此按钮</div>
+      <div style="font-size:12px;color:#94A3B8;margin-top:4px;">确认后进入叫号等待</div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 步骤7：叫号信息/核销码 ==================== -->
+<div id="ov-page-7" class="ov-page">
+  <div class="nav-bar">
+    <button class="back-btn">‹</button>
+    <div class="title">核销码</div>
+  </div>
+  <div class="step7-label">⏳ 确认到达后，系统生成核销码，等待叫号</div>
+  <div class="qr-container">
+    <div style="margin-bottom:16px;">
+      <div style="font-size:16px;font-weight:600;color:#1E293B;">张三</div>
+      <div style="font-size:12px;color:#64748B;margin-top:2px;">京A·12345 · 2026-07-01 08:00~18:00</div>
+    </div>
+    <div class="qr-box">
+      <div class="qr-placeholder">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <rect x="0" y="0" width="200" height="200" fill="#fff"/>
+          <rect x="10" y="10" width="50" height="50" rx="4" fill="none" stroke="#1E293B" stroke-width="6"/>
+          <rect x="22" y="22" width="26" height="26" rx="2" fill="#1E293B"/>
+          <rect x="140" y="10" width="50" height="50" rx="4" fill="none" stroke="#1E293B" stroke-width="6"/>
+          <rect x="152" y="22" width="26" height="26" rx="2" fill="#1E293B"/>
+          <rect x="10" y="140" width="50" height="50" rx="4" fill="none" stroke="#1E293B" stroke-width="6"/>
+          <rect x="22" y="152" width="26" height="26" rx="2" fill="#1E293B"/>
+          <rect x="75" y="15" width="8" height="8" fill="#1E293B"/><rect x="90" y="15" width="8" height="8" fill="#1E293B"/>
+          <rect x="105" y="15" width="8" height="8" fill="#1E293B"/><rect x="120" y="15" width="8" height="8" fill="#1E293B"/>
+          <rect x="75" y="28" width="8" height="8" fill="#1E293B"/><rect x="105" y="28" width="8" height="8" fill="#1E293B"/>
+          <rect x="75" y="41" width="8" height="8" fill="#1E293B"/><rect x="90" y="41" width="8" height="8" fill="#1E293B"/>
+          <rect x="120" y="41" width="8" height="8" fill="#1E293B"/>
+          <rect x="15" y="75" width="8" height="8" fill="#1E293B"/><rect x="30" y="75" width="8" height="8" fill="#1E293B"/>
+          <rect x="45" y="75" width="8" height="8" fill="#1E293B"/><rect x="75" y="75" width="8" height="8" fill="#1E293B"/>
+          <rect x="90" y="75" width="8" height="8" fill="#1E293B"/><rect x="105" y="75" width="8" height="8" fill="#1E293B"/>
+          <rect x="135" y="75" width="8" height="8" fill="#1E293B"/><rect x="165" y="75" width="8" height="8" fill="#1E293B"/>
+          <rect x="180" y="75" width="8" height="8" fill="#1E293B"/>
+          <rect x="15" y="90" width="8" height="8" fill="#1E293B"/><rect x="45" y="90" width="8" height="8" fill="#1E293B"/>
+          <rect x="75" y="90" width="8" height="8" fill="#1E293B"/><rect x="120" y="90" width="8" height="8" fill="#1E293B"/>
+          <rect x="150" y="90" width="8" height="8" fill="#1E293B"/><rect x="180" y="90" width="8" height="8" fill="#1E293B"/>
+          <rect x="15" y="105" width="8" height="8" fill="#1E293B"/><rect x="30" y="105" width="8" height="8" fill="#1E293B"/>
+          <rect x="45" y="105" width="8" height="8" fill="#1E293B"/><rect x="75" y="105" width="8" height="8" fill="#1E293B"/>
+          <rect x="90" y="105" width="8" height="8" fill="#1E293B"/><rect x="105" y="105" width="8" height="8" fill="#1E293B"/>
+          <rect x="120" y="105" width="8" height="8" fill="#1E293B"/><rect x="135" y="105" width="8" height="8" fill="#1E293B"/>
+          <rect x="150" y="105" width="8" height="8" fill="#1E293B"/><rect x="165" y="105" width="8" height="8" fill="#1E293B"/>
+          <rect x="180" y="105" width="8" height="8" fill="#1E293B"/>
+          <rect x="75" y="140" width="8" height="8" fill="#1E293B"/><rect x="90" y="140" width="8" height="8" fill="#1E293B"/>
+          <rect x="120" y="140" width="8" height="8" fill="#1E293B"/><rect x="135" y="140" width="8" height="8" fill="#1E293B"/>
+          <rect x="150" y="140" width="8" height="8" fill="#1E293B"/><rect x="180" y="140" width="8" height="8" fill="#1E293B"/>
+          <rect x="75" y="155" width="8" height="8" fill="#1E293B"/><rect x="105" y="155" width="8" height="8" fill="#1E293B"/>
+          <rect x="135" y="155" width="8" height="8" fill="#1E293B"/><rect x="165" y="155" width="8" height="8" fill="#1E293B"/>
+          <rect x="75" y="170" width="8" height="8" fill="#1E293B"/><rect x="90" y="170" width="8" height="8" fill="#1E293B"/>
+          <rect x="105" y="170" width="8" height="8" fill="#1E293B"/><rect x="120" y="170" width="8" height="8" fill="#1E293B"/>
+          <rect x="150" y="170" width="8" height="8" fill="#1E293B"/><rect x="180" y="170" width="8" height="8" fill="#1E293B"/>
+        </svg>
+      </div>
+    </div>
+    <div class="qr-status valid">✓ 核销码有效</div>
+    <div class="qr-refresh-tip">核销码每分钟自动刷新</div>
+    <div class="qr-countdown">下次刷新：00:45</div>
+    <!-- 叫号信息 -->
+    <div style="margin-top:16px;padding:0 10px;text-align:left;">
+      <div style="background:#EFF6FF;border:1px solid #BFDBFE;border-radius:10px;padding:12px;">
+        <div style="font-size:13px;font-weight:600;color:#1E40AF;margin-bottom:8px;">📢 叫号信息</div>
+        <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;">
+          <div style="display:flex;justify-content:space-between;"><span style="color:#64748B;">指定门岗</span><span style="color:#1E293B;font-weight:500;">1号门</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:#64748B;">卸货点</span><span style="color:#1E293B;font-weight:500;">8卸货点</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="color:#64748B;">允许进入时段</span><span style="color:#2563EB;font-weight:600;">08:30 - 09:30</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:12px;padding:0 10px;">
+      <div class="time-block" style="text-align:left;"><div class="time-label">访客姓名</div><div class="time-value" style="font-size:13px;color:#1E293B;">张三</div></div>
+      <div class="time-block" style="text-align:left;margin-top:6px;"><div class="time-label">车牌号</div><div class="time-value" style="font-size:13px;color:#1E293B;">京A·12345</div></div>
+      <div class="time-block" style="text-align:left;margin-top:6px;"><div class="time-label">有效时间</div><div class="time-value" style="font-size:13px;color:#1E293B;">2026-07-01 08:00 ~ 18:00</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== 步骤8：核销入场 ==================== -->
+<div id="ov-page-8" class="ov-page" style="position:relative;">
+  <div class="nav-bar" style="background:#000;position:relative;top:0;">
+    <button class="back-btn">‹</button>
+    <div class="title">核销入场</div>
+  </div>
+  <div class="step89-label" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+    <span style="background:#F97316;color:#fff;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;">🛡️ 保安 / 仓管</span>
+    <span style="color:rgba(255,255,255,0.8);">核销工作台 · 确认入场</span>
+  </div>
+  <div class="scan-result-banner">
+    <div style="font-size:40px;margin-bottom:6px;">✓</div>
+    <div style="font-size:17px;font-weight:600;">扫码成功</div>
+  </div>
+  <div class="scan-result-body">
+    <div class="scan-info-card">
+      <div class="scan-info-row"><span class="si-label">访客姓名</span><span class="si-value">张三</span></div>
+      <div class="scan-info-row"><span class="si-label">车牌号</span><span class="si-value">京A·12345</span></div>
+      <div class="scan-info-row"><span class="si-label">访客类型</span><span class="si-value">一般访客</span></div>
+      <div class="scan-info-row"><span class="si-label">基地组织</span><span class="si-value">红牛-本基地</span></div>
+      <div class="scan-info-row"><span class="si-label">接待部门</span><span class="si-value">储运采购部</span></div>
+      <div class="scan-info-row"><span class="si-label">接待人</span><span class="si-value">李经理</span></div>
+      <div class="scan-info-row"><span class="si-label">有效时段</span><span class="si-value">07-01 08:00~18:00</span></div>
+    </div>
+    <button class="btn btn-success btn-block btn-lg" style="font-size:16px;" onclick="showStep8VerifyModal()">确认核销</button>
+    <button class="btn btn-outline btn-block" style="margin-top:10px;font-size:13px;">重新扫码</button>
+  </div>
+  <!-- 核销确认弹窗已移至phone-screen层级 -->
+</div>
+
+<!-- ==================== 步骤9：核销出场 ==================== -->
+<div id="ov-page-9" class="ov-page" style="position:relative;">
+  <div class="nav-bar" style="background:#000;position:relative;top:0;">
+    <button class="back-btn">‹</button>
+    <div class="title">核销出场</div>
+  </div>
+  <div class="step89-label" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+    <span style="background:#F97316;color:#fff;padding:3px 10px;border-radius:12px;font-size:11px;font-weight:600;">🛡️ 保安 / 仓管</span>
+    <span style="color:rgba(255,255,255,0.8);">扫码成功 → 确认离场 + 地磅称重</span>
+  </div>
+  <div class="scan-result-banner">
+    <div style="font-size:40px;margin-bottom:6px;">✓</div>
+    <div style="font-size:17px;font-weight:600;">扫码成功</div>
+  </div>
+  <div class="scan-result-body">
+    <div class="scan-info-card">
+      <div class="scan-info-row"><span class="si-label">访客姓名</span><span class="si-value">张三</span></div>
+      <div class="scan-info-row"><span class="si-label">车牌号</span><span class="si-value">京A·12345</span></div>
+      <div class="scan-info-row"><span class="si-label">访客类型</span><span class="si-value">一般访客</span></div>
+      <div class="scan-info-row"><span class="si-label">基地组织</span><span class="si-value">红牛-本基地</span></div>
+      <div class="scan-info-row"><span class="si-label">接待部门</span><span class="si-value">储运采购部</span></div>
+      <div class="scan-info-row"><span class="si-label">接待人</span><span class="si-value">李经理</span></div>
+      <div class="scan-info-row"><span class="si-label">有效时段</span><span class="si-value">07-01 08:00~18:00</span></div>
+    </div>
+    <button class="btn btn-success btn-block btn-lg" style="font-size:16px;" onclick="showStep9VerifyModal()">确认核销</button>
+    <button class="btn btn-outline btn-block" style="margin-top:10px;font-size:13px;">重新扫码</button>
+  </div>
+  <!-- 核销确认弹窗已移至phone-screen层级 -->
+</div>
+
+        </div><!-- end phone-content -->
+
+  <!-- ========== 访客类型确认弹窗（步骤1） ========== -->
+  <div class="type-confirm-overlay" id="type-confirm-overlay">
+    <div class="type-confirm-card">
+      <div class="type-confirm-icon">📋</div>
+      <div class="type-confirm-title" id="type-confirm-title">访客类型确认</div>
+      <div class="type-confirm-desc" id="type-confirm-desc">描述内容</div>
+      <div class="type-confirm-btns">
+        <button class="type-confirm-btn cancel" onclick="closeTypeConfirm()">取消</button>
+        <button class="type-confirm-btn confirm" onclick="confirmTypeSelection()">确认</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 核销确认弹窗（步骤8） ========== -->
+  <div class="modal-overlay" id="step8-verify-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-title">核销确认</span>
+        <button class="modal-close" onclick="closeStep8VerifyModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="summary-row">
+          <div class="item"><span class="label">访客姓名</span><span class="value">张三</span></div>
+          <div class="item"><span class="label">车牌号</span><span class="value">京A·12345</span></div>
+          <div class="item"><span class="label">访客类型</span><span class="value">一般访客</span></div>
+          <div class="item"><span class="label">基地组织</span><span class="value">红牛-本基地</span></div>
+          <div class="item"><span class="label">接待部门</span><span class="value">储运采购部</span></div>
+          <div class="item"><span class="label">接待人</span><span class="value">李经理</span></div>
+        </div>
+        <div class="section-title">允许进入时段</div>
+        <div class="time-block">
+          <div style="display:flex;justify-content:space-between;">
+            <div><div class="time-label">开始时间</div><div class="time-value" style="font-size:13px;">2026-07-01 08:00</div></div>
+            <div style="text-align:right;"><div class="time-label">结束时间</div><div class="time-value" style="font-size:13px;">2026-07-01 18:00</div></div>
+          </div>
+        </div>
+        <div class="section-title">核销原因</div>
+        <div class="radio-group" id="step8-verify-reason">
+          <div class="radio-item selected" onclick="selectStep8Radio(this,'step8-verify-reason')"><div class="dot"></div>确认入场</div>
+          <div class="radio-item" onclick="selectStep8Radio(this,'step8-verify-reason')"><div class="dot"></div>确认离场</div>
+        </div>
+        <div class="section-title">触发类型</div>
+        <div class="radio-group" id="step8-verify-trigger">
+          <div class="radio-item" onclick="selectStep8Radio(this,'step8-verify-trigger')"><div class="dot"></div>手动</div>
+          <div class="radio-item selected" onclick="selectStep8Radio(this,'step8-verify-trigger')"><div class="dot"></div>扫码</div>
+          <div class="radio-item" onclick="selectStep8Radio(this,'step8-verify-trigger')"><div class="dot"></div>门禁</div>
+        </div>
+        <div class="section-title">核销时间</div>
+        <div class="time-block"><div class="time-label">核销时间</div><div class="time-value" style="font-size:13px;">2026-07-01 08:32:15</div></div>
+      </div>
+      <div class="modal-footer">
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline" style="flex:1;" onclick="closeStep8VerifyModal()">取消</button>
+          <button class="btn btn-success" style="flex:1;" onclick="confirmStep8Verify()">确认核销</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== 核销确认弹窗（步骤9，含地磅） ========== -->
+  <div class="modal-overlay" id="step9-verify-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <span class="modal-title">核销确认</span>
+        <button class="modal-close" onclick="closeStep9VerifyModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="summary-row">
+          <div class="item"><span class="label">访客姓名</span><span class="value">张三</span></div>
+          <div class="item"><span class="label">车牌号</span><span class="value">京A·12345</span></div>
+          <div class="item"><span class="label">访客类型</span><span class="value">一般访客</span></div>
+          <div class="item"><span class="label">基地组织</span><span class="value">红牛-本基地</span></div>
+          <div class="item"><span class="label">接待部门</span><span class="value">储运采购部</span></div>
+          <div class="item"><span class="label">接待人</span><span class="value">李经理</span></div>
+        </div>
+        <div class="section-title">允许进入时段</div>
+        <div class="time-block">
+          <div style="display:flex;justify-content:space-between;">
+            <div><div class="time-label">开始时间</div><div class="time-value" style="font-size:13px;">2026-07-01 08:00</div></div>
+            <div style="text-align:right;"><div class="time-label">结束时间</div><div class="time-value" style="font-size:13px;">2026-07-01 18:00</div></div>
+          </div>
+        </div>
+        <div class="section-title">核销原因</div>
+        <div class="radio-group" id="step9-verify-reason">
+          <div class="radio-item" onclick="selectStep9Radio(this,'step9-verify-reason');toggleStep9Weigh();"><div class="dot"></div>确认入场</div>
+          <div class="radio-item selected" onclick="selectStep9Radio(this,'step9-verify-reason');toggleStep9Weigh();"><div class="dot"></div>确认离场</div>
+        </div>
+        <div class="section-title">触发类型</div>
+        <div class="radio-group" id="step9-verify-trigger">
+          <div class="radio-item" onclick="selectStep9Radio(this,'step9-verify-trigger')"><div class="dot"></div>手动</div>
+          <div class="radio-item selected" onclick="selectStep9Radio(this,'step9-verify-trigger')"><div class="dot"></div>扫码</div>
+          <div class="radio-item" onclick="selectStep9Radio(this,'step9-verify-trigger')"><div class="dot"></div>门禁</div>
+        </div>
+        <div class="weigh-section" id="step9-weigh-section">
+          <div class="weigh-title">⚖️ 地磅称重信息</div>
+          <div class="weigh-row"><span style="color:#64748B;">设备状态</span><span style="display:inline-flex;align-items:center;gap:4px;font-size:11px;color:#DC2626;">● 设备未连接</span></div>
+          <div class="weigh-row"><span style="color:#64748B;">称重输入</span><input type="text" placeholder="请输入重量" style="border:1px solid #E2E8F0;border-radius:6px;padding:5px 8px;font-size:12px;width:120px;outline:none;"></div>
+          <div style="font-size:11px;color:#EA580C;margin-top:6px;">⚠️ 设备未连接，请手动输入称重数值（吨）</div>
+        </div>
+        <div class="section-title">核销时间</div>
+        <div class="time-block"><div class="time-label">核销时间</div><div class="time-value" style="font-size:13px;">2026-07-01 17:15:30</div></div>
+      </div>
+      <div class="modal-footer">
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline" style="flex:1;" onclick="closeStep9VerifyModal()">取消</button>
+          <button class="btn btn-success" style="flex:1;" onclick="confirmStep9Verify()">确认核销</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 核销成功弹窗 -->
+  <div class="modal-overlay" id="ov-verify-success-modal">
+    <div style="background:#fff;border-radius:16px;width:80%;max-width:280px;padding:24px 16px;text-align:center;animation:slideUp 0.3s ease;margin:auto;">
+      <div style="font-size:40px;margin-bottom:10px;">✅</div>
+      <div style="font-size:16px;font-weight:600;color:#1E293B;margin-bottom:6px;">核销成功</div>
+      <div class="verify-success-msg" style="font-size:13px;color:#64748B;margin-bottom:16px;">已确认入场，核销完成</div>
+      <button class="btn btn-primary btn-block" onclick="closeVerifySuccess()">确定</button>
+    </div>
+  </div>
+
+  <!-- 时间区间选择弹窗 -->
+  <div id="time-range-popup" class="time-range-popup" style="display:none;" onclick="if(event.target===this)this.style.display='none'">
+    <div class="time-range-sheet">
+      <div class="tr-title">选择停留时间区间</div>
+      <div class="tr-row">
+        <span class="tr-label">开始</span>
+        <input class="tr-input" type="datetime-local" id="tr-start">
+      </div>
+      <div class="tr-row">
+        <span class="tr-label">结束</span>
+        <input class="tr-input" type="datetime-local" id="tr-end">
+      </div>
+      <button class="tr-confirm" onclick="confirmTimeRange()">确认</button>
+    </div>
+  </div>
+
+  <!-- 提交成功弹窗 -->
+  <div class="modal-overlay" id="ov-reg-success" style="align-items:center;justify-content:center;">
+    <div style="background:#fff;border-radius:16px;width:80%;max-width:280px;padding:24px;text-align:center;animation:slideUp 0.3s ease;">
+      <div style="font-size:40px;margin-bottom:10px;">✅</div>
+      <div style="font-size:16px;font-weight:600;color:#1E293B;margin-bottom:6px;">预约提交成功</div>
+      <div style="font-size:13px;color:#64748B;">正在跳转到我的预约...</div>
+    </div>
+  </div>
+
+      </div><!-- end phone-screen -->
+    </div><!-- end phone-frame -->
+  </div><!-- end phone-section -->
+
+  <!-- ========== 黑名单拦截效果演示（菜单项"黑名单限制说明"） ========== -->
+  <div id="ov-page-extra" class="ov-extra-section" style="display:none;">
+<div class="dual-phone-wrapper" id="dual-phone-wrapper">
+
+    <!-- ========== 左侧手机：登录拦截 ========== -->
+    <div class="dual-phone-cell">
+      <div class="cell-title">场景一：登录时被拦截</div>
+      <div class="cell-subtitle">访客进入登录页输入手机号 → 系统识别黑名单 → 验证码无法发送、登录按钮禁用 → 展示拉黑原因</div>
+      <div class="dual-phone-frame">
+        <div class="dual-phone-notch"></div>
+        <div class="dual-phone-screen">
+          <div class="dual-phone-content">
+
+            <!-- 状态栏 -->
+            <div class="status-bar">
+              <span class="time">9:41</span>
+              <span class="icons"><span>📶</span><span>📡</span><span>🔋</span></span>
+            </div>
+
+            <!-- 独立登录页（黑名单场景） -->
+            <div style="position:relative;min-height:100%;background:linear-gradient(180deg,#1E3A8A 0%,#1E40AF 40%,#3B82F6 100%);padding:48px 20px 20px;display:flex;flex-direction:column;align-items:center;">
+
+              <!-- 顶部 Logo -->
+              <div style="width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:14px;backdrop-filter:blur(10px);"></div>
+
+              <!-- 标题 -->
+              <div style="color:#fff;font-size:18px;font-weight:700;text-align:center;margin-bottom:3px;line-height:1.4;">欢迎来到<br>红牛访客预约平台</div>
+              <div style="color:rgba(255,255,255,0.55);font-size:12px;text-align:center;margin-bottom:24px;">手机号快捷登录</div>
+
+              <!-- 手机号输入框 -->
+              <div style="width:100%;background:rgba(255,255,255,0.97);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:8px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.15);">
+                <span style="color:#6B7280;font-size:13px;font-weight:500;padding-right:8px;border-right:1px solid #E5E7EB;">+86</span>
+                <input type="tel" value="138****5678" readonly style="flex:1;border:none;outline:none;background:transparent;font-size:15px;color:#111827;letter-spacing:1px;">
+              </div>
+
+              <!-- 验证码输入框 -->
+              <div style="width:100%;background:rgba(255,255,255,0.97);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:10px;margin-bottom:20px;border:1px solid rgba(255,255,255,0.15);">
+                <input type="text" placeholder="请输入验证码" disabled style="flex:1;border:none;outline:none;background:transparent;font-size:15px;color:#9CA3AF;letter-spacing:4px;">
+              </div>
+
+              <!-- 登录按钮（禁用态） -->
+              <button id="login-btn-blacklist" style="width:100%;padding:14px 0;background:rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);border:none;border-radius:22px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:16px;backdrop-filter:blur(10px);letter-spacing:2px;" onclick="document.getElementById('login-blacklist-popup').style.display='flex'">登 录</button>
+
+              <!-- 底部提示 -->
+              <div style="margin-top:auto;padding-top:20px;text-align:center;">
+                <div style="color:rgba(255,255,255,0.5);font-size:11px;margin-bottom:4px;">📋 我的预约 ›</div>
+                <div style="color:rgba(255,255,255,0.3);font-size:10px;">*黑名单拦截基于访客手机号匹配，各基地独立维护</div>
+              </div>
+              <!-- 登录限制弹窗（默认弹出） -->
+              <div id="login-blacklist-popup" style="display:flex;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);">
+                <div style="width:85%;max-width:280px;background:#fff;border-radius:16px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+                  <div style="width:48px;height:48px;border-radius:50%;background:#FEE2E2;display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 9v4m0 4h.01M12 2L2 22h20L12 2z" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div style="color:#991B1B;font-size:16px;font-weight:700;margin-bottom:6px;">登录限制</div>
+                  <div style="width:100%;background:#FEF2F2;border-radius:8px;padding:12px;margin-bottom:16px;border:1px solid #FECACA;">
+                    <div style="font-weight:600;color:#991B1B;font-size:11px;margin-bottom:4px;">拉黑类型</div>
+                    <div style="font-size:12px;color:#7F1D1D;line-height:1.5;margin-bottom:8px;">人员账号</div>
+                    <div style="font-weight:600;color:#991B1B;font-size:11px;margin-bottom:4px;">拉黑原因</div>
+                    <div style="font-size:12px;color:#7F1D1D;line-height:1.5;">多次违反厂区安全规定（未佩戴安全帽进入生产区、擅自进入仓储禁区）。</div>
+                  </div>
+                  <button onclick="document.getElementById('login-blacklist-popup').style.display='none'" style="width:100%;padding:12px 0;background:#DC2626;color:#fff;border:none;border-radius:22px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:1px;">我知道了</button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 右侧手机：登记提交拦截 ========== -->
+    <div class="dual-phone-cell">
+      <div class="cell-title">场景二：提交登记时被拦截</div>
+      <div class="cell-subtitle">访客已登录并填写完登记信息 → 提交时系统识别黑名单 → 阻断提交并提示拉黑原因</div>
+      <div class="dual-phone-frame">
+        <div class="dual-phone-notch"></div>
+        <div class="dual-phone-screen">
+          <div class="dual-phone-content" style="position:relative;">
+
+            <!-- 状态栏 -->
+            <div class="status-bar">
+              <span class="time">9:41</span>
+              <span class="icons"><span>📶</span><span>📡</span><span>🔋</span></span>
+            </div>
+
+            <!-- 导航栏 -->
+            <div class="nav-bar">
+              <button class="back-btn">‹</button>
+              <div class="title">预约登记</div>
+              <span style="font-size:18px;margin-left:auto;cursor:pointer;margin-right:8px;opacity:0.7;">···</span>
+            </div>
+
+            <!-- 隐私提示条 -->
+            <div class="registration-tip-bar">
+              ⓘ 此次个人信息收集仅用于公司内部管理，公司严格保密
+            </div>
+
+            <!-- 访客类型标记 -->
+            <div class="card">
+              <div style="display:flex;flex-wrap:wrap;margin-bottom:4px;">
+                <div class="visitor-type-badge">
+                  <span class="vtb-label">基地：</span>
+                  <span>红牛（本基地）</span>
+                </div>
+                <div class="visitor-type-badge">
+                  <span class="vtb-label">类型：</span>
+                  <span>一般访客</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 来访信息表单（已填写） -->
+            <div class="card">
+              <div class="card-title">来访信息</div>
+
+              <div class="reg-form-group">
+                <label class="reg-label"><span class="required">*</span>访客姓名</label>
+                <input class="reg-input" type="text" value="张三" readonly style="color:#111827;">
+              </div>
+              <div class="reg-form-group">
+                <label class="reg-label"><span class="required">*</span>身份证号</label>
+                <input class="reg-input" type="text" value="3301**********1234" readonly style="color:#111827;">
+              </div>
+              <div class="reg-form-group">
+                <label class="reg-label"><span class="required">*</span>性别</label>
+                <input class="reg-input" type="text" value="男" readonly style="color:#111827;">
+              </div>
+              <div class="reg-form-group">
+                <label class="reg-label"><span class="required">*</span>访客单位</label>
+                <input class="reg-input" type="text" value="某某物流公司" readonly style="color:#111827;">
+              </div>
+              <div class="reg-form-group">
+                <label class="reg-label"><span class="required">*</span>联系电话</label>
+                <input class="reg-input" type="tel" value="138****5678" readonly style="color:#DC2626;background:#FEF2F2;">
+              </div>
+              <div class="reg-form-group">
+                <label class="reg-label"><span class="required">*</span>接待部门</label>
+                <input class="reg-input" type="text" value="储运采购部" readonly style="color:#111827;">
+              </div>
+              <div class="reg-form-group">
+                <label class="reg-label"><span class="required">*</span>接待人</label>
+                <input class="reg-input" type="text" value="李经理" readonly style="color:#111827;">
+              </div>
+
+              <div style="height:8px;"></div>
+            </div>
+
+            <div style="height:80px;"></div>
+
+            <!-- 底部提交按钮（禁用态） -->
+            <div class="reg-submit-bar" style="background:#fff;border-top:1px solid #FECACA;">
+              <button class="bl-submit-btn-disabled" onclick="this.closest('.dual-phone-content').querySelector('.blacklist-modal-overlay').style.display='none'">提交申请 · 黑名单拦截中</button>
+            </div>
+
+            <!-- 全屏黑名单拦截弹窗 -->
+            <div class="blacklist-modal-overlay" style="display:flex;">
+              <div class="blacklist-modal">
+                <div class="bm-icon">✕</div>
+                <div class="bm-title">登记提交失败</div>
+                <div class="bm-desc">该手机号已被加入黑名单，本次登记无法提交</div>
+                <div class="bm-reason">
+                  <div><strong>拉黑类型：</strong>车辆车牌</div>
+                  <div><strong>手机号：</strong>138****5678</div>
+                  <div><strong>车牌号：</strong>京A·12345</div>
+                  <div style="margin-top:6px;"><strong>拉黑原因：</strong></div>
+                  <div>多次违反厂区安全规定（未佩戴安全帽进入生产区、擅自进入仓储禁区）。</div>
+                </div>
+                <button class="bm-btn" onclick="this.closest('.blacklist-modal-overlay').style.display='none'">我知道了</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  </div>
+
+    <!-- 右侧配置说明面板 -->
+  <div class="config-panel">
+
+    <!-- 步骤1配置 -->
+    <div class="config-card active" id="config-1">
+      <div class="config-header">
+        <h3>📋 后台配置说明</h3>
+        <p>步骤 1 · 预约登录页</p>
+      </div>
+      <div class="config-body">
+        <div class="config-item">
+          <div class="config-item-title">🏢 选择访问组织</div>
+          <div class="config-item-desc">扫码进入时，若该基地配置了多组织选择，则弹出组织选择弹窗；否则直接进入。</div>
+          <div style="margin-top:8px;">
+            <span class="config-tag config-tag-blue">湖北</span>
+            <span class="config-tag config-tag-blue">广东</span>
+            <span class="config-tag config-tag-blue">江苏</span>
+            <span class="config-tag config-tag-gray">其他基地不开启</span>
+          </div>
+          <div class="config-note">💡 开启的基地在扫码进入时会弹出组织选择弹窗，未开启的基地直接进入下一步。</div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">🔗 扫码入口</div>
+          <div class="config-item-desc">访客通过扫描基地专属二维码进入预约登录页面，系统自动识别所属基地。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 步骤2配置 -->
+    <div class="config-card" id="config-2">
+      <div class="config-header">
+        <h3>📋 后台配置说明</h3>
+        <p>步骤 2 · 入场须知页</p>
+      </div>
+      <div class="config-body">
+        <div style="background:#EFF6FF;border-radius:8px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:#1E40AF;">
+          💡 适用于所有基地，各基地可自主配置
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">🎬 视频管理</div>
+          <div class="config-item-desc">基地自主上传视频，按访客类型分别配置，可设置是否允许拖动进度条。</div>
+          <div class="config-highlight">⚙️ 可配置项：上传视频（按访客类型）<br>• 是否允许拖动进度条</div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">📄 安全告知书</div>
+          <div class="config-item-desc">基地按访客类型编辑告知书内容，可开启强制阅读模式，倒计时结束后确认已阅读。</div>
+          <div class="config-highlight">⚙️ 可配置项：告知书内容（按基地+访客类型）<br>• 是否强制阅读，倒计时确认已阅读</div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">📝 答题配置</div>
+          <div class="config-item-desc">基地按访客类型配置题目和答案，可设置近期来访免答天数。</div>
+          <div class="config-highlight">⚙️ 可配置项：答题题目（按基地+访客类型）<br>• 近期来访N天免答题</div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">✍️ 签字提交</div>
+          <div class="config-item-desc">完成视频、告知书、答题后，手写签字确认。</div>
+          <div class="config-highlight">⚙️ 必选项（不可关闭）</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 步骤3配置 -->
+    <div class="config-card" id="config-3">
+      <div class="config-header">
+        <h3>📋 后台配置说明</h3>
+        <p>步骤 3 · 预约登记页</p>
+      </div>
+      <div class="config-body">
+        <div class="config-item">
+          <div class="config-item-title">📝 表单字段管理</div>
+          <div class="config-item-desc">此页面无特殊后台配置项，表单字段由系统统一管理。所有必填字段带 * 标记。</div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">📋 字段清单</div>
+          <div class="config-flow">
+            <div class="config-flow-item"><div class="config-flow-dot"></div>访客姓名、身份证号、性别（自动获取）</div>
+            <div class="config-flow-item"><div class="config-flow-dot"></div>访客单位、联系电话</div>
+            <div class="config-flow-item"><div class="config-flow-dot"></div>接待部门（选择）、接待人（填写）</div>
+            <div class="config-flow-item"><div class="config-flow-dot"></div>计划停留时间（时间区间）</div>
+            <div class="config-flow-item"><div class="config-flow-dot"></div>访问事由（选择）、备注、人脸图片</div>
+            <div class="config-flow-item"><div class="config-flow-dot"></div>车牌号（选填）</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 步骤4配置 -->
+    <div class="config-card" id="config-4">
+      <div class="config-header">
+        <h3>📋 后台配置说明</h3>
+        <p>步骤 4 · 我的预约列表</p>
+      </div>
+      <div class="config-body">
+        <div class="config-item">
+          <div class="config-item-title">📋 列表展示规则</div>
+          <div class="config-item-desc">此页面无特殊后台配置项，列表数据根据审批状态自动展示。</div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">🏷️ 状态分类</div>
+          <div style="margin-top:6px;">
+            <span class="config-tag config-tag-orange">待审核</span>
+            <span class="config-tag config-tag-green">已审核</span>
+            <span class="config-tag" style="background:#FEF2F2;color:#DC2626;border:1px solid #FCA5A5;">已驳回</span>
+            <span class="config-tag config-tag-gray">已取消</span>
+          </div>
+          <div class="config-note" style="margin-top:10px;">💡 "我的预约" 标签下展示所有预约记录，"进厂记录" 标签下展示已核销的进出厂记录。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 步骤5配置 -->
+    <div class="config-card" id="config-5">
+      <div class="config-header">
+        <h3>📋 后台配置说明</h3>
+        <p>步骤 5 · 审批通过</p>
+      </div>
+      <div class="config-body">
+        <div class="config-item">
+          <div class="config-item-title">⚙️ 审批流程配置</div>
+          <div class="config-flow">
+            <div class="config-flow-item"><div class="config-flow-dot"></div>外部预审（可选，按访客类型灵活配置）</div>
+            <div class="config-flow-item"><div class="config-flow-dot"></div>内部审批（可按访客类型不同部门审批）</div>
+          </div>
+          <div style="margin-top:10px;font-size:11px;color:#64748B;font-weight:600;">外部预审角色：</div>
+          <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+            <span class="config-tag config-tag-orange">物流公司</span>
+            <span class="config-tag config-tag-orange">奥瑞金</span>
+            <span class="config-tag config-tag-orange">力美</span>
+            <span class="config-tag config-tag-gray">各角色可单独指定或不指定预审人员</span>
+          </div>
+          <div style="margin-top:10px;font-size:11px;color:#64748B;font-weight:600;">开启外部预审的基地：</div>
+          <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;">
+            <span class="config-tag config-tag-blue">湖北</span>
+            <span class="config-tag config-tag-blue">广东</span>
+            <span class="config-tag config-tag-blue">江苏</span>
+            <span class="config-tag config-tag-gray">多组织基地</span>
+          </div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">🏭 基地差异</div>
+          <div class="config-item-desc">贵州、福建不涉及车辆时，审批流程到此完成，无需后续确认到达和核销步骤。</div>
+          <div style="margin-top:8px;">
+            <span class="config-tag config-tag-green">贵州</span>
+            <span class="config-tag config-tag-green">福建</span>
+            <span class="config-tag config-tag-gray">不涉及车辆时流程到此完成</span>
+          </div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">📱 审批通知</div>
+          <div class="config-item-desc">审批通过后，系统自动通过订阅消息和短信通知访客，包含允许进入时段、门岗、卸货点等信息。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 步骤6配置 -->
+    <div class="config-card" id="config-6">
+      <div class="config-header">
+        <h3>📋 后台配置说明</h3>
+        <p>步骤 6 · 确认到达</p>
+      </div>
+      <div class="config-body">
+        <div class="config-item">
+          <div class="config-item-title">📍 开启条件</div>
+          <div style="margin-top:4px;">
+            <span class="config-tag config-tag-blue">湖北</span>
+            <span class="config-tag config-tag-blue">广东</span>
+            <span class="config-tag config-tag-blue">江苏</span>
+          </div>
+          <div class="config-highlight">⚠️ 未配置此功能的基地将跳过此步骤，直接进入叫号环节。</div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">👆 操作说明</div>
+          <div class="config-item-desc">访客到达门岗后，在"我的预约"列表中找到对应预约卡片，点击"确认到达"按钮完成到达确认。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 步骤7配置 -->
+    <div class="config-card" id="config-7">
+      <div class="config-header">
+        <h3>📋 后台配置说明</h3>
+        <p>步骤 7 · 叫号信息</p>
+      </div>
+      <div class="config-body">
+        <div class="config-item">
+          <div class="config-item-title">📍 开启条件</div>
+          <div style="margin-top:4px;">
+            <span class="config-tag config-tag-blue">湖北</span>
+            <span class="config-tag config-tag-blue">广东</span>
+            <span class="config-tag config-tag-blue">江苏</span>
+          </div>
+          <div class="config-highlight">⚠️ 未配置此功能的基地将跳过此步骤。</div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">📱 核销码机制</div>
+          <div class="config-item-desc">访客确认到达后，系统自动生成核销码（二维码），每分钟自动刷新。访客需向保安/仓管出示核销码完成核销。</div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">⏳ 等待叫号</div>
+          <div class="config-item-desc">核销码展示后，访客等待保安/仓管扫码叫号。核销码有效期内均可使用。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 步骤8配置 -->
+    <div class="config-card" id="config-8">
+      <div class="config-header">
+        <h3>📋 后台配置说明</h3>
+        <p>步骤 8 · 核销入场</p>
+      </div>
+      <div class="config-body">
+        <div class="config-item">
+          <div class="config-item-title">📍 开启条件</div>
+          <div style="margin-top:4px;">
+            <span class="config-tag config-tag-blue">湖北</span>
+            <span class="config-tag config-tag-blue">广东</span>
+            <span class="config-tag config-tag-blue">江苏</span>
+          </div>
+          <div class="config-highlight">⚠️ 未配置此功能的基地将跳过此步骤。</div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">🛡️ 操作角色（可配置）</div>
+          <div style="margin-top:6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;">
+            <span class="config-tag config-tag-orange">保安</span>
+            <span class="config-tag config-tag-orange">仓管</span>
+            <span class="config-tag config-tag-gray">在核销工作台对访客核销</span>
+          </div>
+          <div class="config-item-desc" style="margin-top:8px;">支持扫码核销、查询选择核销两种方式。</div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">🏭 贵州特殊流程</div>
+          <div class="config-item-desc">贵州涉及车辆时，由仓管进行核销操作。</div>
+          <div style="margin-top:6px;">
+            <span class="config-tag config-tag-orange">贵州</span>
+            <span class="config-tag config-tag-gray">涉及车辆时仓管核销</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 步骤9配置 -->
+    <div class="config-card" id="config-9">
+      <div class="config-header">
+        <h3>📋 后台配置说明</h3>
+        <p>步骤 9 · 核销出场</p>
+      </div>
+      <div class="config-body">
+        <div class="config-item">
+          <div class="config-item-title">⚖️ 地磅称重配置</div>
+          <div style="margin-top:4px;">
+            <span class="config-tag config-tag-blue">江苏</span>
+            <span class="config-tag config-tag-green">开启地磅记录</span>
+          </div>
+          <div class="config-item-desc" style="margin-top:6px;">江苏开启地磅记录，确认出厂时自动读取重量或手动输入重量。</div>
+          <div class="config-highlight">⚙️ 地磅称重信息：<br>• 设备状态（在线/离线）<br>• 自动读取重量（kg）<br>• 手动输入（可修改）</div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">📍 湖北/广东</div>
+          <div class="config-item-desc">不开启地磅记录，直接选择"确认离场"完成出厂核销。</div>
+          <div style="margin-top:6px;">
+            <span class="config-tag config-tag-blue">湖北</span>
+            <span class="config-tag config-tag-blue">广东</span>
+            <span class="config-tag config-tag-gray">不开启地磅</span>
+          </div>
+        </div>
+        <div class="config-item">
+          <div class="config-item-title">🏭 贵州特殊流程</div>
+          <div class="config-item-desc">贵州涉及车辆时，由仓管进行核销操作。</div>
+          <div style="margin-top:6px;">
+            <span class="config-tag config-tag-orange">贵州</span>
+            <span class="config-tag config-tag-gray">涉及车辆时仓管核销</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 黑名单限制说明配置（额外项，无序号） -->
+    <div class="config-card" id="config-extra">
+      <div class="config-header">
+        <h3>📋 后台配置说明</h3>
+        <p>🚫 黑名单限制说明 · 江苏基地</p>
+      </div>
+      <div class="config-body">
+        <div class="config-item">
+          <div class="config-item-title">🏷️ 基地来源</div>
+          <div style="margin-top:4px;">
+            <span class="config-tag config-tag-blue">江苏</span>
+            <span class="config-tag config-tag-gray">司机违规黑名单</span>
+          </div>
+          <div class="config-item-desc" style="margin-top:6px;">由江苏基地提出，针对司机在厂区装卸货作业的违规行为进行拦截。</div>
+        </div>
+
+        <div class="config-item">
+          <div class="config-item-title">📜 限制说明文案</div>
+          <div class="config-highlight" style="font-size:12px;line-height:1.7;color:#1E293B;">
+            司机在厂区内进行装卸货作业时，必须严格遵守厂区规定。若发生违规行为，个人信息将被纳入厂区黑名单系统，且永久失去再次进入厂区的资格。
+          </div>
+        </div>
+
+        <div class="config-item">
+          <div class="config-item-title">⚙️ 拦截场景</div>
+          <div class="config-item-desc">
+            <div style="margin-bottom:6px;"><strong>场景一·登录拦截</strong>：手机号触发黑名单，禁用验证码与登录按钮，弹窗展示拉黑原因。</div>
+            <div><strong>场景二·提交拦截</strong>：车牌号触发黑名单，阻断登记提交，弹窗展示拉黑原因。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end config-panel -->
+
+</div><!-- end main-content -->
+
+<script>
+var currentStep = 1;
+var step2Countdown = null;
+var step2Answers = {};
+
+function switchStep(step) {
+  // 切换步骤时关闭所有弹窗，避免残留显示
+  document.querySelectorAll('.modal-overlay.show').forEach(function(m) { m.classList.remove('show'); });
+  document.querySelectorAll('.step-btn').forEach(function(btn) { btn.classList.remove('active'); });
+  document.querySelectorAll('.step-btn').forEach(function(btn) {
+    var oc = btn.getAttribute('onclick') || '';
+    if (oc === 'switchStep(' + step + ')' || oc === "switchStep('" + step + "')" || oc === 'switchStep("' + step + '")') btn.classList.add('active');
+  });
+  for (var i = 1; i <= 9; i++) {
+    var page = document.getElementById('ov-page-' + i);
+    if (page) page.classList.toggle('active', i === step);
+  }
+  for (var j = 1; j <= 9; j++) {
+    var config = document.getElementById('config-' + j);
+    if (config) config.classList.toggle('active', j === step);
+  }
+  // 额外页（黑名单限制说明）：隐藏 phone-section，显示 ov-page-extra + config-extra
+  var phoneSection = document.querySelector('.phone-section');
+  var ovExtra = document.getElementById('ov-page-extra');
+  var configExtra = document.getElementById('config-extra');
+  if (step === 'extra') {
+    if (phoneSection) phoneSection.style.display = 'none';
+    if (ovExtra) { ovExtra.style.display = ''; ovExtra.classList.add('active'); }
+    if (configExtra) configExtra.classList.add('active');
+  } else {
+    if (phoneSection) phoneSection.style.display = '';
+    if (ovExtra) { ovExtra.style.display = 'none'; ovExtra.classList.remove('active'); }
+    if (configExtra) configExtra.classList.remove('active');
+  }
+  var phoneContent = document.getElementById('phone-content');
+  if (phoneContent) phoneContent.scrollTop = 0;
+  currentStep = step;
+  if (step === 1) initStep1();
+  if (step === 2) initStep2();
+  if (step === 3) initStep3();
+  if (step === 6) resetStep6();
+}
+
+/* ====== 步骤1 ====== */
+var step1OrgSelected = false;
+function initStep1() {
+  var overlay = document.getElementById('org-popup-overlay');
+  if (overlay && !step1OrgSelected) overlay.style.display = 'flex';
+}
+function selectOrg(el) {
+  var page = document.getElementById('ov-page-1');
+  var btns = page.querySelectorAll('.login-org-popup-btn');
+  btns.forEach(function(b) { b.style.background = ''; b.style.color = ''; b.style.borderColor = ''; });
+  el.style.background = '#EFF6FF'; el.style.color = '#2563EB'; el.style.borderColor = '#2563EB';
+  var nameEl = page.querySelector('.login-selected-org-name');
+  if (nameEl) nameEl.textContent = el.textContent;
+  step1OrgSelected = true;
+  setTimeout(function() { document.getElementById('org-popup-overlay').style.display = 'none'; }, 600);
+}
+// 访客类型描述映射
+var visitorTypeDesc = {
+  '一般访客': '适用于无特殊限制的日常拜访人员',
+  '外来施工': '适用于外部施工单位人员，需佩戴安全帽',
+  '成品发运': '适用于物流公司成品发运车辆司机及人员，进厂前做好卫生、安全防护措施检查',
+  '原料送货': '适用于原料供应商送货车辆及人员',
+  '辅料/备件送货': '适用于辅料、备件供应商送货人员'
+};
+
+function selectVisitorType(el) {
+  var page = document.getElementById('ov-page-1');
+  page.querySelectorAll('.login-type-btn').forEach(function(b) { b.classList.remove('selected'); });
+  el.classList.add('selected');
+  // 显示访客类型确认弹窗
+  var type = el.textContent;
+  var desc = visitorTypeDesc[type] || '';
+  document.getElementById('type-confirm-title').textContent = type;
+  document.getElementById('type-confirm-desc').textContent = desc;
+  document.getElementById('type-confirm-overlay').classList.add('show');
+}
+
+function closeTypeConfirm() {
+  document.getElementById('type-confirm-overlay').classList.remove('show');
+}
+
+function confirmTypeSelection() {
+  closeTypeConfirm();
+  setTimeout(function() { switchStep(2); }, 200);
+}
+
+/* ====== 步骤2：入场须知交互 ====== */
+function initStep2() {
+  step2Answers = {};
+  var page = document.getElementById('ov-page-2');
+  page.querySelectorAll('.quiz-option-btn').forEach(function(b) { b.classList.remove('selected'); });
+  updateStep2SubmitBtn();
+  var overlay = document.getElementById('step2-notice-overlay');
+  if (overlay) {
+    overlay.style.display = 'flex';
+    var cd = document.getElementById('step2-popup-countdown');
+    if (cd) cd.style.display = '';
+    startStep2Countdown();
+  }
+}
+
+function startStep2Countdown() {
+  if (step2Countdown) clearInterval(step2Countdown);
+  var span = document.getElementById('step2-popup-timer');
+  var btn = document.getElementById('step2-popup-close-btn');
+  var countdownEl = document.getElementById('step2-popup-countdown');
+  var seconds = 3;
+  if (span) span.textContent = seconds;
+  if (btn) { btn.disabled = true; btn.style.opacity = '0.5'; btn.style.cursor = 'not-allowed'; }
+  step2Countdown = setInterval(function() {
+    seconds--;
+    if (span) span.textContent = seconds;
+    if (seconds <= 0) {
+      clearInterval(step2Countdown); step2Countdown = null;
+      if (btn) { btn.disabled = false; btn.style.opacity = '1'; btn.style.cursor = 'pointer'; }
+      if (countdownEl) countdownEl.textContent = '请关闭弹窗后完成答题';
+    }
+  }, 1000);
+}
+
+function closeStep2Notice() {
+  var overlay = document.getElementById('step2-notice-overlay');
+  if (overlay) overlay.style.display = 'none';
+}
+
+function selectStep2QuizOption(el) {
+  var question = el.closest('.quiz-question');
+  question.querySelectorAll('.quiz-option-btn').forEach(function(b) { b.classList.remove('selected', 'wrong'); });
+  el.classList.add('selected');
+  step2Answers[question.getAttribute('data-q')] = el.getAttribute('data-val');
+  updateStep2SubmitBtn();
+}
+
+function updateStep2SubmitBtn() {
+  var answered = Object.keys(step2Answers).length;
+  var btn = document.getElementById('notice-submit-btn');
+  if (btn) btn.textContent = '签字提交（答题 ' + answered + '/3）';
+}
+
+// 签字画布
+var sig2Canvas, sig2Ctx, sig2Drawing = false;
+function initStep2Signature() {
+  sig2Canvas = document.getElementById('step2-signature-canvas');
+  if (!sig2Canvas) return;
+  sig2Ctx = sig2Canvas.getContext('2d');
+  sig2Canvas.width = sig2Canvas.offsetWidth;
+  sig2Canvas.height = sig2Canvas.offsetHeight;
+  sig2Ctx.strokeStyle = '#1E293B';
+  sig2Ctx.lineWidth = 2;
+  sig2Ctx.lineCap = 'round';
+  sig2Canvas.onmousedown = function(e) { sig2Drawing = true; sig2Ctx.beginPath(); sig2Ctx.moveTo(e.offsetX, e.offsetY); };
+  sig2Canvas.onmousemove = function(e) { if (sig2Drawing) { sig2Ctx.lineTo(e.offsetX, e.offsetY); sig2Ctx.stroke(); } };
+  sig2Canvas.onmouseup = function() { sig2Drawing = false; };
+  sig2Canvas.onmouseleave = function() { sig2Drawing = false; };
+}
+function clearStep2Signature() {
+  if (sig2Ctx && sig2Canvas) sig2Ctx.clearRect(0, 0, sig2Canvas.width, sig2Canvas.height);
+}
+function confirmStep2Signature() {
+  document.getElementById('step2-signature-overlay').style.display = 'none';
+  switchStep(3);
+}
+
+/* ====== 步骤3 ====== */
+function initStep3() {
+  var page = document.getElementById('ov-page-3');
+  if (!page) return;
+  var submitBtn = page.querySelector('.reg-submit-btn');
+  if (submitBtn && !submitBtn._bound) {
+    submitBtn._bound = true;
+    submitBtn.onclick = function() {
+      var overlay = document.getElementById('ov-reg-success');
+      if (overlay) overlay.classList.add('show');
+      setTimeout(function() { if (overlay) overlay.classList.remove('show'); switchStep(4); }, 1500);
+    };
+  }
+}
+
+/* ====== 步骤6：确认到达 ====== */
+function resetStep6() {
+  var c = document.getElementById('step6-confirm-section');
+  var w = document.getElementById('step6-waiting-section');
+  if (c) c.style.display = '';
+  if (w) w.style.display = 'none';
+}
+function confirmStep6Arrival() {
+  document.getElementById('step6-confirm-section').style.display = 'none';
+  document.getElementById('step6-waiting-section').style.display = '';
+}
+
+/* ====== 步骤8：核销入场弹窗 ====== */
+function showStep8VerifyModal() { document.getElementById('step8-verify-modal').classList.add('show'); }
+function closeStep8VerifyModal() { document.getElementById('step8-verify-modal').classList.remove('show'); }
+function selectStep8Radio(el, groupId) {
+  document.querySelectorAll('#' + groupId + ' .radio-item').forEach(function(r) { r.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+function confirmStep8Verify() {
+  closeStep8VerifyModal();
+  var modal = document.getElementById('ov-verify-success-modal');
+  var msg = modal.querySelector('.verify-success-msg');
+  if (msg) msg.textContent = '已确认入场，核销完成';
+  modal.classList.add('show');
+}
+
+/* ====== 步骤9：核销出场弹窗 ====== */
+function showStep9VerifyModal() { document.getElementById('step9-verify-modal').classList.add('show'); }
+function closeStep9VerifyModal() { document.getElementById('step9-verify-modal').classList.remove('show'); }
+function selectStep9Radio(el, groupId) {
+  document.querySelectorAll('#' + groupId + ' .radio-item').forEach(function(r) { r.classList.remove('selected'); });
+  el.classList.add('selected');
+}
+function toggleStep9Weigh() {
+  var reason = document.querySelector('#step9-verify-reason .radio-item.selected');
+  var ws = document.getElementById('step9-weigh-section');
+  if (reason && ws) ws.style.display = reason.textContent.trim() === '确认离场' ? '' : 'none';
+}
+function confirmStep9Verify() {
+  closeStep9VerifyModal();
+  var modal = document.getElementById('ov-verify-success-modal');
+  var msg = modal.querySelector('.verify-success-msg');
+  if (msg) msg.textContent = '已确认离场，核销完成';
+  modal.classList.add('show');
+}
+function closeVerifySuccess() { document.getElementById('ov-verify-success-modal').classList.remove('show'); }
+
+/* ====== 时间区间选择 ====== */
+function confirmTimeRange() {
+  var s = document.getElementById('tr-start').value;
+  var e = document.getElementById('tr-end').value;
+  if (!s || !e) return;
+  if (new Date(s) >= new Date(e)) return;
+  function fmt(dt) { var d=new Date(dt); return (d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0'); }
+  document.getElementById('time-range-text').textContent = fmt(s) + ' ~ ' + fmt(e);
+  document.getElementById('time-range-text').style.color = '#1E293B';
+  document.getElementById('time-range-popup').style.display = 'none';
+}
+
+/* ====== 初始化 ====== */
+(function() {
+  // 绑定告知书链接 → 打开弹窗
+  var safetyLink = document.querySelector('#ov-page-2 .notice-safety-link');
+  if (safetyLink) safetyLink.onclick = function() {
+    var overlay = document.getElementById('step2-notice-overlay');
+    if (overlay) {
+      overlay.style.display = 'flex';
+      var cd = document.getElementById('step2-popup-countdown');
+      if (cd) { cd.style.display = ''; cd.textContent = '请仔细阅读（'; }
+      var span = document.getElementById('step2-popup-timer');
+      if (span) span.textContent = '3';
+      startStep2Countdown();
+    }
+  };
+  // 绑定签字提交按钮
+  var submitBtn = document.getElementById('notice-submit-btn');
+  if (submitBtn) submitBtn.onclick = function() {
+    // 先清除之前的错误样式
+    document.querySelectorAll('#ov-page-2 .quiz-option-btn').forEach(function(btn) { btn.classList.remove('wrong'); });
+    var answered = Object.keys(step2Answers).length;
+    if (answered < 3) { document.getElementById('step2-quiz-incomplete').style.display = 'flex'; return; }
+    var wrong = [];
+    document.querySelectorAll('#ov-page-2 .quiz-question').forEach(function(q) {
+      var qNum = q.getAttribute('data-q');
+      var correct = q.getAttribute('data-answer');
+      if (step2Answers[qNum] !== correct) {
+        wrong.push(qNum);
+        var selectedBtn = q.querySelector('.quiz-option-btn.selected');
+        if (selectedBtn) selectedBtn.classList.add('wrong');
+      }
+    });
+    if (wrong.length > 0) {
+      var errOverlay = document.getElementById('step2-quiz-error');
+      var errMsg = document.getElementById('step2-error-msg');
+      if (errMsg) errMsg.innerHTML = '第（' + wrong.join('、') + '）题回答错误<br>请重新修改提交！';
+      if (errOverlay) errOverlay.style.display = 'flex';
+      return;
+    }
+    var sigOverlay = document.getElementById('step2-signature-overlay');
+    if (sigOverlay) { sigOverlay.style.display = 'flex'; initStep2Signature(); }
+  };
+  // 绑定组织选择
+  document.querySelectorAll('.login-org-popup-btn').forEach(function(btn) {
+    btn.onclick = function() { selectOrg(this); };
+  });
+  // 绑定访客类型选择
+  document.querySelectorAll('.login-type-btn').forEach(function(btn) {
+    btn.onclick = function() { selectVisitorType(this); };
+  });
+  switchStep(1);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>访客管理系统 - 角色垂直泳道图 v3</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; background: #1a1a2e; color: #fff; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 20px; }
+.header { text-align: center; margin-bottom: 16px; }
+.header h1 { font-size: 22px; font-weight: 700; color: #fff; }
+.header p { font-size: 13px; color: rgba(255,255,255,0.5); margin-top: 4px; }
+.legend-bar { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; padding: 12px 16px; background: rgba(255,255,255,0.05); border-radius: 12px; max-width: 900px; }
+.legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: rgba(255,255,255,0.7); }
+.legend-color { width: 16px; height: 16px; border-radius: 4px; }
+.toolbar { display: flex; gap: 10px; margin-bottom: 16px; }
+.toolbar button { padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 500; }
+.btn-download { background: #2563EB; color: #fff; }
+.btn-zoom { background: rgba(255,255,255,0.1); color: #fff; }
+.diagram-container { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 32px rgba(0,0,0,0.3); max-width: 100%; }
+.diagram-container iframe { border: none; display: block; }
+</style>
+</head>
+<body>
+<div class="header">
+<h1>访客管理系统 - 角色垂直泳道图</h1>
+<p>v3版本 | 4泳道垂直布局 | 7流程阶段 | 6基地差异标注</p>
+</div>
+<div class="legend-bar">
+<div class="legend-item"><div class="legend-color" style="background: #bbdefb;"></div><span>访客端</span></div>
+<div class="legend-item"><div class="legend-color" style="background: #ffe0b2;"></div><span>访客管理系统</span></div>
+<div class="legend-item"><div class="legend-color" style="background: #e1bee7;"></div><span>审批人</span></div>
+<div class="legend-item"><div class="legend-color" style="background: #c8e6c9;"></div><span>出入核销</span></div>
+<div class="legend-item"><div class="legend-color" style="background: #fff2cc;"></div><span>判断节点</span></div>
+<div class="legend-item"><div class="legend-color" style="background: #fff9c4; border: 1px solid #f9a825;"></div><span>基地差异标注</span></div>
+<div class="legend-item"><div class="legend-color" style="background: none; border: 1px dashed #999;"></div><span>跨泳道连接线</span></div>
+</div>
+<div class="toolbar">
+<button class="btn-download" onclick="downloadDrawio()">下载 drawio 文件</button>
+<button class="btn-zoom" onclick="zoomIn()">放大</button>
+<button class="btn-zoom" onclick="zoomOut()">缩小</button>
+</div>
+<div class="diagram-container" id="container">
+<iframe id="diagram" width="2300" height="1800" srcdoc="&lt;?xml version=&#39;1.0&#39; encoding=&#39;UTF-8&#39;?&gt;
+&lt;mxfile host=&quot;app.diagrams.net&quot; version=&quot;24.0.0&quot;&gt;
+  &lt;diagram name=&quot;访客管理系统-角色垂直泳道图&quot; pageHeight=&quot;1800&quot;&gt;
+    &lt;mxGraphModel dx=&quot;2000&quot; dy=&quot;1800&quot; grid=&quot;1&quot; gridSize=&quot;10&quot; guides=&quot;1&quot; tooltips=&quot;1&quot; connect=&quot;1&quot; arrows=&quot;1&quot; fold=&quot;1&quot; page=&quot;1&quot; pageScale=&quot;1&quot; pageWidth=&quot;2300&quot; pageHeight=&quot;2000&quot; math=&quot;0&quot; shadow=&quot;0&quot;&gt;
+      &lt;root&gt;
+        &lt;mxCell id=&quot;0&quot; /&gt;
+        &lt;mxCell id=&quot;1&quot; parent=&quot;0&quot; /&gt;
+
+        &lt;mxCell id=&quot;lane1&quot; value=&quot;访客端&quot; style=&quot;swimlane;startSize=40;horizontal=0;containerType=tree;fillColor=#e3f2fd;strokeColor=#1565c0;strokeWidth=2;whiteSpace=wrap;html=1;fontStyle=1;fontSize=14;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;360&quot; y=&quot;60&quot; width=&quot;360&quot; height=&quot;1800&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;lane2&quot; value=&quot;访客管理系统&quot; style=&quot;swimlane;startSize=40;horizontal=0;containerType=tree;fillColor=#fff3e0;strokeColor=#e65100;strokeWidth=2;whiteSpace=wrap;html=1;fontStyle=1;fontSize=14;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;740&quot; y=&quot;60&quot; width=&quot;360&quot; height=&quot;1800&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;lane3&quot; value=&quot;审批人（外部预审/内部）&quot; style=&quot;swimlane;startSize=40;horizontal=0;containerType=tree;fillColor=#f3e5f5;strokeColor=#6a1b9a;strokeWidth=2;whiteSpace=wrap;html=1;fontStyle=1;fontSize=13;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;1120&quot; y=&quot;60&quot; width=&quot;360&quot; height=&quot;1800&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;lane4&quot; value=&quot;出入核销（保安/仓管）&quot; style=&quot;swimlane;startSize=40;horizontal=0;containerType=tree;fillColor=#e8f5e9;strokeColor=#2e7d32;strokeWidth=2;whiteSpace=wrap;html=1;fontStyle=1;fontSize=13;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;1500&quot; y=&quot;60&quot; width=&quot;360&quot; height=&quot;1800&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+
+        &lt;mxCell id=&quot;phase1_bg&quot; value=&quot;&quot; style=&quot;rounded=0;fillColor=#f5f5f5;strokeColor=none;opacity=30;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;350&quot; y=&quot;100&quot; width=&quot;1530&quot; height=&quot;300&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;phase1_label&quot; value=&quot;阶段1：预约登记&quot; style=&quot;text;html=1;fontSize=12;fontStyle=1;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontColor=#666666;;align=right&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;145&quot; y=&quot;100&quot; width=&quot;200&quot; height=&quot;30&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+
+        &lt;mxCell id=&quot;phase2_bg&quot; value=&quot;&quot; style=&quot;rounded=0;fillColor=#f5f5f5;strokeColor=none;opacity=30;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;350&quot; y=&quot;405&quot; width=&quot;1530&quot; height=&quot;220&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;phase2_label&quot; value=&quot;阶段2：安全学习&quot; style=&quot;text;html=1;fontSize=12;fontStyle=1;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontColor=#666666;;align=right&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;145&quot; y=&quot;405&quot; width=&quot;200&quot; height=&quot;30&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+
+        &lt;mxCell id=&quot;phase3_bg&quot; value=&quot;&quot; style=&quot;rounded=0;fillColor=#f5f5f5;strokeColor=none;opacity=30;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;350&quot; y=&quot;630&quot; width=&quot;1530&quot; height=&quot;112&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;phase3_label&quot; value=&quot;阶段3：审批&quot; style=&quot;text;html=1;fontSize=12;fontStyle=1;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontColor=#666666;;align=right&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;145&quot; y=&quot;630&quot; width=&quot;200&quot; height=&quot;30&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+
+        &lt;mxCell id=&quot;phase4_bg&quot; value=&quot;&quot; style=&quot;rounded=0;fillColor=#f5f5f5;strokeColor=none;opacity=30;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;350&quot; y=&quot;747&quot; width=&quot;1530&quot; height=&quot;284&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;phase4_label&quot; value=&quot;阶段4：到达/叫号（物流+部分基地）&quot; style=&quot;text;html=1;fontSize=11;fontStyle=1;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontColor=#666666;;align=right&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;145&quot; y=&quot;747&quot; width=&quot;200&quot; height=&quot;30&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+
+        &lt;mxCell id=&quot;phase5_bg&quot; value=&quot;&quot; style=&quot;rounded=0;fillColor=#f5f5f5;strokeColor=none;opacity=30;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;350&quot; y=&quot;1035&quot; width=&quot;1530&quot; height=&quot;160&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;phase5_label&quot; value=&quot;阶段5：入场核销（部分基地）&quot; style=&quot;text;html=1;fontSize=12;fontStyle=1;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontColor=#666666;;align=right&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;145&quot; y=&quot;1035&quot; width=&quot;200&quot; height=&quot;30&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+
+        &lt;mxCell id=&quot;phase6_bg&quot; value=&quot;&quot; style=&quot;rounded=0;fillColor=#f5f5f5;strokeColor=none;opacity=30;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;350&quot; y=&quot;1200&quot; width=&quot;1530&quot; height=&quot;57&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;phase6_label&quot; value=&quot;阶段6：作业&quot; style=&quot;text;html=1;fontSize=12;fontStyle=1;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontColor=#666666;;align=right&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;145&quot; y=&quot;1200&quot; width=&quot;200&quot; height=&quot;30&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+
+        &lt;mxCell id=&quot;phase7_bg&quot; value=&quot;&quot; style=&quot;rounded=0;fillColor=#f5f5f5;strokeColor=none;opacity=30;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;350&quot; y=&quot;1262&quot; width=&quot;1530&quot; height=&quot;160&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;phase7_label&quot; value=&quot;阶段7：出场核销（部分基地）&quot; style=&quot;text;html=1;fontSize=12;fontStyle=1;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontColor=#666666;;align=right&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;145&quot; y=&quot;1262&quot; width=&quot;200&quot; height=&quot;30&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+
+        
+        &lt;mxCell id=&quot;v_start&quot; value=&quot;开始&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;120&quot; y=&quot;55&quot; width=&quot;80&quot; height=&quot;36&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_scan&quot; value=&quot;扫码进入基地&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;115&quot; width=&quot;160&quot; height=&quot;48&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;d_multi_org&quot; value=&quot;是否多组织基地？&quot; style=&quot;rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;115&quot; y=&quot;175&quot; width=&quot;110&quot; height=&quot;40&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_org&quot; value=&quot;选择组织（多组织弹窗）&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;230&quot; width=&quot;160&quot; height=&quot;48&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_type&quot; value=&quot;选择访客类型&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;293&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_video&quot; value=&quot;观看安全视频&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;400&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_notice&quot; value=&quot;阅读告知书(强制阅读倒计时)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;345&quot; width=&quot;160&quot; height=&quot;48&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_exam&quot; value=&quot;安全答题&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;462&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_sign&quot; value=&quot;电子签字&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;518&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_fill&quot; value=&quot;填写登记信息(姓名/身份证等)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;572&quot; width=&quot;160&quot; height=&quot;48&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_submit&quot; value=&quot;提交预约申请&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;635&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_notify&quot; value=&quot;接收审批通知&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;690&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;d_logistics&quot; value=&quot;是否物流类型？&quot; style=&quot;rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;115&quot; y=&quot;745&quot; width=&quot;110&quot; height=&quot;40&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_arrive&quot; value=&quot;确认到达(手动/电子围栏)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;800&quot; width=&quot;160&quot; height=&quot;48&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_queue&quot; value=&quot;等待叫号&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;862&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_call_notify&quot; value=&quot;接收叫号通知(卸货点+时段)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;918&quot; width=&quot;160&quot; height=&quot;48&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;d_verify&quot; value=&quot;是否开启出入核销？&quot; style=&quot;rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;115&quot; y=&quot;978&quot; width=&quot;110&quot; height=&quot;40&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_qrcode&quot; value=&quot;出示核销码&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;1032&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_verify_in&quot; value=&quot;核销入场&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;1088&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_work&quot; value=&quot;执行作业(卸货/施工/装车)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;1144&quot; width=&quot;160&quot; height=&quot;48&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;d_weighbridge&quot; value=&quot;是否江苏地磅？&quot; style=&quot;rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;115&quot; y=&quot;1205&quot; width=&quot;110&quot; height=&quot;40&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_verify_out&quot; value=&quot;核销出场&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;1260&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;v_end&quot; value=&quot;结束&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;&quot; vertex=&quot;1&quot; parent=&quot;lane1&quot;&gt;
+          &lt;mxGeometry x=&quot;120&quot; y=&quot;1318&quot; width=&quot;80&quot; height=&quot;36&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+
+        
+        &lt;mxCell id=&quot;s_identify&quot; value=&quot;识别基地+组织&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane2&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;115&quot; width=&quot;160&quot; height=&quot;48&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;s_show_page&quot; value=&quot;展示登记页面&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane2&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;178&quot; width=&quot;160&quot; height=&quot;48&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;s_show_safety&quot; value=&quot;展示安全学习内容(视频/告知书/答题)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane2&quot;&gt;
+          &lt;mxGeometry x=&quot;80&quot; y=&quot;345&quot; width=&quot;180&quot; height=&quot;52&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;s_push_approval&quot; value=&quot;推送审批请求&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane2&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;635&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;d_pre_review&quot; value=&quot;是否开启外部预审？&quot; style=&quot;rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;lane2&quot;&gt;
+          &lt;mxGeometry x=&quot;110&quot; y=&quot;580&quot; width=&quot;120&quot; height=&quot;40&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;s_notify_result&quot; value=&quot;通知访客审批结果&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane2&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;690&quot; width=&quot;160&quot; height=&quot;48&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;s_update_arrive&quot; value=&quot;更新到达状态+通知仓管&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane2&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;800&quot; width=&quot;160&quot; height=&quot;48&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;s_push_call&quot; value=&quot;推送叫号信息(卸货点+时段)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane2&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;862&quot; width=&quot;160&quot; height=&quot;52&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;s_record_in&quot; value=&quot;记录入场核销&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane2&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;1032&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;s_weigh&quot; value=&quot;地磅称重(自动/手动)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane2&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;1260&quot; width=&quot;160&quot; height=&quot;48&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+
+        
+        &lt;mxCell id=&quot;a_external&quot; value=&quot;外部预审人员审核(物流/奥瑞金/力美)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#6a1b9a;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane3&quot;&gt;
+          &lt;mxGeometry x=&quot;70&quot; y=&quot;580&quot; width=&quot;200&quot; height=&quot;52&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;a_internal&quot; value=&quot;内部审批人审核&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#6a1b9a;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane3&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;648&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;a_pass&quot; value=&quot;审批通过&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane3&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;705&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;a_reject&quot; value=&quot;审批驳回&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane3&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;762&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+
+        
+        &lt;mxCell id=&quot;g_call&quot; value=&quot;仓管叫号+分配卸货点+时段&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane4&quot;&gt;
+          &lt;mxGeometry x=&quot;80&quot; y=&quot;800&quot; width=&quot;180&quot; height=&quot;52&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;g_verify_in&quot; value=&quot;扫码/搜索核销入场(检查放行时段)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane4&quot;&gt;
+          &lt;mxGeometry x=&quot;80&quot; y=&quot;1032&quot; width=&quot;180&quot; height=&quot;52&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;g_verify_out&quot; value=&quot;核销出场&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane4&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;1205&quot; width=&quot;160&quot; height=&quot;42&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;g_weighbridge&quot; value=&quot;地磅自动核销(仅江苏)&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=11;&quot; vertex=&quot;1&quot; parent=&quot;lane4&quot;&gt;
+          &lt;mxGeometry x=&quot;90&quot; y=&quot;1262&quot; width=&quot;160&quot; height=&quot;48&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+
+        
+        &lt;mxCell id=&quot;e_v1&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_start&quot; target=&quot;v_scan&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v2&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_scan&quot; target=&quot;d_multi_org&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v3&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;d_multi_org&quot; target=&quot;v_org&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v4&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_org&quot; target=&quot;v_type&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v5&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_type&quot; target=&quot;v_notice&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v6&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_notice&quot; target=&quot;v_video&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v7&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_video&quot; target=&quot;v_exam&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v8&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_exam&quot; target=&quot;v_sign&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v9&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_sign&quot; target=&quot;v_fill&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v10&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_fill&quot; target=&quot;v_submit&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v11&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_notify&quot; target=&quot;d_logistics&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v12&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;d_logistics&quot; target=&quot;v_arrive&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v13&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_arrive&quot; target=&quot;v_queue&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v14&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_queue&quot; target=&quot;v_call_notify&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v15&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_call_notify&quot; target=&quot;d_verify&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v16&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;d_verify&quot; target=&quot;v_qrcode&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v17&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_qrcode&quot; target=&quot;v_verify_in&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v18&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_verify_in&quot; target=&quot;v_work&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v19&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_work&quot; target=&quot;d_weighbridge&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v20&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;d_weighbridge&quot; target=&quot;v_verify_out&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_v21&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;v_verify_out&quot; target=&quot;v_end&quot; parent=&quot;lane1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+
+        
+        &lt;mxCell id=&quot;e_s1&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;s_identify&quot; target=&quot;s_show_page&quot; parent=&quot;lane2&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_s2&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;s_show_page&quot; target=&quot;s_show_safety&quot; parent=&quot;lane2&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_s3&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;s_show_safety&quot; target=&quot;s_push_approval&quot; parent=&quot;lane2&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_s4&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;s_push_approval&quot; target=&quot;d_pre_review&quot; parent=&quot;lane2&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_s5&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;d_pre_review&quot; target=&quot;s_notify_result&quot; parent=&quot;lane2&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_s6&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;s_notify_result&quot; target=&quot;s_update_arrive&quot; parent=&quot;lane2&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_s7&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;s_update_arrive&quot; target=&quot;s_push_call&quot; parent=&quot;lane2&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_s8&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;s_push_call&quot; target=&quot;s_record_in&quot; parent=&quot;lane2&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_s9&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;s_record_in&quot; target=&quot;s_weigh&quot; parent=&quot;lane2&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+
+        
+        &lt;mxCell id=&quot;e_a1&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6a1b9a;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;a_external&quot; target=&quot;a_internal&quot; parent=&quot;lane3&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_a2&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6a1b9a;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;a_internal&quot; target=&quot;a_pass&quot; parent=&quot;lane3&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_a3&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6a1b9a;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;a_internal&quot; target=&quot;a_reject&quot; parent=&quot;lane3&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+
+        
+        &lt;mxCell id=&quot;e_g1&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2e7d32;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;g_verify_in&quot; target=&quot;g_verify_out&quot; parent=&quot;lane4&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;e_g2&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2e7d32;strokeWidth=2;&quot; edge=&quot;1&quot; source=&quot;g_verify_out&quot; target=&quot;g_weighbridge&quot; parent=&quot;lane4&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+
+        
+        &lt;mxCell id=&quot;c1&quot; value=&quot;&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=1.5;dashed=1;&quot; edge=&quot;1&quot; source=&quot;v_submit&quot; target=&quot;s_push_approval&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;c2&quot; value=&quot;是&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6a1b9a;strokeWidth=1.5;dashed=1;fontStyle=1;fontSize=11;&quot; edge=&quot;1&quot; source=&quot;d_pre_review&quot; target=&quot;a_external&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;c3&quot; value=&quot;通过&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=1.5;dashed=1;fontStyle=1;fontSize=11;&quot; edge=&quot;1&quot; source=&quot;a_pass&quot; target=&quot;s_notify_result&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;c4&quot; value=&quot;&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=1.5;dashed=1;&quot; edge=&quot;1&quot; source=&quot;s_notify_result&quot; target=&quot;v_notify&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;c5&quot; value=&quot;&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=1.5;dashed=1;&quot; edge=&quot;1&quot; source=&quot;v_arrive&quot; target=&quot;s_update_arrive&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;c6&quot; value=&quot;&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=1.5;dashed=1;&quot; edge=&quot;1&quot; source=&quot;g_call&quot; target=&quot;s_push_call&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;c7&quot; value=&quot;&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=1.5;dashed=1;&quot; edge=&quot;1&quot; source=&quot;s_push_call&quot; target=&quot;v_call_notify&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;c8&quot; value=&quot;&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2e7d32;strokeWidth=1.5;dashed=1;&quot; edge=&quot;1&quot; source=&quot;v_qrcode&quot; target=&quot;g_verify_in&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;c9&quot; value=&quot;&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=1.5;dashed=1;&quot; edge=&quot;1&quot; source=&quot;g_verify_in&quot; target=&quot;s_record_in&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;c10&quot; value=&quot;&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2e7d32;strokeWidth=1.5;dashed=1;&quot; edge=&quot;1&quot; source=&quot;v_verify_out&quot; target=&quot;g_verify_out&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+        &lt;mxCell id=&quot;c11&quot; value=&quot;江苏&quot; style=&quot;edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=1.5;dashed=1;fontStyle=1;fontSize=11;&quot; edge=&quot;1&quot; source=&quot;d_weighbridge&quot; target=&quot;s_weigh&quot; parent=&quot;1&quot;&gt;&lt;mxGeometry relative=&quot;1&quot; as=&quot;geometry&quot; /&gt;&lt;/mxCell&gt;
+
+        
+        &lt;mxCell id=&quot;note1&quot; value=&quot;【基地差异】多组织选择：广东/湖北/江苏开启，其他基地自动跳过&quot; style=&quot;shape=note;size=12;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;align=left;verticalAlign=top;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;145&quot; y=&quot;135&quot; width=&quot;200&quot; height=&quot;70&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;note2&quot; value=&quot;【基地差异】外部预审：湖北/广东/江苏开启，其他基地走内部审批&quot; style=&quot;shape=note;size=12;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;align=left;verticalAlign=top;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;145&quot; y=&quot;440&quot; width=&quot;200&quot; height=&quot;70&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;note3&quot; value=&quot;【基地差异】到达/叫号：湖北/广东/江苏开启，仅物流类型访客&quot; style=&quot;shape=note;size=12;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;align=left;verticalAlign=top;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;145&quot; y=&quot;782&quot; width=&quot;200&quot; height=&quot;70&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;note4&quot; value=&quot;【基地差异】出入核销：所有基地开启(部分场景跳过)，贵州仓管替代保安&quot; style=&quot;shape=note;size=12;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;align=left;verticalAlign=top;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;145&quot; y=&quot;1070&quot; width=&quot;200&quot; height=&quot;70&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;note5&quot; value=&quot;【基地差异】地磅称重：仅江苏开启，自动采集+自动核销出场&quot; style=&quot;shape=note;size=12;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;align=left;verticalAlign=top;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;145&quot; y=&quot;1297&quot; width=&quot;200&quot; height=&quot;70&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+
+        
+        &lt;mxCell id=&quot;legend_title&quot; value=&quot;图例&quot; style=&quot;text;html=1;fontSize=13;fontStyle=1;align=center;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;195&quot; y=&quot;1450&quot; width=&quot;150&quot; height=&quot;26&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;legend1&quot; value=&quot;访客端操作&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;195&quot; y=&quot;1482&quot; width=&quot;150&quot; height=&quot;26&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;legend2&quot; value=&quot;系统处理/配置&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;195&quot; y=&quot;1514&quot; width=&quot;150&quot; height=&quot;26&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;legend3&quot; value=&quot;审批人操作&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#6a1b9a;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;195&quot; y=&quot;1546&quot; width=&quot;150&quot; height=&quot;26&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;legend4&quot; value=&quot;核销人员操作&quot; style=&quot;rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;195&quot; y=&quot;1578&quot; width=&quot;150&quot; height=&quot;26&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;legend5&quot; value=&quot;判断节点&quot; style=&quot;rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;195&quot; y=&quot;1610&quot; width=&quot;150&quot; height=&quot;26&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;legend6&quot; value=&quot;基地差异便签&quot; style=&quot;shape=note;size=8;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;195&quot; y=&quot;1642&quot; width=&quot;150&quot; height=&quot;26&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+        &lt;mxCell id=&quot;legend7&quot; value=&quot;跨泳道连线(虚线)&quot; style=&quot;rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#999;fontSize=10;dashed=1;&quot; vertex=&quot;1&quot; parent=&quot;1&quot;&gt;
+          &lt;mxGeometry x=&quot;195&quot; y=&quot;1674&quot; width=&quot;150&quot; height=&quot;26&quot; as=&quot;geometry&quot; /&gt;
+        &lt;/mxCell&gt;
+
+      &lt;/root&gt;
+    &lt;/mxGraphModel&gt;
+  &lt;/diagram&gt;
+&lt;/mxfile&gt;"></iframe>
+</div>
+<script>
+const drawioData = `<?xml version='1.0' encoding='UTF-8'?>
+<mxfile host="app.diagrams.net" version="24.0.0">
+  <diagram name="访客管理系统-角色垂直泳道图" pageHeight="1800">
+    <mxGraphModel dx="2000" dy="1800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2300" pageHeight="2000" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="lane1" value="访客端" style="swimlane;startSize=40;horizontal=0;containerType=tree;fillColor=#e3f2fd;strokeColor=#1565c0;strokeWidth=2;whiteSpace=wrap;html=1;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="360" y="60" width="360" height="1800" as="geometry" />
+        </mxCell>
+        <mxCell id="lane2" value="访客管理系统" style="swimlane;startSize=40;horizontal=0;containerType=tree;fillColor=#fff3e0;strokeColor=#e65100;strokeWidth=2;whiteSpace=wrap;html=1;fontStyle=1;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="740" y="60" width="360" height="1800" as="geometry" />
+        </mxCell>
+        <mxCell id="lane3" value="审批人（外部预审/内部）" style="swimlane;startSize=40;horizontal=0;containerType=tree;fillColor=#f3e5f5;strokeColor=#6a1b9a;strokeWidth=2;whiteSpace=wrap;html=1;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1120" y="60" width="360" height="1800" as="geometry" />
+        </mxCell>
+        <mxCell id="lane4" value="出入核销（保安/仓管）" style="swimlane;startSize=40;horizontal=0;containerType=tree;fillColor=#e8f5e9;strokeColor=#2e7d32;strokeWidth=2;whiteSpace=wrap;html=1;fontStyle=1;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="1500" y="60" width="360" height="1800" as="geometry" />
+        </mxCell>
+
+        <mxCell id="phase1_bg" value="" style="rounded=0;fillColor=#f5f5f5;strokeColor=none;opacity=30;" vertex="1" parent="1">
+          <mxGeometry x="350" y="100" width="1530" height="300" as="geometry" />
+        </mxCell>
+        <mxCell id="phase1_label" value="阶段1：预约登记" style="text;html=1;fontSize=12;fontStyle=1;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontColor=#666666;;align=right" vertex="1" parent="1">
+          <mxGeometry x="145" y="100" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="phase2_bg" value="" style="rounded=0;fillColor=#f5f5f5;strokeColor=none;opacity=30;" vertex="1" parent="1">
+          <mxGeometry x="350" y="405" width="1530" height="220" as="geometry" />
+        </mxCell>
+        <mxCell id="phase2_label" value="阶段2：安全学习" style="text;html=1;fontSize=12;fontStyle=1;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontColor=#666666;;align=right" vertex="1" parent="1">
+          <mxGeometry x="145" y="405" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="phase3_bg" value="" style="rounded=0;fillColor=#f5f5f5;strokeColor=none;opacity=30;" vertex="1" parent="1">
+          <mxGeometry x="350" y="630" width="1530" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="phase3_label" value="阶段3：审批" style="text;html=1;fontSize=12;fontStyle=1;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontColor=#666666;;align=right" vertex="1" parent="1">
+          <mxGeometry x="145" y="630" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="phase4_bg" value="" style="rounded=0;fillColor=#f5f5f5;strokeColor=none;opacity=30;" vertex="1" parent="1">
+          <mxGeometry x="350" y="747" width="1530" height="284" as="geometry" />
+        </mxCell>
+        <mxCell id="phase4_label" value="阶段4：到达/叫号（物流+部分基地）" style="text;html=1;fontSize=11;fontStyle=1;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontColor=#666666;;align=right" vertex="1" parent="1">
+          <mxGeometry x="145" y="747" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="phase5_bg" value="" style="rounded=0;fillColor=#f5f5f5;strokeColor=none;opacity=30;" vertex="1" parent="1">
+          <mxGeometry x="350" y="1035" width="1530" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="phase5_label" value="阶段5：入场核销（部分基地）" style="text;html=1;fontSize=12;fontStyle=1;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontColor=#666666;;align=right" vertex="1" parent="1">
+          <mxGeometry x="145" y="1035" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="phase6_bg" value="" style="rounded=0;fillColor=#f5f5f5;strokeColor=none;opacity=30;" vertex="1" parent="1">
+          <mxGeometry x="350" y="1200" width="1530" height="57" as="geometry" />
+        </mxCell>
+        <mxCell id="phase6_label" value="阶段6：作业" style="text;html=1;fontSize=12;fontStyle=1;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontColor=#666666;;align=right" vertex="1" parent="1">
+          <mxGeometry x="145" y="1200" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="phase7_bg" value="" style="rounded=0;fillColor=#f5f5f5;strokeColor=none;opacity=30;" vertex="1" parent="1">
+          <mxGeometry x="350" y="1262" width="1530" height="160" as="geometry" />
+        </mxCell>
+        <mxCell id="phase7_label" value="阶段7：出场核销（部分基地）" style="text;html=1;fontSize=12;fontStyle=1;fillColor=none;strokeColor=none;align=left;verticalAlign=middle;fontColor=#666666;;align=right" vertex="1" parent="1">
+          <mxGeometry x="145" y="1262" width="200" height="30" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="v_start" value="开始" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="120" y="55" width="80" height="36" as="geometry" />
+        </mxCell>
+        <mxCell id="v_scan" value="扫码进入基地" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="115" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="d_multi_org" value="是否多组织基地？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="lane1">
+          <mxGeometry x="115" y="175" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="v_org" value="选择组织（多组织弹窗）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="230" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="v_type" value="选择访客类型" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="293" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="v_video" value="观看安全视频" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="400" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="v_notice" value="阅读告知书(强制阅读倒计时)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="345" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="v_exam" value="安全答题" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="462" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="v_sign" value="电子签字" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="518" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="v_fill" value="填写登记信息(姓名/身份证等)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="572" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="v_submit" value="提交预约申请" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="635" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="v_notify" value="接收审批通知" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="690" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="d_logistics" value="是否物流类型？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="lane1">
+          <mxGeometry x="115" y="745" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="v_arrive" value="确认到达(手动/电子围栏)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="800" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="v_queue" value="等待叫号" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="862" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="v_call_notify" value="接收叫号通知(卸货点+时段)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="918" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="d_verify" value="是否开启出入核销？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="lane1">
+          <mxGeometry x="115" y="978" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="v_qrcode" value="出示核销码" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="1032" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="v_verify_in" value="核销入场" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="1088" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="v_work" value="执行作业(卸货/施工/装车)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="1144" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="d_weighbridge" value="是否江苏地磅？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="lane1">
+          <mxGeometry x="115" y="1205" width="110" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="v_verify_out" value="核销出场" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=11;" vertex="1" parent="lane1">
+          <mxGeometry x="90" y="1260" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="v_end" value="结束" style="rounded=1;whiteSpace=wrap;html=1;arcSize=50;fillColor=#f5f5f5;strokeColor=#666666;fontSize=12;fontStyle=1;" vertex="1" parent="lane1">
+          <mxGeometry x="120" y="1318" width="80" height="36" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="s_identify" value="识别基地+组织" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;" vertex="1" parent="lane2">
+          <mxGeometry x="90" y="115" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="s_show_page" value="展示登记页面" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;" vertex="1" parent="lane2">
+          <mxGeometry x="90" y="178" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="s_show_safety" value="展示安全学习内容(视频/告知书/答题)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;" vertex="1" parent="lane2">
+          <mxGeometry x="80" y="345" width="180" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="s_push_approval" value="推送审批请求" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;" vertex="1" parent="lane2">
+          <mxGeometry x="90" y="635" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="d_pre_review" value="是否开启外部预审？" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="lane2">
+          <mxGeometry x="110" y="580" width="120" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="s_notify_result" value="通知访客审批结果" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;" vertex="1" parent="lane2">
+          <mxGeometry x="90" y="690" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="s_update_arrive" value="更新到达状态+通知仓管" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;" vertex="1" parent="lane2">
+          <mxGeometry x="90" y="800" width="160" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="s_push_call" value="推送叫号信息(卸货点+时段)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;" vertex="1" parent="lane2">
+          <mxGeometry x="90" y="862" width="160" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="s_record_in" value="记录入场核销" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;" vertex="1" parent="lane2">
+          <mxGeometry x="90" y="1032" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="s_weigh" value="地磅称重(自动/手动)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=11;" vertex="1" parent="lane2">
+          <mxGeometry x="90" y="1260" width="160" height="48" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="a_external" value="外部预审人员审核(物流/奥瑞金/力美)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#6a1b9a;fontSize=11;" vertex="1" parent="lane3">
+          <mxGeometry x="70" y="580" width="200" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="a_internal" value="内部审批人审核" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#6a1b9a;fontSize=11;" vertex="1" parent="lane3">
+          <mxGeometry x="90" y="648" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="a_pass" value="审批通过" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=11;" vertex="1" parent="lane3">
+          <mxGeometry x="90" y="705" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="a_reject" value="审批驳回" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffcdd2;strokeColor=#c62828;fontSize=11;" vertex="1" parent="lane3">
+          <mxGeometry x="90" y="762" width="160" height="42" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="g_call" value="仓管叫号+分配卸货点+时段" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=11;" vertex="1" parent="lane4">
+          <mxGeometry x="80" y="800" width="180" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="g_verify_in" value="扫码/搜索核销入场(检查放行时段)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=11;" vertex="1" parent="lane4">
+          <mxGeometry x="80" y="1032" width="180" height="52" as="geometry" />
+        </mxCell>
+        <mxCell id="g_verify_out" value="核销出场" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=11;" vertex="1" parent="lane4">
+          <mxGeometry x="90" y="1205" width="160" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="g_weighbridge" value="地磅自动核销(仅江苏)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=11;" vertex="1" parent="lane4">
+          <mxGeometry x="90" y="1262" width="160" height="48" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="e_v1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_start" target="v_scan" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_scan" target="d_multi_org" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="d_multi_org" target="v_org" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_org" target="v_type" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_type" target="v_notice" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_notice" target="v_video" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_video" target="v_exam" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_exam" target="v_sign" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_sign" target="v_fill" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_fill" target="v_submit" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_notify" target="d_logistics" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v12" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="d_logistics" target="v_arrive" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_arrive" target="v_queue" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v14" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_queue" target="v_call_notify" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_call_notify" target="d_verify" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="d_verify" target="v_qrcode" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_qrcode" target="v_verify_in" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v18" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_verify_in" target="v_work" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v19" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_work" target="d_weighbridge" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="d_weighbridge" target="v_verify_out" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_v21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=2;" edge="1" source="v_verify_out" target="v_end" parent="lane1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        
+        <mxCell id="e_s1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;" edge="1" source="s_identify" target="s_show_page" parent="lane2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_s2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;" edge="1" source="s_show_page" target="s_show_safety" parent="lane2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_s3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;" edge="1" source="s_show_safety" target="s_push_approval" parent="lane2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_s4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;" edge="1" source="s_push_approval" target="d_pre_review" parent="lane2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_s5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;" edge="1" source="d_pre_review" target="s_notify_result" parent="lane2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_s6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;" edge="1" source="s_notify_result" target="s_update_arrive" parent="lane2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_s7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;" edge="1" source="s_update_arrive" target="s_push_call" parent="lane2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_s8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;" edge="1" source="s_push_call" target="s_record_in" parent="lane2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_s9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=2;" edge="1" source="s_record_in" target="s_weigh" parent="lane2"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        
+        <mxCell id="e_a1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6a1b9a;strokeWidth=2;" edge="1" source="a_external" target="a_internal" parent="lane3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_a2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6a1b9a;strokeWidth=2;" edge="1" source="a_internal" target="a_pass" parent="lane3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_a3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6a1b9a;strokeWidth=2;" edge="1" source="a_internal" target="a_reject" parent="lane3"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        
+        <mxCell id="e_g1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2e7d32;strokeWidth=2;" edge="1" source="g_verify_in" target="g_verify_out" parent="lane4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e_g2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2e7d32;strokeWidth=2;" edge="1" source="g_verify_out" target="g_weighbridge" parent="lane4"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        
+        <mxCell id="c1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=1.5;dashed=1;" edge="1" source="v_submit" target="s_push_approval" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c2" value="是" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#6a1b9a;strokeWidth=1.5;dashed=1;fontStyle=1;fontSize=11;" edge="1" source="d_pre_review" target="a_external" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c3" value="通过" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=1.5;dashed=1;fontStyle=1;fontSize=11;" edge="1" source="a_pass" target="s_notify_result" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=1.5;dashed=1;" edge="1" source="s_notify_result" target="v_notify" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=1.5;dashed=1;" edge="1" source="v_arrive" target="s_update_arrive" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=1.5;dashed=1;" edge="1" source="g_call" target="s_push_call" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#1565c0;strokeWidth=1.5;dashed=1;" edge="1" source="s_push_call" target="v_call_notify" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2e7d32;strokeWidth=1.5;dashed=1;" edge="1" source="v_qrcode" target="g_verify_in" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=1.5;dashed=1;" edge="1" source="g_verify_in" target="s_record_in" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#2e7d32;strokeWidth=1.5;dashed=1;" edge="1" source="v_verify_out" target="g_verify_out" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="c11" value="江苏" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#e65100;strokeWidth=1.5;dashed=1;fontStyle=1;fontSize=11;" edge="1" source="d_weighbridge" target="s_weigh" parent="1"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        
+        <mxCell id="note1" value="【基地差异】多组织选择：广东/湖北/江苏开启，其他基地自动跳过" style="shape=note;size=12;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="145" y="135" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="note2" value="【基地差异】外部预审：湖北/广东/江苏开启，其他基地走内部审批" style="shape=note;size=12;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="145" y="440" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="note3" value="【基地差异】到达/叫号：湖北/广东/江苏开启，仅物流类型访客" style="shape=note;size=12;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="145" y="782" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="note4" value="【基地差异】出入核销：所有基地开启(部分场景跳过)，贵州仓管替代保安" style="shape=note;size=12;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="145" y="1070" width="200" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="note5" value="【基地差异】地磅称重：仅江苏开启，自动采集+自动核销出场" style="shape=note;size=12;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;align=left;verticalAlign=top;" vertex="1" parent="1">
+          <mxGeometry x="145" y="1297" width="200" height="70" as="geometry" />
+        </mxCell>
+
+        
+        <mxCell id="legend_title" value="图例" style="text;html=1;fontSize=13;fontStyle=1;align=center;" vertex="1" parent="1">
+          <mxGeometry x="195" y="1450" width="150" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="legend1" value="访客端操作" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#bbdefb;strokeColor=#1565c0;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="195" y="1482" width="150" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="legend2" value="系统处理/配置" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe0b2;strokeColor=#e65100;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="195" y="1514" width="150" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="legend3" value="审批人操作" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1bee7;strokeColor=#6a1b9a;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="195" y="1546" width="150" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="legend4" value="核销人员操作" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#c8e6c9;strokeColor=#2e7d32;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="195" y="1578" width="150" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="legend5" value="判断节点" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="195" y="1610" width="150" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="legend6" value="基地差异便签" style="shape=note;size=8;whiteSpace=wrap;html=1;fillColor=#fff9c4;strokeColor=#f9a825;fontSize=10;" vertex="1" parent="1">
+          <mxGeometry x="195" y="1642" width="150" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="legend7" value="跨泳道连线(虚线)" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;strokeColor=#999;fontSize=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="195" y="1674" width="150" height="26" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>`;
+function downloadDrawio() {
+    const blob = new Blob([drawioData], {type: 'application/xml'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = '系统角色垂直泳道图_v3.drawio';
+    a.click();
+}
+let scale = 1;
+function zoomIn() { scale = Math.min(scale + 0.1, 2); document.getElementById('diagram').style.transform = 'scale(' + scale + ')'; }
+function zoomOut() { scale = Math.max(scale - 0.1, 0.3); document.getElementById('diagram').style.transform = 'scale(' + scale + ')'; }
+</script>
+</body>
+</html>
