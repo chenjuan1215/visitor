@@ -848,13 +848,19 @@ body {
 
 .toggle-switch {
   position: relative;
+  display: inline-block;
+  vertical-align: middle;
   width: 44px;
   height: 24px;
   cursor: pointer;
 }
 
 .toggle-switch input {
-  display: none;
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+  margin: 0;
 }
 
 .toggle-slider {
@@ -1952,6 +1958,16 @@ body {
 .gate-tree-item.active .gate-count {
   background: rgba(59,127,255,0.15);
   color: var(--accent-blue);
+}
+
+.gate-tree-item .gate-actions {
+  display: none;
+  gap: 2px;
+  margin-left: 6px;
+}
+
+.gate-tree-item:hover .gate-actions {
+  display: inline-flex;
 }
 
 .unload-detail-panel {
@@ -3824,6 +3840,24 @@ select.form-input {
           <td style="padding:8px 12px;border:1px solid #FFE0E0;">叫号访客消息推送</td>
           <td style="padding:8px 12px;border:1px solid #FFE0E0;color:#666;">保安/仓管叫号时，自动向访客推送消息通知（含入场时段、门岗、卸货点、核销码 H5 链接），通知示例见下方</td>
         </tr>
+        <tr>
+          <td style="padding:8px 12px;border:1px solid #FFE0E0;font-weight:600;">NEW-014</td>
+          <td style="padding:8px 12px;border:1px solid #FFE0E0;color:#FF4D4F;">新增</td>
+          <td style="padding:8px 12px;border:1px solid #FFE0E0;">通知仓管按钮</td>
+          <td style="padding:8px 12px;border:1px solid #FFE0E0;color:#666;">A8 顶部按钮组新增入口，点击弹窗选人员（多选），确认后弹 toast "已通知：xxx、xxx"</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border:1px solid #FFE0E0;color:#999;">—</td>
+          <td style="padding:8px 12px;border:1px solid #FFE0E0;color:#999;">原有</td>
+          <td style="padding:8px 12px;border:1px solid #FFE0E0;">规则配置按钮</td>
+          <td style="padding:8px 12px;border:1px solid #FFE0E0;color:#666;">M8 原有按钮（叫号规则配置弹窗入口）</td>
+        </tr>
+        <tr>
+          <td style="padding:8px 12px;border:1px solid #FFE0E0;color:#999;">—</td>
+          <td style="padding:8px 12px;border:1px solid #FFE0E0;color:#999;">原有</td>
+          <td style="padding:8px 12px;border:1px solid #FFE0E0;">新增车辆按钮</td>
+          <td style="padding:8px 12px;border:1px solid #FFE0E0;color:#666;">M8 原有按钮（功能开发中）</td>
+        </tr>
         </tbody>
       </table>
     </div>
@@ -4735,23 +4769,35 @@ select.form-input {
       <div class="gate-tree-panel">
         <div class="gate-tree-header">
           <h3>入口门</h3>
-          <button class="btn btn-primary btn-sm" onclick="addGateTree()">+ 添加</button>
+          <button class="btn btn-primary btn-sm" onclick="openGateEditModal()">+ 添加</button>
         </div>
         <div class="gate-tree-list" id="gate-tree-list">
           <div class="gate-tree-item active" data-gate="1号门" onclick="selectGate(this)">
             <span class="gate-icon">🚪</span>
             <span>1号门</span>
             <span class="gate-count">3</span>
+            <span class="gate-actions" onclick="event.stopPropagation()">
+              <button class="btn-text" style="font-size:11px;padding:2px 4px" onclick="openGateEditModal('1号门')">编辑</button>
+              <button class="btn-text danger" style="font-size:11px;padding:2px 4px" onclick="deleteGate('1号门')">删除</button>
+            </span>
           </div>
           <div class="gate-tree-item" data-gate="2号门" onclick="selectGate(this)">
             <span class="gate-icon">🚪</span>
             <span>2号门</span>
             <span class="gate-count">3</span>
+            <span class="gate-actions" onclick="event.stopPropagation()">
+              <button class="btn-text" style="font-size:11px;padding:2px 4px" onclick="openGateEditModal('2号门')">编辑</button>
+              <button class="btn-text danger" style="font-size:11px;padding:2px 4px" onclick="deleteGate('2号门')">删除</button>
+            </span>
           </div>
           <div class="gate-tree-item" data-gate="3号门" onclick="selectGate(this)">
             <span class="gate-icon">🚪</span>
             <span>3号门</span>
             <span class="gate-count">0</span>
+            <span class="gate-actions" onclick="event.stopPropagation()">
+              <button class="btn-text" style="font-size:11px;padding:2px 4px" onclick="openGateEditModal('3号门')">编辑</button>
+              <button class="btn-text danger" style="font-size:11px;padding:2px 4px" onclick="deleteGate('3号门')">删除</button>
+            </span>
           </div>
         </div>
       </div>
@@ -4805,7 +4851,7 @@ select.form-input {
           <td style="padding:8px 12px;border:1px solid #FFE0E0;font-weight:600;">NEW-026</td>
           <td style="padding:8px 12px;border:1px solid #FFE0E0;color:#FF4D4F;">新增</td>
           <td style="padding:8px 12px;border:1px solid #FFE0E0;">入口门管理</td>
-          <td style="padding:8px 12px;border:1px solid #FFE0E0;color:#666;">按入口门管理卸货点分布</td>
+          <td style="padding:8px 12px;border:1px solid #FFE0E0;color:#666;">按入口门管理卸货点分布，支持弹窗新增/编辑/删除</td>
         </tr>
         <tr>
           <td style="padding:8px 12px;border:1px solid #FFE0E0;font-weight:600;">NEW-027</td>
@@ -5586,6 +5632,24 @@ select.form-input {
     <div class="modal-footer">
       <button class="btn btn-secondary" onclick="closeUnloadEditModal()">取消</button>
       <button class="btn btn-primary" onclick="confirmUnloadEdit()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== GATE EDIT MODAL (入口门新增/编辑) ==================== -->
+<div class="modal-overlay" id="gate-edit-modal">
+  <div class="modal-box" style="width:420px">
+    <div class="modal-header" id="gate-edit-modal-title">添加入口门</div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label><span class="req">*</span>入口门名称</label>
+        <input type="text" id="gate-edit-name" placeholder="请输入入口门名称（如：1号门 / 北门 / 货仓入口）" style="padding:9px 12px;border:1.5px solid var(--border-light);border-radius:var(--radius-sm);font-size:13px;font-family:inherit;margin-top:6px;width:100%">
+        <div class="help-text">入口门名称全局唯一，不超过 20 字</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="closeGateEditModal()">取消</button>
+      <button class="btn btn-primary" onclick="saveGate()">保存</button>
     </div>
   </div>
 </div>
@@ -7073,18 +7137,104 @@ function deleteUnloadPoint(index) {
   }
 }
 
-function addGateTree() {
-  gateTreeCounter++;
-  var gateName = gateTreeCounter + '号门';
-  gateUnloadData[gateName] = [];
+// ==================== 入口门弹窗（新增 / 编辑 / 删除）====================
+let currentEditGate = null; // null = add new, string = editing gate name
+
+function openGateEditModal(gateName) {
+  var modal = document.getElementById('gate-edit-modal');
+  if (gateName !== undefined && gateName !== null) {
+    // Edit mode
+    currentEditGate = gateName;
+    document.getElementById('gate-edit-modal-title').textContent = '编辑入口门';
+    document.getElementById('gate-edit-name').value = gateName;
+  } else {
+    // Add mode
+    currentEditGate = null;
+    document.getElementById('gate-edit-modal-title').textContent = '添加入口门';
+    document.getElementById('gate-edit-name').value = '';
+  }
+  modal.classList.add('show');
+  setTimeout(function() { document.getElementById('gate-edit-name').focus(); }, 100);
+}
+
+function closeGateEditModal() {
+  document.getElementById('gate-edit-modal').classList.remove('show');
+  currentEditGate = null;
+}
+
+function saveGate() {
+  var newName = document.getElementById('gate-edit-name').value.trim();
+  if (!newName) { showToast('请输入入口门名称'); return; }
+  if (newName.length > 20) { showToast('入口门名称不能超过 20 字'); return; }
+
+  var existing = Object.keys(gateUnloadData);
+  if (currentEditGate) {
+    if (newName !== currentEditGate && existing.indexOf(newName) !== -1) {
+      showToast('入口门名称已存在'); return;
+    }
+  } else {
+    if (existing.indexOf(newName) !== -1) {
+      showToast('入口门名称已存在'); return;
+    }
+  }
+
+  if (currentEditGate) {
+    // Rename: 同步 gateUnloadData 键名
+    if (newName !== currentEditGate) {
+      gateUnloadData[newName] = gateUnloadData[currentEditGate];
+      delete gateUnloadData[currentEditGate];
+      if (selectedGate === currentEditGate) selectedGate = newName;
+    }
+    showToast('已保存');
+  } else {
+    gateUnloadData[newName] = [];
+    showToast('已添加 ' + newName);
+  }
+
+  renderGateList();
+  closeGateEditModal();
+}
+
+function deleteGate(gateName) {
+  if (Object.keys(gateUnloadData).length <= 1) {
+    showToast('至少保留 1 个入口门'); return;
+  }
+  var unloadCount = (gateUnloadData[gateName] || []).length;
+  var msg = '确定删除「' + gateName + '」？';
+  if (unloadCount > 0) msg += '\n将同时删除 ' + unloadCount + ' 个卸货点。';
+  if (!confirm(msg)) return;
+
+  delete gateUnloadData[gateName];
+  if (selectedGate === gateName) {
+    selectedGate = Object.keys(gateUnloadData)[0];
+  }
+  renderGateList();
+  // 同步右侧卸货点列表
+  document.getElementById('unload-detail-title').textContent = selectedGate + ' - 卸货点列表';
+  renderUnloadPointTable();
+  showToast('已删除 ' + gateName);
+}
+
+function renderGateList() {
   var list = document.getElementById('gate-tree-list');
-  var div = document.createElement('div');
-  div.className = 'gate-tree-item';
-  div.dataset.gate = gateName;
-  div.onclick = function() { selectGate(this); };
-  div.innerHTML = '<span class="gate-icon">🚪</span><span>' + gateName + '</span><span class="gate-count">0</span>';
-  list.appendChild(div);
-  showToast('已添加 ' + gateName);
+  if (!list) return;
+  var html = '';
+  var names = Object.keys(gateUnloadData);
+  names.forEach(function(name) {
+    var isActive = name === selectedGate ? ' active' : '';
+    var count = gateUnloadData[name].length;
+    var escName = name.replace(/'/g, "\\'");
+    html += '<div class="gate-tree-item' + isActive + '" data-gate="' + name + '" onclick="selectGate(this)">' +
+            '<span class="gate-icon">🚪</span>' +
+            '<span>' + name + '</span>' +
+            '<span class="gate-count">' + count + '</span>' +
+            '<span class="gate-actions" onclick="event.stopPropagation()">' +
+              '<button class="btn-text" style="font-size:11px;padding:2px 4px" onclick="openGateEditModal(\'' + escName + '\')">编辑</button>' +
+              '<button class="btn-text danger" style="font-size:11px;padding:2px 4px" onclick="deleteGate(\'' + escName + '\')">删除</button>' +
+            '</span>' +
+            '</div>';
+  });
+  list.innerHTML = html;
 }
 
 function simulateUpload(slotEl, type) {
@@ -8135,9 +8285,9 @@ function confirmRemove() {
       </div>
     </div>
     <div style="background:#FFF7F7;border-radius:8px;padding:10px;margin-bottom:8px;">
-      <div style="font-weight:700;color:#FF4D4F;margin-bottom:6px;">🔴 红色虚线 = 字段/卡片级新增（11 处）</div>
+      <div style="font-weight:700;color:#FF4D4F;margin-bottom:6px;">🔴 红色虚线 = 字段/卡片级新增（12 处）</div>
       <div style="color:#555;font-size:12px;line-height:1.8;">
-        列表"基地组织/审核状态"列（红）· 操作列"详情/外部审批"按钮（黄/迭代）· 表单"基地组织"字段 · 详情页"基地组织" + 核销信息区域（核销原因/触发类型/地磅重量/核销人/核销时间）· 车辆预约列表 · 叫号规则配置 · 卸货时段配置 · 访客类型选择器 · 基地组织配置 · 出入核销配置 · 外部预审配置 · 强制阅读 · 视频进度条控制 · 答题频次
+        列表"基地组织/审核状态"列（红）· 操作列"详情/外部审批"按钮（黄/迭代）· 表单"基地组织"字段 · 详情页"基地组织" + 核销信息区域（核销原因/触发类型/地磅重量/核销人/核销时间）· 车辆预约列表 · 叫号规则配置 · 卸货时段配置 · 访客类型选择器 · 基地组织配置 · 出入核销配置 · 外部预审配置 · 强制阅读 · 视频进度条控制 · 答题频次 · 通知仓管按钮
       </div>
     </div>
     <div style="background:#FFFBEB;border-radius:8px;padding:10px;margin-bottom:8px;border:1px solid #FCD34D;">
