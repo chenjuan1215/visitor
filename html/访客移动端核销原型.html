@@ -491,28 +491,6 @@ body {
   margin-left: 8px;
 }
 
-/* 搜索方式切换 */
-.search-tabs {
-  display: flex;
-  gap: 0;
-  margin: 10px 14px 0;
-  background: #fff;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-}
-.search-tab {
-  flex: 1;
-  text-align: center;
-  padding: 8px 0;
-  font-size: 12px;
-  color: #64748B;
-  cursor: pointer;
-  transition: all 0.2s;
-  border-bottom: 2px solid transparent;
-}
-.search-tab.active { color: #2563EB; border-bottom-color: #2563EB; font-weight: 500; }
-
 /* 核销弹窗 */
 .modal-overlay {
   display: none;
@@ -807,6 +785,79 @@ body {
   font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.6;
 }
 
+/* ==================== 手机验证码登录页 ==================== */
+.sms-input-group { width: 100%; margin-bottom: 12px; }
+.sms-input-group .sms-input {
+  width: 100%; padding: 14px 16px; border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1);
+  color: #fff; font-size: 16px; outline: none; box-sizing: border-box;
+  transition: all 0.2s;
+}
+.sms-input-group .sms-input::placeholder { color: rgba(255,255,255,0.5); }
+.sms-input-group .sms-input:focus { border-color: #fff; background: rgba(255,255,255,0.2); }
+.sms-input-group.sms-row { display: flex; gap: 8px; align-items: stretch; }
+.sms-input-group.sms-row .sms-input { flex: 1; min-width: 0; }
+.sms-send-btn {
+  padding: 0 16px; border-radius: 12px; border: 2px solid rgba(255,255,255,0.3);
+  background: rgba(255,255,255,0.1); color: #fff; font-size: 13px; font-weight: 500;
+  cursor: pointer; white-space: nowrap; min-width: 110px; transition: all 0.2s;
+}
+.sms-send-btn:active { opacity: 0.85; }
+.sms-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.sms-tip { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.6; }
+
+/* 图形验证码 */
+.sms-captcha-row {
+  display: flex; gap: 8px; align-items: stretch; width: 100%;
+  margin-bottom: 12px;
+}
+.sms-captcha-input {
+  flex: 1; min-width: 0;
+  width: 100%; padding: 14px 16px; border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.3); background: rgba(255,255,255,0.1);
+  color: #fff; font-size: 16px; outline: none; box-sizing: border-box;
+  transition: all 0.2s;
+}
+.sms-captcha-input::placeholder { color: rgba(255,255,255,0.5); }
+.sms-captcha-input:focus { border-color: #fff; background: rgba(255,255,255,0.2); }
+.sms-captcha-img {
+  width: 120px; height: 44px; border-radius: 12px;
+  border: 2px solid rgba(255,255,255,0.3);
+  cursor: pointer; background: #fff; flex-shrink: 0;
+  display: block;
+}
+.sms-captcha-refresh-row {
+  display: flex; justify-content: flex-end; width: 100%;
+  margin-top: -4px; margin-bottom: 12px;
+}
+.sms-captcha-refresh {
+  font-size: 12px; color: rgba(255,255,255,0.7); cursor: pointer;
+  padding: 2px 4px; user-select: none;
+}
+.sms-captcha-refresh:active { opacity: 0.7; }
+
+/* 手机内弹窗 */
+.sms-alert-overlay {
+  display: none; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5); z-index: 1003;
+  align-items: center; justify-content: center; padding: 30px;
+}
+.sms-alert-overlay.show { display: flex; }
+.sms-alert-card {
+  background: #fff; border-radius: 16px; width: 100%; max-width: 320px;
+  padding: 24px 20px; text-align: center;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+}
+.sms-alert-icon { font-size: 44px; margin-bottom: 8px; line-height: 1; }
+.sms-alert-title { font-size: 17px; font-weight: 700; color: #1E293B; margin-bottom: 8px; }
+.sms-alert-msg { font-size: 13px; color: #64748B; line-height: 1.6; margin-bottom: 20px; word-break: break-all; }
+.sms-alert-btn {
+  padding: 11px 28px; border-radius: 10px; font-size: 15px; font-weight: 600;
+  border: none; cursor: pointer; background: #2563EB; color: #fff; min-width: 110px;
+  transition: all 0.2s;
+}
+.sms-alert-btn:active { opacity: 0.85; }
+
 
 /* 登录页两步选择样式 */
 .login-org-grid {
@@ -1072,6 +1123,17 @@ body {
 .reg-upload-area:hover { border-color: #2563EB; background: #EFF6FF; }
 .reg-upload-area .upload-icon { font-size: 28px; margin-bottom: 4px; }
 .reg-upload-area .upload-text { font-size: 12px; color: #94A3B8; }
+.reg-attach-list { margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+.reg-attach-item { display: flex; align-items: center; gap: 10px; padding: 10px; background: #fff; border: 1px solid #E2E8F0; border-radius: 10px; }
+.reg-attach-item .rai-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.reg-attach-item .rai-info { flex: 1; min-width: 0; }
+.reg-attach-item .rai-name { font-size: 13px; color: #1E293B; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.reg-attach-item .rai-meta { font-size: 11px; color: #94A3B8; margin-top: 2px; }
+.reg-attach-item .rai-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.reg-attach-item .rai-preview { font-size: 12px; color: #2563EB; cursor: pointer; padding: 2px 4px; }
+.reg-attach-item .rai-preview:hover { text-decoration: underline; }
+.reg-attach-item .rai-del { font-size: 14px; color: #94A3B8; cursor: pointer; padding: 2px 4px; }
+.reg-attach-item .rai-del:hover { color: #EF4444; }
 .reg-plate-row { display: flex; align-items: center; gap: 8px; }
 .reg-plate-row .reg-input { flex: 1; }
 .reg-plate-tag {
@@ -1131,6 +1193,261 @@ body {
 .type-confirm-btn.cancel { background: #F1F5F9; color: #64748B; }
 .type-confirm-btn.confirm { background: #2563EB; color: #fff; }
 
+
+/* ==================== 双手机容器（黑名单效果） ==================== */
+.dual-phone-wrapper {
+  display: none;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 50px;
+  padding: 80px 30px 30px;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+}
+.dual-phone-wrapper.active { display: flex; }
+.dual-phone-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+.dual-phone-cell .cell-title {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  padding: 8px 18px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.dual-phone-cell .cell-subtitle {
+  color: rgba(255,255,255,0.5);
+  font-size: 12px;
+  margin-top: -6px;
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.5;
+}
+.dual-phone-frame {
+  width: 320px;
+  height: 690px;
+  background: #000;
+  border-radius: 40px;
+  padding: 10px;
+  box-shadow:
+    0 0 0 2px #333,
+    0 0 0 4px #1a1a1a,
+    0 20px 60px rgba(0,0,0,0.5),
+    inset 0 0 0 1px rgba(255,255,255,0.05);
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.dual-phone-notch {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 130px;
+  height: 24px;
+  background: #000;
+  border-radius: 0 0 16px 16px;
+  z-index: 9999;
+}
+.dual-phone-screen {
+  width: 100%;
+  height: 100%;
+  background: #F0F2F5;
+  border-radius: 30px;
+  overflow: hidden;
+  position: relative;
+}
+.dual-phone-content {
+  width: 100%;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.dual-phone-content::-webkit-scrollbar { display: none; }
+
+/* 黑名单拦截横幅（内嵌） */
+.blacklist-banner {
+  background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+  border: 1px solid #FECACA;
+  border-radius: 12px;
+  padding: 14px;
+  margin: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.blacklist-banner .bl-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.blacklist-banner .bl-icon {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #DC2626;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+.blacklist-banner .bl-title {
+  color: #991B1B;
+  font-size: 14px;
+  font-weight: 700;
+  flex: 1;
+}
+.blacklist-banner .bl-body {
+  background: #fff;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 12px;
+  color: #7F1D1D;
+  line-height: 1.6;
+  border: 1px solid #FEE2E2;
+}
+.blacklist-banner .bl-body .bl-reason-label {
+  color: #991B1B;
+  font-weight: 600;
+  margin-bottom: 2px;
+  font-size: 11px;
+}
+.blacklist-banner .bl-footer {
+  font-size: 11px;
+  color: #991B1B;
+  text-align: center;
+  padding-top: 4px;
+  border-top: 1px dashed #FCA5A5;
+}
+
+/* 黑名单全屏模态弹窗 */
+.blacklist-modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 9000;
+  border-radius: 30px;
+}
+.blacklist-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 22px 20px;
+  width: 100%;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+  text-align: center;
+}
+.blacklist-modal .bm-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #FEE2E2;
+  color: #DC2626;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 0 auto 10px;
+  line-height: 1;
+}
+.blacklist-modal .bm-title {
+  color: #991B1B;
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.blacklist-modal .bm-desc {
+  color: #6B7280;
+  font-size: 12px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.blacklist-modal .bm-reason {
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  padding: 10px 12px;
+  text-align: left;
+  font-size: 12px;
+  color: #991B1B;
+  line-height: 1.6;
+  margin-bottom: 14px;
+}
+.blacklist-modal .bm-reason strong { color: #7F1D1D; }
+.blacklist-modal .bm-btn {
+  background: #DC2626;
+  color: #fff;
+  border: none;
+  border-radius: 22px;
+  padding: 10px 0;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* 登录页黑名单场景 - 手机号输入条 */
+.bl-login-phone-bar {
+  margin: 8px 16px 4px;
+  padding: 11px 14px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #FCA5A5;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.bl-login-phone-bar .country-code {
+  color: #6B7280;
+  font-size: 13px;
+  padding-right: 10px;
+  border-right: 1px solid #E5E7EB;
+}
+.bl-login-phone-bar .phone-number {
+  flex: 1;
+  color: #111827;
+  letter-spacing: 1px;
+}
+.bl-login-phone-bar .phone-disabled-tag {
+  background: #FEE2E2;
+  color: #991B1B;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+/* 禁用态提交按钮 */
+.bl-submit-btn-disabled {
+  background: #E5E7EB;
+  color: #9CA3AF;
+  cursor: not-allowed;
+  border: none;
+  border-radius: 22px;
+  padding: 10px 0;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 600;
+}
+
 </style>
 </head>
 <body>
@@ -1142,9 +1459,21 @@ body {
     <p>访客核销 v11</p>
   </div>
 
-  <div class="menu-group">
+    <div class="menu-group">
+    <div class="menu-group-title">🚫 黑名单拦截效果</div>
+    <div class="menu-item" onclick="navigateTo('v-page-smslogin', this, '手机验证码登录')">
+      <span class="icon">📲</span> 手机验证码登录
+      <span class="badge-new">NEW</span>
+    </div>
+    <div class="menu-item" onclick="navigateTo('v-page-blacklist', this, '黑名单拦截效果')">
+      <span class="icon">⛔</span> 登录拦截 + 登记拦截
+      <span class="badge-new">NEW</span>
+    </div>
+  </div>
+
+<div class="menu-group">
     <div class="menu-group-title">👤 访客端</div>
-    <div class="menu-item" onclick="navigateTo('v-page-login', this, '预约登录页')">
+    <div class="menu-item active" onclick="navigateTo('v-page-login', this, '预约登录页')">
       <span class="icon">🔑</span> 预约登录页
       <span class="badge-new">NEW</span>
     </div>
@@ -1156,7 +1485,7 @@ body {
       <span class="icon">📝</span> 预约登记页
       <span class="badge-new">NEW</span>
     </div>
-    <div class="menu-item active" onclick="navigateTo('v-page-list', this, '我的预约列表')">
+    <div class="menu-item" onclick="navigateTo('v-page-list', this, '我的预约列表')">
       <span class="icon">📋</span> 我的预约列表
     </div>
     <div class="menu-item" onclick="navigateTo('v-page-detail', this, '预约详情页')">
@@ -1211,7 +1540,7 @@ body {
 
 
 <!-- ========== 预约登录页 ========== -->
-<div id="v-page-login" class="page">
+<div id="v-page-login" class="page active">
   <div class="login-welcome">
     <div class="login-logo">🏭</div>
     <div class="login-title">欢迎来到<br>红牛访客预约平台</div>
@@ -1255,6 +1584,50 @@ body {
     <div class="login-bottom-links">
       <div class="my-reservation" onclick="navigateTo('v-page-list', null, '我的预约列表')">📋 我的预约 ›</div>
       <div class="internal-notice">*公司内部管理系统，采用白名单验证登录机制，仅限内部员工使用</div>
+    </div>
+  </div>
+</div>
+
+<!-- ========== 手机验证码登录页 ========== -->
+<div id="v-page-smslogin" class="page" style="position:relative;height:100%;box-sizing:border-box;">
+  <div class="login-welcome" style="height:100%;box-sizing:border-box;">
+    <div class="login-logo">📲</div>
+    <div class="login-title">手机验证码登录</div>
+    <div class="login-subtitle">请输入手机号获取验证码登录</div>
+
+    <div class="sms-input-group">
+      <input class="sms-input" type="tel" maxlength="11" placeholder="请输入手机号" id="sms-phone">
+    </div>
+
+    <!-- 图形验证码 -->
+    <div class="sms-captcha-row">
+      <input class="sms-input sms-captcha-input" type="text" maxlength="4" placeholder="图形验证码" id="sms-captcha-input" autocomplete="off">
+      <canvas class="sms-captcha-img" id="sms-captcha-canvas" width="120" height="44" onclick="refreshCaptcha()" title="点击换一张"></canvas>
+    </div>
+    <div class="sms-captcha-refresh-row">
+      <span class="sms-captcha-refresh" onclick="refreshCaptcha()">🔄 换一张</span>
+    </div>
+
+    <div class="sms-input-group sms-row">
+      <input class="sms-input" type="text" maxlength="6" placeholder="6 位验证码" id="sms-code">
+      <button class="sms-send-btn" id="sms-send-btn" onclick="sendSmsCode()">获取验证码</button>
+    </div>
+
+    <button class="login-btn-primary" style="margin-top:24px;" onclick="smsLogin()">登录</button>
+
+    <div class="login-bottom-links">
+      <div class="sms-tip">未注册的手机号将自动创建访客账号</div>
+      <div class="internal-notice" style="margin-top:8px;">*登录即表示您同意《用户服务协议》和《隐私政策》</div>
+    </div>
+  </div>
+
+  <!-- 手机内弹窗 -->
+  <div class="sms-alert-overlay" id="sms-alert-overlay">
+    <div class="sms-alert-card">
+      <div class="sms-alert-icon" id="sms-alert-icon">📱</div>
+      <div class="sms-alert-title" id="sms-alert-title">提示</div>
+      <div class="sms-alert-msg" id="sms-alert-msg"></div>
+      <button class="sms-alert-btn" id="sms-alert-btn" onclick="closeSmsAlert()">知道了</button>
     </div>
   </div>
 </div>
@@ -1459,6 +1832,61 @@ body {
         <div class="upload-text">点击上传人脸照片</div>
       </div>
     </div>
+    <div class="reg-form-group">
+      <label class="reg-label">附件资料
+        <span style="color:#94A3B8;font-size:11px;font-weight:400;margin-left:6px;">（外来施工类访客上传 · 支持图片 / PDF / Word / Excel / 压缩包）</span>
+      </label>
+      <div class="reg-upload-area" style="height:80px;">
+        <div class="upload-icon">📎</div>
+        <div class="upload-text">点击上传附件资料</div>
+      </div>
+      <div class="reg-attach-list">
+        <div class="reg-attach-item">
+          <div class="rai-icon" style="background:#FEE2E2;color:#DC2626;">🖼️</div>
+          <div class="rai-info">
+            <div class="rai-name">施工现场照片1.jpg</div>
+            <div class="rai-meta">1.2 MB · 图片</div>
+          </div>
+          <div class="rai-actions">
+            <span class="rai-preview">预览</span>
+            <span class="rai-del">✕</span>
+          </div>
+        </div>
+        <div class="reg-attach-item">
+          <div class="rai-icon" style="background:#FEF3C7;color:#D97706;">📄</div>
+          <div class="rai-info">
+            <div class="rai-name">施工方案及安全承诺书.pdf</div>
+            <div class="rai-meta">2.3 MB · PDF</div>
+          </div>
+          <div class="rai-actions">
+            <span class="rai-preview">预览</span>
+            <span class="rai-del">✕</span>
+          </div>
+        </div>
+        <div class="reg-attach-item">
+          <div class="rai-icon" style="background:#DBEAFE;color:#2563EB;">📊</div>
+          <div class="rai-info">
+            <div class="rai-name">施工人员名单.xlsx</div>
+            <div class="rai-meta">156 KB · Excel</div>
+          </div>
+          <div class="rai-actions">
+            <span class="rai-preview">预览</span>
+            <span class="rai-del">✕</span>
+          </div>
+        </div>
+        <div class="reg-attach-item">
+          <div class="rai-icon" style="background:#F3E8FF;color:#9333EA;">📦</div>
+          <div class="rai-info">
+            <div class="rai-name">施工资质材料.zip</div>
+            <div class="rai-meta">5.8 MB · 压缩包</div>
+          </div>
+          <div class="rai-actions">
+            <span class="rai-preview">预览</span>
+            <span class="rai-del">✕</span>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- 来访车辆 -->
@@ -1483,7 +1911,7 @@ body {
 </div>
 
 <!-- ========== 页面1：我的预约列表 ========== -->
-<div id="v-page-list" class="page active">
+<div id="v-page-list" class="page">
   <div class="nav-bar"><div class="title">我的预约</div></div>
   <div style="display:flex; background:#fff;">
     <div class="v-sub-tab active" onclick="switchVisitorTab(this, 'v-reservations')" style="flex:1;text-align:center;padding:10px 0;font-size:13px;color:#2563EB;border-bottom:2px solid #2563EB;cursor:pointer;font-weight:500;">我的预约</div>
@@ -1939,26 +2367,18 @@ body {
     <button class="back-btn" onclick="navigateTo('s-page-home', null, '保安/仓管工作台')">‹</button>
     <div class="title">搜索核销</div>
   </div>
-  <div class="search-tabs">
-    <div class="search-tab active" onclick="switchSearchTab(this,'name')">姓名</div>
-    <div class="search-tab" onclick="switchSearchTab(this,'phone')">手机号</div>
-    <div class="search-tab" onclick="switchSearchTab(this,'plate')">车牌号</div>
+  <div style="padding:6px 18px 0;font-size:11px;color:#94A3B8;display:flex;align-items:center;gap:4px;">
+    <span>💡</span><span>综合搜索：输入任意字段关键字均可查询（姓名 / 手机号 / 车牌号 / 访客单位 / 接待部门）</span>
   </div>
   <div class="search-bar">
     <span style="color:#94A3B8;margin-right:6px;">🔍</span>
-    <input type="text" id="search-input" placeholder="请输入访客姓名">
+    <input type="text" id="search-input" placeholder="请输入姓名/手机号/车牌号/访客单位/接待部门">
     <button class="search-btn" onclick="doSearch()">搜索</button>
   </div>
-  <div id="search-results">
-    <div class="reservation-card" onclick="showVerifyModalSearch('张三','京A·12345')" style="margin:6px 14px;">
-      <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-approved">已审核</span></div>
-      <div class="reservation-info"><span>🚗 京A·12345</span><span>📅 2026-07-01</span></div>
-      <div style="margin-top:6px;font-size:11px;color:#64748B;">红牛-本基地 · 一般访客 · 接待人：李经理</div>
-    </div>
-    <div class="reservation-card" onclick="showVerifyModalSearch('张三','京C·11111')" style="margin:6px 14px;">
-      <div class="reservation-header"><span class="reservation-name">张三</span><span class="badge badge-pending">待审核</span></div>
-      <div class="reservation-info"><span>🚗 京C·11111</span><span>📅 2026-07-03</span></div>
-      <div style="margin-top:6px;font-size:11px;color:#64748B;">奥瑞金 · 外来施工 · 接待人：王主管</div>
+  <div id="search-results"></div>
+  <div id="search-initial" style="display:none;padding:6px 14px 0;">
+    <div style="font-size:12px;color:#94A3B8;display:flex;align-items:center;gap:4px;">
+      <span>📋</span><span>共 <span id="search-count">0</span> 条预约记录（输入关键字进行综合搜索）</span>
     </div>
   </div>
   <div id="search-empty" style="display:none;">
@@ -2063,12 +2483,211 @@ body {
   </div>
     </div><!-- end phone-screen -->
   </div><!-- end phone-frame -->
+
+
+  <!-- ==================== 双手机容器：黑名单拦截效果 ==================== -->
+  <div class="dual-phone-wrapper" id="dual-phone-wrapper">
+
+    <!-- ========== 左侧手机：登录拦截 ========== -->
+    <div class="dual-phone-cell">
+      <div class="cell-title">场景一：登录时被拦截</div>
+      <div class="cell-subtitle">访客进入登录页输入手机号 → 系统识别黑名单 → 验证码无法发送、登录按钮禁用 → 展示拉黑原因</div>
+      <div class="dual-phone-frame">
+        <div class="dual-phone-notch"></div>
+        <div class="dual-phone-screen">
+          <div class="dual-phone-content">
+
+            <!-- 状态栏 -->
+            <div class="status-bar">
+              <span class="time">9:41</span>
+              <span class="icons"><span>📶</span><span>📡</span><span>🔋</span></span>
+            </div>
+
+            <!-- 独立登录页（黑名单场景） -->
+            <div style="position:relative;min-height:100%;background:linear-gradient(180deg,#1E3A8A 0%,#1E40AF 40%,#3B82F6 100%);padding:48px 20px 20px;display:flex;flex-direction:column;align-items:center;">
+
+              <!-- 顶部 Logo -->
+              <div style="width:64px;height:64px;border-radius:16px;background:rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:14px;backdrop-filter:blur(10px);"></div>
+
+              <!-- 标题 -->
+              <div style="color:#fff;font-size:18px;font-weight:700;text-align:center;margin-bottom:3px;line-height:1.4;">欢迎来到<br>红牛访客预约平台</div>
+              <div style="color:rgba(255,255,255,0.55);font-size:12px;text-align:center;margin-bottom:24px;">手机号快捷登录</div>
+
+              <!-- 手机号输入框 -->
+              <div style="width:100%;background:rgba(255,255,255,0.97);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:8px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.15);">
+                <span style="color:#6B7280;font-size:13px;font-weight:500;padding-right:8px;border-right:1px solid #E5E7EB;">+86</span>
+                <input type="tel" value="138****5678" readonly style="flex:1;border:none;outline:none;background:transparent;font-size:15px;color:#111827;letter-spacing:1px;">
+              </div>
+
+              <!-- 验证码输入框 -->
+              <div style="width:100%;background:rgba(255,255,255,0.97);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:10px;margin-bottom:20px;border:1px solid rgba(255,255,255,0.15);">
+                <input type="text" placeholder="请输入验证码" disabled style="flex:1;border:none;outline:none;background:transparent;font-size:15px;color:#9CA3AF;letter-spacing:4px;">
+              </div>
+
+              <!-- 登录按钮（禁用态） -->
+              <button id="login-btn-blacklist" style="width:100%;padding:14px 0;background:rgba(255,255,255,0.2);color:rgba(255,255,255,0.5);border:none;border-radius:22px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:16px;backdrop-filter:blur(10px);letter-spacing:2px;" onclick="document.getElementById('login-blacklist-popup').style.display='flex'">登 录</button>
+
+              <!-- 底部提示 -->
+              <div style="margin-top:auto;padding-top:20px;text-align:center;">
+                <div style="color:rgba(255,255,255,0.5);font-size:11px;margin-bottom:4px;">📋 我的预约 ›</div>
+                <div style="color:rgba(255,255,255,0.3);font-size:10px;">*黑名单拦截基于访客手机号匹配，各基地独立维护</div>
+              </div>
+              <!-- 登录限制弹窗（默认弹出） -->
+              <div id="login-blacklist-popup" style="display:flex;position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.6);align-items:center;justify-content:center;z-index:100;backdrop-filter:blur(4px);">
+                <div style="width:85%;max-width:280px;background:#fff;border-radius:16px;padding:24px 20px;display:flex;flex-direction:column;align-items:center;box-shadow:0 8px 32px rgba(0,0,0,0.3);">
+                  <div style="width:48px;height:48px;border-radius:50%;background:#FEE2E2;display:flex;align-items:center;justify-content:center;margin-bottom:12px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 9v4m0 4h.01M12 2L2 22h20L12 2z" stroke="#DC2626" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div style="color:#991B1B;font-size:16px;font-weight:700;margin-bottom:6px;">登录限制</div>
+                  <div style="width:100%;background:#FEF2F2;border-radius:8px;padding:12px;margin-bottom:16px;border:1px solid #FECACA;">
+                    <div style="font-weight:600;color:#991B1B;font-size:11px;margin-bottom:4px;">拉黑类型</div>
+                    <div style="font-size:12px;color:#7F1D1D;line-height:1.5;margin-bottom:8px;">人员账号</div>
+                    <div style="font-weight:600;color:#991B1B;font-size:11px;margin-bottom:4px;">拉黑原因</div>
+                    <div style="font-size:12px;color:#7F1D1D;line-height:1.5;">多次违反厂区安全规定（未佩戴安全帽进入生产区、擅自进入仓储禁区）。</div>
+                  </div>
+                  <button onclick="document.getElementById('login-blacklist-popup').style.display='none'" style="width:100%;padding:12px 0;background:#DC2626;color:#fff;border:none;border-radius:22px;font-size:14px;font-weight:600;cursor:pointer;letter-spacing:1px;">我知道了</button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== 右侧手机：登记提交拦截 ========== -->
+    <div class="dual-phone-cell">
+      <div class="cell-title">场景二：提交登记时被拦截</div>
+      <div class="cell-subtitle">访客已登录并填写完登记信息 → 提交时系统识别黑名单 → 阻断提交并提示拉黑原因</div>
+      <div class="dual-phone-frame">
+        <div class="dual-phone-notch"></div>
+        <div class="dual-phone-screen">
+          <div class="dual-phone-content" style="position:relative;">
+
+            <!-- 状态栏 -->
+            <div class="status-bar">
+              <span class="time">9:41</span>
+              <span class="icons"><span>📶</span><span>📡</span><span>🔋</span></span>
+            </div>
+
+            <!-- 导航栏 -->
+            <div class="nav-bar" style="position:relative;">
+              <button class="back-btn">‹</button>
+              <div class="title">预约登记</div>
+              <span style="font-size:18px;margin-left:auto;cursor:pointer;margin-right:8px;opacity:0.7;">···</span>
+            </div>
+
+            <!-- 隐私提示条 -->
+            <div class="registration-tip-bar">
+              ⓘ 此次个人信息收集仅用于公司内部管理，公司严格保密
+            </div>
+
+            <!-- 访客类型标记 -->
+            <div class="card">
+              <div style="display:flex;flex-wrap:wrap;margin-bottom:4px;">
+                <div class="visitor-type-badge">
+                  <span class="vtb-label">基地：</span>
+                  <span>红牛（本基地）</span>
+                </div>
+                <div class="visitor-type-badge">
+                  <span class="vtb-label">类型：</span>
+                  <span>一般访客</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 来访信息表单（已填写） -->
+            <div class="card">
+              <div class="card-title">来访信息</div>
+
+              <div class="reg-form-group">
+                <label class="reg-label"><span class="required">*</span>访客姓名</label>
+                <input class="reg-input" type="text" value="张三" readonly style="color:#111827;">
+              </div>
+              <div class="reg-form-group">
+                <label class="reg-label"><span class="required">*</span>身份证号</label>
+                <input class="reg-input" type="text" value="3301**********1234" readonly style="color:#111827;">
+              </div>
+              <div class="reg-form-group">
+                <label class="reg-label"><span class="required">*</span>性别</label>
+                <input class="reg-input" type="text" value="男" readonly style="color:#111827;">
+              </div>
+              <div class="reg-form-group">
+                <label class="reg-label"><span class="required">*</span>访客单位</label>
+                <input class="reg-input" type="text" value="某某物流公司" readonly style="color:#111827;">
+              </div>
+              <div class="reg-form-group">
+                <label class="reg-label"><span class="required">*</span>联系电话</label>
+                <input class="reg-input" type="tel" value="138****5678" readonly style="color:#DC2626;background:#FEF2F2;">
+              </div>
+              <div class="reg-form-group">
+                <label class="reg-label"><span class="required">*</span>接待部门</label>
+                <input class="reg-input" type="text" value="储运采购部" readonly style="color:#111827;">
+              </div>
+              <div class="reg-form-group">
+                <label class="reg-label"><span class="required">*</span>接待人</label>
+                <input class="reg-input" type="text" value="李经理" readonly style="color:#111827;">
+              </div>
+
+              <div style="height:8px;"></div>
+            </div>
+
+            <div style="height:80px;"></div>
+
+            <!-- 底部提交按钮（禁用态） -->
+            <div class="reg-submit-bar" style="background:#fff;border-top:1px solid #FECACA;">
+              <button class="bl-submit-btn-disabled">提交申请 · 黑名单拦截中</button>
+            </div>
+
+            <!-- 全屏黑名单拦截弹窗 -->
+            <div class="blacklist-modal-overlay">
+              <div class="blacklist-modal">
+                <div class="bm-icon">✕</div>
+                <div class="bm-title">登记提交失败</div>
+                <div class="bm-desc">该手机号已被加入黑名单，本次登记无法提交</div>
+                <div class="bm-reason">
+                  <div><strong>拉黑类型：</strong>车辆车牌</div>
+                  <div><strong>手机号：</strong>138****5678</div>
+                  <div><strong>车牌号：</strong>京A·12345</div>
+                  <div style="margin-top:6px;"><strong>拉黑原因：</strong></div>
+                  <div>多次违反厂区安全规定（未佩戴安全帽进入生产区、擅自进入仓储禁区）。</div>
+                </div>
+                <button class="bm-btn">我知道了</button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
 </div><!-- end preview-area -->
 
 <script>
 let countdownInterval = null;
 
 function navigateTo(pageId, menuItem, label) {
+  // ========== 黑名单效果特殊页面识别 ==========
+  var dualWrapper = document.getElementById('dual-phone-wrapper');
+  var singleFrame = document.querySelector('.preview-area > .phone-frame');
+  var pageLabel = document.getElementById('page-label');
+  if (pageId === 'v-page-blacklist') {
+    // 隐藏单手机，显示双手机
+    if (singleFrame) singleFrame.style.display = 'none';
+    if (dualWrapper) dualWrapper.classList.add('active');
+    if (pageLabel) pageLabel.textContent = label || '黑名单拦截效果';
+  } else {
+    // 隐藏双手机，显示单手机
+    if (dualWrapper) dualWrapper.classList.remove('active');
+    if (singleFrame) singleFrame.style.display = '';
+  }
+  // ========== 黑名单效果特殊页面识别 END ==========
+
   // 切换页面
   document.querySelectorAll('.page').forEach(function(p) {
     p.classList.remove('active');
@@ -2140,23 +2759,61 @@ function switchMsgTab(el, targetId) {
   document.getElementById('msg-sms').style.display = targetId === 'msg-sms' ? 'block' : 'none';
 }
 
-function switchSearchTab(el, type) {
-  document.querySelectorAll('.search-tab').forEach(function(t) { t.classList.remove('active'); });
-  el.classList.add('active');
-  var input = document.getElementById('search-input');
-  var placeholders = { name: '请输入访客姓名', phone: '请输入手机号', plate: '请输入车牌号' };
-  input.placeholder = placeholders[type] || '请输入搜索关键词';
-  input.value = '';
+// 综合搜索数据（演示用）—— 5 个字段都能搜
+var searchData = [
+  { name: '张三', phone: '13800138001', plate: '京A·12345', company: '北京红牛饮料公司', department: '储运采购部', date: '2026-07-01', status: 'approved', base: '红牛-本基地', type: '一般访客', host: '李经理' },
+  { name: '张三', phone: '13800138002', plate: '京C·11111', company: '奥瑞金包装公司', department: '工程维修部', date: '2026-07-03', status: 'pending', base: '奥瑞金', type: '外来施工', host: '王主管' },
+  { name: '李四', phone: '13900139003', plate: '京B·22222', company: '力美供应链公司', department: '物流配送部', date: '2026-07-05', status: 'approved', base: '力美', type: '原料送货', host: '张主任' },
+  { name: '王五', phone: '13700137004', plate: '京D·33333', company: '中通物流公司', department: '运输管理部', date: '2026-07-08', status: 'pending', base: '红牛-本基地', type: '辅料送货', host: '赵主管' }
+];
+
+function renderSearchResults(list) {
+  var html = '';
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i];
+    var statusBadge = item.status === 'approved'
+      ? '<span class="badge badge-approved">已审核</span>'
+      : '<span class="badge badge-pending">待审核</span>';
+    html += '<div class="reservation-card" onclick="showVerifyModalSearch(\'' + item.name + '\',\'' + item.plate + '\')" style="margin:6px 14px;">';
+    html += '<div class="reservation-header"><span class="reservation-name">' + item.name + '</span>' + statusBadge + '</div>';
+    html += '<div class="reservation-info"><span>🚗 ' + item.plate + '</span><span>📅 ' + item.date + '</span></div>';
+    html += '<div style="margin-top:6px;font-size:11px;color:#64748B;">' + item.base + ' · ' + item.type + ' · 接待人：' + item.host + '</div>';
+    html += '<div style="margin-top:4px;font-size:10px;color:#94A3B8;">🏢 ' + item.company + ' · 部门：' + item.department + '</div>';
+    html += '</div>';
+  }
+  document.getElementById('search-results').innerHTML = html;
+  var countEl = document.getElementById('search-count');
+  if (countEl) countEl.textContent = list.length;
+  var initial = document.getElementById('search-initial');
+  if (initial) initial.style.display = list.length > 0 ? 'block' : 'none';
 }
 
 function doSearch() {
-  var val = document.getElementById('search-input').value.trim();
-  if (val) {
-    document.getElementById('search-results').style.display = 'block';
-    document.getElementById('search-empty').style.display = 'none';
+  var val = document.getElementById('search-input').value.trim().toLowerCase();
+  var results = document.getElementById('search-results');
+  var empty = document.getElementById('search-empty');
+  if (!val) {
+    // 空输入：显示全部预约记录（综合搜索的初始态）
+    renderSearchResults(searchData);
+    results.style.display = 'block';
+    empty.style.display = 'none';
+    return;
+  }
+  // 综合搜索：5 个字段都做 includes 匹配
+  var matched = searchData.filter(function(item) {
+    return (item.name || '').toLowerCase().indexOf(val) >= 0 ||
+           (item.phone || '').toLowerCase().indexOf(val) >= 0 ||
+           (item.plate || '').toLowerCase().indexOf(val) >= 0 ||
+           (item.company || '').toLowerCase().indexOf(val) >= 0 ||
+           (item.department || '').toLowerCase().indexOf(val) >= 0;
+  });
+  renderSearchResults(matched);
+  if (matched.length > 0) {
+    results.style.display = 'block';
+    empty.style.display = 'none';
   } else {
-    document.getElementById('search-results').style.display = 'none';
-    document.getElementById('search-empty').style.display = 'block';
+    results.style.display = 'none';
+    empty.style.display = 'block';
   }
 }
 
@@ -2500,14 +3157,172 @@ function confirmArrival() {
   document.getElementById('waiting-section').style.display = 'block';
 }
 
-// 初始化
+// ==================== 手机验证码登录 ====================
+var smsCountdown = 0;
+var smsTimer = null;
+
+function sendSmsCode() {
+  // 1. 图形验证码校验
+  var captchaInput = document.getElementById('sms-captcha-input').value.trim();
+  if (!captchaInput) {
+    showSmsAlert('🖼️', '提示', '请输入图形验证码');
+    refreshCaptcha();
+    return;
+  }
+  if (captchaInput.toUpperCase() !== currentCaptcha) {
+    showSmsAlert('❌', '图形验证码错误', '请重新输入');
+    refreshCaptcha();
+    document.getElementById('sms-captcha-input').value = '';
+    return;
+  }
+  // 2. 手机号校验
+  var phone = document.getElementById('sms-phone').value.trim();
+  if (!/^1[3-9]\d{9}$/.test(phone)) {
+    showSmsAlert('📱', '提示', '请输入正确的 11 位手机号');
+    return;
+  }
+  // 3. 发送成功后再刷新一次图形验证码（避免短时间重复点）
+  refreshCaptcha();
+  document.getElementById('sms-captcha-input').value = '';
+  var btn = document.getElementById('sms-send-btn');
+  if (smsCountdown > 0 || btn.disabled) return;
+  smsCountdown = 60;
+  btn.disabled = true;
+  btn.textContent = smsCountdown + 's 后重发';
+  smsTimer = setInterval(function() {
+    smsCountdown--;
+    if (smsCountdown <= 0) {
+      clearInterval(smsTimer);
+      btn.disabled = false;
+      btn.textContent = '获取验证码';
+    } else {
+      btn.textContent = smsCountdown + 's 后重发';
+    }
+  }, 1000);
+  // 演示用：模拟发送成功，提示固定验证码
+  showSmsAlert('📨', '验证码已发送', '演示用固定码：123456');
+}
+
+function smsLogin() {
+  var phone = document.getElementById('sms-phone').value.trim();
+  var code = document.getElementById('sms-code').value.trim();
+  if (!/^1[3-9]\d{9}$/.test(phone)) {
+    showSmsAlert('📱', '提示', '请输入正确的 11 位手机号');
+    return;
+  }
+  if (!/^\d{6}$/.test(code)) {
+    showSmsAlert('🔢', '提示', '请输入 6 位数字验证码');
+    return;
+  }
+  // 演示用：123456 视为通过
+  if (code !== '123456') {
+    showSmsAlert('❌', '验证码错误', '演示用固定码：123456');
+    return;
+  }
+  // 登录成功：跳转入厂须知
+  navigateTo('v-page-notice', null, '入厂须知页');
+}
+
+// 手机内弹窗控制
+function showSmsAlert(icon, title, msg) {
+  document.getElementById('sms-alert-icon').textContent = icon || '📱';
+  document.getElementById('sms-alert-title').textContent = title || '提示';
+  document.getElementById('sms-alert-msg').textContent = msg || '';
+  document.getElementById('sms-alert-btn').textContent = '知道了';
+  document.getElementById('sms-alert-overlay').classList.add('show');
+}
+function closeSmsAlert() {
+  document.getElementById('sms-alert-overlay').classList.remove('show');
+}
+
+// 图形验证码 - 当前正确码（演示用，每次刷新更新）
+var currentCaptcha = '';
+var CAPTCHA_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 去掉 0/O/1/I
+
+function generateCaptcha() {
+  var s = '';
+  for (var i = 0; i < 4; i++) {
+    s += CAPTCHA_CHARS.charAt(Math.floor(Math.random() * CAPTCHA_CHARS.length));
+  }
+  return s;
+}
+
+function drawCaptcha() {
+  var canvas = document.getElementById('sms-captcha-canvas');
+  if (!canvas) return;
+  var ctx = canvas.getContext('2d');
+  var w = canvas.width, h = canvas.height;
+  // 背景
+  ctx.fillStyle = '#fff';
+  ctx.fillRect(0, 0, w, h);
+  // 字符
+  var chars = currentCaptcha;
+  var colors = ['#2563EB', '#DC2626', '#059669', '#7C3AED', '#EA580C'];
+  for (var i = 0; i < chars.length; i++) {
+    var ch = chars.charAt(i);
+    var fontSize = 26 + Math.floor(Math.random() * 6); // 26-31
+    ctx.save();
+    ctx.font = 'bold ' + fontSize + 'px Arial, sans-serif';
+    ctx.fillStyle = colors[Math.floor(Math.random() * colors.length)];
+    var x = 14 + i * 24;
+    var y = 30 + Math.floor(Math.random() * 6) - 3; // 27-33
+    var angle = (Math.random() - 0.5) * 0.6; // -0.3 ~ 0.3 rad ≈ ±17°
+    ctx.translate(x, y);
+    ctx.rotate(angle);
+    ctx.fillText(ch, 0, 0);
+    ctx.restore();
+  }
+  // 干扰线
+  for (var j = 0; j < 3; j++) {
+    ctx.strokeStyle = ['#94A3B8', '#CBD5E1', '#64748B'][j % 3];
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    var x1 = Math.random() * w, y1 = Math.random() * h;
+    var x2 = Math.random() * w, y2 = Math.random() * h;
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+  }
+  // 干扰点
+  for (var k = 0; k < 25; k++) {
+    ctx.fillStyle = '#94A3B8';
+    ctx.fillRect(Math.random() * w, Math.random() * h, 1, 1);
+  }
+}
+
+function refreshCaptcha() {
+  currentCaptcha = generateCaptcha();
+  drawCaptcha();
+}
+
+// 初始化 - 默认显示预约登录页
 (function() {
+  // 初始化图形验证码
+  if (document.getElementById('sms-captcha-canvas')) {
+    refreshCaptcha();
+  }
+  // 搜索核销页初始化：渲染初始全部数据
+  if (document.getElementById('s-page-search') && typeof doSearch === 'function') {
+    doSearch();
+  }
   document.querySelectorAll('.page').forEach(function(p) {
     p.style.display = 'none';
     p.classList.remove('active');
   });
-  var page = document.getElementById('v-page-list');
+  var page = document.getElementById('v-page-login');
   if (page) { page.style.display = 'block'; page.classList.add('active'); }
+  // 同步菜单高亮
+  var menuItems = document.querySelectorAll('.menu-item');
+  menuItems.forEach(function(m) {
+    m.classList.remove('active');
+    var onclickStr = m.getAttribute('onclick') || '';
+    if (onclickStr.indexOf("'v-page-login'") > -1) {
+      m.classList.add('active');
+    }
+  });
+  // 同步 page-label 文本
+  var pageLabel = document.getElementById('page-label');
+  if (pageLabel) pageLabel.textContent = '预约登录页';
 })();
 </script>
 </body>
