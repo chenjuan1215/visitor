@@ -3708,7 +3708,8 @@ select.form-input {
           <table class="data-table" id="queue-table">
             <thead>
               <tr>
-                <th>排队序号</th>
+                <th title="编码规则：JH+年月日+3位数字">叫号编号</th>
+                <th title="来源访客登记单据编号；编码规则：FK+年月日+3位数字">登记单据编号</th>
                 <th>访客姓名</th>
                 <th>访客单位</th>
                 <th>车牌号</th>
@@ -5803,6 +5804,8 @@ let currentRowIndex = -1;
 const queueData = [
   {
     seq: 1,
+    callNo: 'JH20260617001',
+    regNo: 'FK20260617001',
     name: '张三',
     unit: '贵州物流有限公司',
     plate: '贵A·12345',
@@ -5823,6 +5826,8 @@ const queueData = [
   },
   {
     seq: 2,
+    callNo: 'JH20260617002',
+    regNo: 'FK20260617002',
     name: '李四',
     unit: '云南运输公司',
     plate: '云A·67890',
@@ -5843,6 +5848,8 @@ const queueData = [
   },
   {
     seq: 3,
+    callNo: 'JH20260617003',
+    regNo: 'FK20260617003',
     name: '王五',
     unit: '四川建材运输有限公司',
     plate: '川A·55678',
@@ -5863,6 +5870,8 @@ const queueData = [
   },
   {
     seq: 4,
+    callNo: 'JH20260617004',
+    regNo: 'FK20260617004',
     name: '赵六',
     unit: '武汉顺达物流',
     plate: '鄂A·D9876',
@@ -5883,6 +5892,8 @@ const queueData = [
   },
   {
     seq: 5,
+    callNo: 'JH20260617005',
+    regNo: 'FK20260617005',
     name: '刘七',
     unit: '长沙恒运集团',
     plate: '湘A·F3321',
@@ -6048,7 +6059,8 @@ function renderQueueTable() {
     }
 
     var tr = document.createElement('tr');
-    tr.innerHTML = '<td>' + row.seq + '</td>' +
+    tr.innerHTML = '<td>' + row.callNo + '</td>' +
+      '<td>' + row.regNo + '</td>' +
       '<td>' + row.name + '</td>' +
       '<td>' + row.unit + '</td>' +
       '<td style="font-weight:500">' + row.plate + '</td>' +
